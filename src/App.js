@@ -1,4 +1,4 @@
-import { AppBar, Button, IconButton, makeStyles, Switch, ThemeProvider, Toolbar, Typography, withStyles } from "@material-ui/core";
+import { AppBar, Button, Grid, IconButton, makeStyles, Paper, Switch, ThemeProvider, Toolbar, Typography, withStyles } from "@material-ui/core";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContactsRounded';
 import { useState } from "react";
@@ -7,6 +7,7 @@ import lightTheme from './themes/light';
 import Moon from './images/moon.png';
 import Sun from './images/sun.png';
 import { Link } from "react-router-dom";
+import {ReactComponent as Reading} from './images/reading.svg';
 
 const NavBar = ({ themeName, changeTheme }) => {
   const useStyles = makeStyles(theme => ({
@@ -16,6 +17,7 @@ const NavBar = ({ themeName, changeTheme }) => {
     },
     appBarIcon: {
       fontSize: '3rem',
+      color: theme.palette.secondary.light,
     },
     title: {
       flexGrow: 1,
@@ -78,6 +80,7 @@ const NavBar = ({ themeName, changeTheme }) => {
       height: switchThumb,
       marginTop: 2,
       border: `.5px solid ${theme.palette.secondary.main}`,
+      transition: theme.transitions.create(['all'], '1s', 'ease'),
     },
     track: {
       borderRadius: (switchHeight / 2),
@@ -143,8 +146,29 @@ const Contents = () => {
   const useStyles = makeStyles(theme => ({
     contentAreaOffset: theme.mixins.toolbar,
     root: {
-      marginTop: theme.spacing(0.5),
-    }
+      marginTop: theme.spacing(1),
+    },
+    heroPaper: {
+      backgroundColor: '#006253',
+      paddingTop: theme.spacing(8),
+      paddingBottom: 0,
+
+      '& svg': {
+        width: '100%',
+        height: 'auto'
+      },
+    },
+    heroTitle: {
+      marginTop: theme.spacing(5),
+      fontWeight: 'bold',
+      color: 'white',
+    },
+    heroSubtitle: {
+      backgroundColor: theme.palette.background.default,
+      opacity: 0.8,
+      padding: theme.spacing(2),
+      borderRadius: '1rem',
+    },
   }));
 
   const classes = useStyles();
@@ -154,7 +178,23 @@ const Contents = () => {
       <div className={classes.contentAreaOffset}/>
 
       <div className={classes.root}>
-        Hello
+        <Paper elevation={0} square className={classes.heroPaper}>
+          <Grid container alignItems="stretch">
+            <Grid item xs={12} md={6}>
+              <Reading/>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Grid container justify="center" alignItems="center">
+                <Grid item>
+                  <Typography variant="h1" className={classes.heroTitle}>CAMPUS SPACE</Typography>
+                  <Typography variant="h4" className={classes.heroSubtitle}>More Space, More Info</Typography>
+                  
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Paper>
       </div>
     </>
   );
@@ -170,13 +210,6 @@ const App = () => {
       setTheme('dark');
   };
 
-  const useStyles = makeStyles(theme => ({
-    contentAreaOffset: theme.mixins.toolbar,
-    
-  }));
-
-  const classes = useStyles();
-  
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <CssBaseline />
