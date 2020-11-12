@@ -8,6 +8,9 @@ import Moon from './images/moon.png';
 import Sun from './images/sun.png';
 import { Link } from "react-router-dom";
 import {ReactComponent as Reading} from './images/reading.svg';
+import {ReactComponent as Storage} from './images/cloud_storage.svg';
+import {ReactComponent as Discussion} from './images/discussion.svg';
+import {ReactComponent as TimeManagement} from './images/time_management.svg';
 
 const NavBar = ({ themeName, changeTheme }) => {
   const useStyles = makeStyles(theme => ({
@@ -161,13 +164,41 @@ const Contents = () => {
     heroTitle: {
       marginTop: theme.spacing(5),
       fontWeight: 'bold',
-      color: 'white',
+      color: '#fafafa',
     },
     heroSubtitle: {
       backgroundColor: theme.palette.background.default,
       opacity: 0.8,
       padding: theme.spacing(2),
-      borderRadius: '1rem',
+      borderRadius: '.8rem',
+    },
+    heroBtn: {
+      marginTop: theme.spacing(20),
+      textTransform: 'capitalize',
+      padding: theme.spacing(3),
+      borderRadius: '.5rem',
+      fontSize: '1.5rem',
+      width: '100%',
+    },
+    featuresPaper: {
+      backgroundColor: theme.palette.primary.main,
+      paddingTop: theme.spacing(12),
+      paddingBottom: theme.spacing(2),
+      
+      '& svg': {
+        width: '100%',
+        height: '50%',
+        flexGrow: 1,
+      },
+
+      '& h4': {
+        textAlign: 'center',
+        marginBottom: theme.spacing(3),
+        padding: '.9rem',
+        //borderRadius: '.2rem',
+        //borderLeft: `.4rem solid ${theme.palette.secondary.main}`,
+        //borderRight: `.4rem solid ${theme.palette.secondary.main}`,
+      },
     },
   }));
 
@@ -179,7 +210,7 @@ const Contents = () => {
 
       <div className={classes.root}>
         <Paper elevation={0} square className={classes.heroPaper}>
-          <Grid container alignItems="stretch">
+          <Grid container>
             <Grid item xs={12} md={6}>
               <Reading/>
             </Grid>
@@ -188,10 +219,37 @@ const Contents = () => {
               <Grid container justify="center" alignItems="center">
                 <Grid item>
                   <Typography variant="h1" className={classes.heroTitle}>CAMPUS SPACE</Typography>
-                  <Typography variant="h4" className={classes.heroSubtitle}>More Space, More Info</Typography>
+                  <Typography variant="h5" className={classes.heroSubtitle}>More Space, More Info...</Typography>
                   
+                  <Grid container justify="center" alignItems="center" spacing={3}>
+                    <Grid item xs={12} md={6}>
+                      <Button variant="contained" color="secondary" size="large" className={classes.heroBtn}>Explore Resources</Button>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <Button variant="contained" color="primary" size="large" className={classes.heroBtn}>Download App</Button>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
+            </Grid>
+          </Grid>
+        </Paper>
+
+        <Paper elevation={0}  className={classes.featuresPaper}>
+          <Grid container justify="space-around">
+            <Grid item xs={12} md={4}>
+              <Typography variant="h4">Save Space</Typography>
+              <Storage/>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Typography variant="h4">Share Thoughts</Typography>
+              <Discussion/>
+            </Grid>
+            
+            <Grid item xs={12} md={4}>
+              <Typography variant="h4">Save Time</Typography>
+              <TimeManagement/>
             </Grid>
           </Grid>
         </Paper>
