@@ -225,7 +225,7 @@ const Contents = () => {
         color: 'white',
 
         '& .title': {
-          fontSize: '4rem',
+          fontSize: '3rem',
           fontWeight: 'bold',
         },
 
@@ -235,12 +235,22 @@ const Contents = () => {
         },
 
         '& .text': {
-          fontSize: '1.8rem',
+          fontSize: '1.6rem',
           textAlign: 'left',
           color: '#fafafa',
           opacity: 0.8,
         }
       }
+    },
+    statPaperContainer: {
+      padding: '2rem',
+      paddingTop: '4rem',
+      textAlign: 'center',
+    },
+    statPaper: {
+      backgroundColor: '#212121',
+      padding: '3rem',
+      borderRadius: '1rem',
     },
   }));
 
@@ -307,6 +317,12 @@ const Contents = () => {
               You're not limited to just your departmental resources, you have access to every other faculty, department and level! Basically, you can access resources for higher levels even before you get there!
             </Typography>
           </div>
+        </Paper>
+
+        <Paper elevation={0} square className={classes.statPaperContainer}>
+          <Paper elevation={20} className={classes.statPaper}>
+
+          </Paper>
         </Paper>
       </div>
     </>
