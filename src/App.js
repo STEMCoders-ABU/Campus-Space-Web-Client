@@ -12,6 +12,7 @@ import {ReactComponent as Storage} from './images/cloud_storage.svg';
 import {ReactComponent as Discussion} from './images/discussion.svg';
 import {ReactComponent as TimeManagement} from './images/time_management.svg';
 import {ReactComponent as Questions} from './images/questions.svg';
+import largeLogo from './images/large-logo.jpg';
 
 const NavBar = ({ themeName, changeTheme, ...props }) => {
   const useStyles = makeStyles(theme => ({
@@ -183,8 +184,8 @@ const Contents = () => {
     },
     featuresPaper: {
       backgroundColor: theme.palette.primary.main,
-      paddingTop: theme.spacing(12),
-      paddingBottom: theme.spacing(2),
+      paddingTop: theme.spacing(20),
+      paddingBottom: theme.spacing(1),
       
       '& svg': {
         width: '100%',
@@ -200,6 +201,46 @@ const Contents = () => {
         //borderLeft: `.4rem solid ${theme.palette.secondary.main}`,
         //borderRight: `.4rem solid ${theme.palette.secondary.main}`,
       },
+    },
+    questionsPaper: {
+      paddingTop: theme.spacing(12),
+
+      '& svg': {
+        width: '100%',
+        height: 'auto'
+      },
+    },
+    ideaPaper: {
+      textAlign: 'center',
+      backgroundImage: `url(${largeLogo})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed',
+      backgroundRepeat: 'no-repeat',
+      //padding: '20% 20%',
+
+      '& .inner': {
+        padding: '10% 10% 10% 10%',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        color: 'white',
+
+        '& .title': {
+          fontSize: '4rem',
+          fontWeight: 'bold',
+        },
+
+        '& hr': {
+          marginBottom: '4rem',
+          width: '30%',
+        },
+
+        '& .text': {
+          fontSize: '1.8rem',
+          textAlign: 'left',
+          color: '#fafafa',
+          opacity: 0.8,
+        }
+      }
     },
   }));
 
@@ -255,8 +296,17 @@ const Contents = () => {
           </Grid>
         </Paper>
 
-        <Paper>
+        <Paper elevation={0} square className={classes.ideaPaper}>
+          <div className="inner">
+            <Typography variant="h1" className="title">HOW IT WORKS</Typography>
+            <hr/>
 
+            <Typography variant="span" component="p" className="text">
+              We give class representatives the opportunity to keep class members up to date with resources and useful information in an organised and student friendly manner. At Campus Space, we let you focus on what you're actually interested in. You no longer have to scroll through hundreds of not so useful messages to get updated
+              <br/><br/>
+              You're not limited to just your departmental resources, you have access to every other faculty, department and level! Basically, you can access resources for higher levels even before you get there!
+            </Typography>
+          </div>
         </Paper>
       </div>
     </>
