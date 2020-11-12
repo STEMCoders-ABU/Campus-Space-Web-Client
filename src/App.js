@@ -142,24 +142,21 @@ const NavBar = ({ themeName, changeTheme }) => {
 const Contents = () => {
   const useStyles = makeStyles(theme => ({
     contentAreaOffset: theme.mixins.toolbar,
-    
+    root: {
+      marginTop: theme.spacing(0.5),
+    }
   }));
 
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <>
       <div className={classes.contentAreaOffset}/>
 
-      nskndakjndjandkajnajdandadhbadabhdab
-
-
-
-      hhhhhhhhhh
-
-
-      jjjjjj
-    </div>
+      <div className={classes.root}>
+        Hello
+      </div>
+    </>
   );
 };
 
@@ -173,6 +170,13 @@ const App = () => {
       setTheme('dark');
   };
 
+  const useStyles = makeStyles(theme => ({
+    contentAreaOffset: theme.mixins.toolbar,
+    
+  }));
+
+  const classes = useStyles();
+  
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <CssBaseline />
