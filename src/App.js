@@ -156,7 +156,7 @@ const Contents = () => {
     heroPaper: {
       backgroundColor: '#006253',
       paddingTop: theme.spacing(8),
-      paddingBottom: 0,
+      paddingBottom: theme.spacing(8),
 
       '& svg': {
         width: '100%',
@@ -302,7 +302,7 @@ const Contents = () => {
             <hr/>
 
             <Typography variant="span" component="p" className="text">
-              We give class representatives the opportunity to keep class members up to date with resources and useful information in an organised and student friendly manner. At Campus Space, we let you focus on what you're actually interested in. You no longer have to scroll through hundreds of not so useful messages to get updated
+              We give class representatives the opportunity to keep class members up to date with resources and useful information in an organised and student friendly manner. At Campus Space, we let you focus on what you're actually interested in. You no longer have to scroll through hundreds of not so useful messages to get updated.
               <br/><br/>
               You're not limited to just your departmental resources, you have access to every other faculty, department and level! Basically, you can access resources for higher levels even before you get there!
             </Typography>
