@@ -1,7 +1,7 @@
-import { AppBar, Button, Grid, IconButton, makeStyles, Paper, Switch, ThemeProvider, Toolbar, Typography, withStyles } from "@material-ui/core";
+import { AppBar, Button, Grid, IconButton, makeStyles, Paper, Switch, ThemeProvider, Toolbar, Typography, useScrollTrigger, withStyles } from "@material-ui/core";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContactsRounded';
-import { useState } from "react";
+import { cloneElement, useState } from "react";
 import darkTheme from './themes/dark';
 import lightTheme from './themes/light';
 import Moon from './images/moon.png';
@@ -11,8 +11,9 @@ import {ReactComponent as Reading} from './images/reading.svg';
 import {ReactComponent as Storage} from './images/cloud_storage.svg';
 import {ReactComponent as Discussion} from './images/discussion.svg';
 import {ReactComponent as TimeManagement} from './images/time_management.svg';
+import {ReactComponent as Questions} from './images/questions.svg';
 
-const NavBar = ({ themeName, changeTheme }) => {
+const NavBar = ({ themeName, changeTheme, ...props }) => {
   const useStyles = makeStyles(theme => ({
     appBar: {
       backgroundColor: theme.palette.primary.main,
@@ -121,7 +122,7 @@ const NavBar = ({ themeName, changeTheme }) => {
   const classes = useStyles();
 
   return (
-    <AppBar position="fixed" className={classes.appBar}>
+    <AppBar position="fixed" className={classes.appBar} {...props}>
       <Toolbar>
         <IconButton edge="start" size="medium" color="secondary" aria-label="icon">
           <ImportContactsRoundedIcon fontSize="large" className={classes.appBarIcon} />
@@ -253,13 +254,17 @@ const Contents = () => {
             </Grid>
           </Grid>
         </Paper>
+
+        <Paper>
+
+        </Paper>
       </div>
     </>
   );
 };
 
-const App = () => {
-  const [theme, setTheme] = useState('dark');
+const App = (props) => {
+  const [theme, setTheme] = useState('light');
 
   const changeTheme = () => {
     if (theme === 'dark')
@@ -268,12 +273,28 @@ const App = () => {
       setTheme('dark');
   };
 
+  const ElevationScroll = (props) => {
+    const { children, window } = props;
+    
+    const trigger = useScrollTrigger({
+      disableHysteresis: true,
+      threshold: 0,
+      target: window ? window() : undefined,
+    });
+  
+    return cloneElement(children, {
+      elevation: trigger ? 4 : 0,
+    });
+  }
+
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <CssBaseline />
 
-      <NavBar themeName={theme} changeTheme={changeTheme} />
-
+      <ElevationScroll {...props}>
+        <NavBar themeName={theme} changeTheme={changeTheme} />
+      </ElevationScroll>
+      
       <Contents/>
        
     </ThemeProvider>
