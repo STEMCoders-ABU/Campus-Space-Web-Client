@@ -38,11 +38,14 @@ const RawHome = () => {
         marginTop: theme.spacing(5),
         fontWeight: 'bold',
         color: '#fafafa',
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down('xs')]: {
             fontSize: '2.5rem',
         },
+        [theme.breakpoints.only('sm')]: {
+            fontSize: '3.5rem',
+        },
         [theme.breakpoints.only('md')]: {
-            fontSize: '4rem',
+            fontSize: '3.5rem',
         },
         [theme.breakpoints.only('lg')]: {
             fontSize: '5rem',
@@ -53,13 +56,19 @@ const RawHome = () => {
         opacity: 0.8,
         padding: theme.spacing(2),
         borderRadius: '.8rem',
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down('xs')]: {
             fontSize: '1rem',
             padding: theme.spacing(1),
             borderRadius: '.5rem',
         },
+        [theme.breakpoints.only('sm')]: {
+            fontSize: '1.4rem',
+            padding: theme.spacing(1),
+            borderRadius: '.5rem',
+        },
         [theme.breakpoints.only('md')]: {
-            padding: theme.spacing(0.8),
+            padding: theme.spacing(0.7),
+            fontSize: '1.4rem',
         },
       },
       heroBtnsContainer: {
@@ -165,9 +174,13 @@ const RawHome = () => {
           padding: '1rem',
           backgroundColor: theme.palette.secondary.dark,
           borderRadius: '.5rem',
-          [theme.breakpoints.down('sm')]: {
+          [theme.breakpoints.down('xs')]: {
             padding: '.5rem',
             fontSize: '2rem',
+          },
+          [theme.breakpoints.only('sm')]: {
+            padding: '.7rem',
+            fontSize: '3rem',
           },
         },
         '& .label': {
@@ -175,9 +188,13 @@ const RawHome = () => {
           opacity: 0.6,
           marginTop: '1rem',
           fontSize: '2rem',
-          [theme.breakpoints.down('sm')]: {
+          [theme.breakpoints.down('xs')]: {
             marginTop: '.7rem',
             fontSize: '1.5rem',
+          },
+          [theme.breakpoints.only('sm')]: {
+            marginTop: '.7rem',
+            fontSize: '1.7rem',
           },
         },
       },

@@ -232,8 +232,11 @@ const Footer = () => {
       borderRadius: '.4rem',
       marginRight: '1rem',
       transition: '.3s ease',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('xs')]: {
         fontSize: '.7rem',
+      },
+      [theme.breakpoints.only('sm')]: {
+        fontSize: '.9rem',
       },
       [theme.breakpoints.only('md')]: {
         fontSize: '.9rem',
