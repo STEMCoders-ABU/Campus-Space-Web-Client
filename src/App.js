@@ -1,4 +1,4 @@
-import { AppBar, Button, IconButton, makeStyles, Switch, ThemeProvider, Toolbar, Typography, useScrollTrigger, withStyles } from "@material-ui/core";
+import { AppBar, Button, Grid, IconButton, makeStyles, Switch, ThemeProvider, Toolbar, Typography, useScrollTrigger, withStyles } from "@material-ui/core";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import 'animate.css/animate.min.css';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContactsRounded';
@@ -9,6 +9,9 @@ import Sun from './images/sun.png';
 import darkTheme from './themes/dark';
 import lightTheme from './themes/light';
 import Home from './components/home';
+import stemLogo from './images/stemlogo.jpg';
+import FacebookIcon from '@material-ui/icons/Facebook';
+import TwitterIcon from '@material-ui/icons/Twitter';
 
 const NavBar = ({ themeName, changeTheme, ...props }) => {
   const useStyles = makeStyles(theme => ({
@@ -143,6 +146,85 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
   );
 };
 
+const Footer = () => {
+  const useStyles = makeStyles(theme => ({
+    root: {
+      backgroundColor: theme.palette.primary.dark,
+      padding: '10%',
+      paddingTop: '2rem',
+      paddingBottom: '1rem',
+    },
+
+    logo: {
+      borderRadius: '50%',
+    },
+
+    copyright: {
+      fontFamily: "'PT Sans', sans-serif !important",
+    },
+
+    link: {
+      color: 'white',
+      textDecoration: 'none',
+      fontSize: '1.2rem',
+      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+      padding: '.5rem',
+      borderRadius: '.4rem',
+      marginRight: '1rem',
+      transition: '.3s ease',
+      
+      '&:hover': {
+        color: theme.palette.secondary.light,
+        backgroundColor: theme.palette.primary.main,
+        transition: '.3s ease',
+      },
+    },
+
+    socialLink: {
+      color: 'white',
+      textDecoration: 'none',
+      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+      padding: '.5rem',
+      fontSize: '4rem',
+      borderRadius: '.5rem',
+      marginRight: '1rem',
+      transition: '.3s ease',
+      
+      '&:hover': {
+        color: theme.palette.secondary.light,
+        backgroundColor: theme.palette.primary.main,
+        transition: '.3s ease',
+      },
+
+      '& .icon': {
+        fontSize: '4rem',
+      },
+    },
+  }));
+
+  const classes = useStyles();
+
+  return (
+    <footer className={classes.root}>
+      <Grid container alignItems="center">
+        <Grid item xs={12} md={4}>
+          <img className={classes.logo} src={stemLogo} alt="STEM Coders Logo"/>
+          <Typography variant="subtitle1" className={classes.copyright}>&copy; 2020 STEM Coders Club. All Rights Reserved</Typography>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Link className={classes.link} to="/terms">Terms of Use</Link>
+          <a className={classes.link} href="https://stemcoders.com.ng">STEM Coders</a>
+          <a className={classes.link} href="https://abu.edu.ng">Ahmadu Bello University</a>
+        </Grid>
+        <Grid item xs={12} md={2}>
+          <a className={classes.socialLink} href="http"><FacebookIcon className="icon"/></a>
+          <a className={classes.socialLink} href="http"><TwitterIcon className="icon"/></a>
+        </Grid>
+      </Grid>
+    </footer>
+  );
+};
+
 const App = (props) => {
   const [theme, setTheme] = useState(window.localStorage.getItem('app-theme') || 'light');
 
@@ -182,7 +264,8 @@ const App = (props) => {
       <Router>
         <Route path="/"><Home/></Route>
       </Router>
-       
+      
+      <Footer/>
     </ThemeProvider>
   );
 };
