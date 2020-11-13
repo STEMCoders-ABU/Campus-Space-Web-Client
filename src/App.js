@@ -283,6 +283,36 @@ const Contents = () => {
         fontFamily: "'PT Sans', sans-serif",
       },
     },
+
+    appPaper: {
+      padding: '1rem',
+      paddingTop: theme.spacing(12),
+      backgroundColor: theme.palette.primary.main,
+
+      '& svg': {
+        width: '100%',
+        height: 'auto'
+      },
+      '& .content-container': {
+        padding: '2rem',
+        paddingTop: 0,
+      },
+      '& .content': {
+        textAlign: 'left',
+        fontSize: '1.4rem',
+        opacity: 0.8,
+        fontFamily: "'PT Sans', sans-serif",
+        paddingTop: '12rem',
+      },
+    },
+    appBtn: {
+      marginTop: theme.spacing(20),
+      textTransform: 'capitalize',
+      padding: theme.spacing(3),
+      borderRadius: '.5rem',
+      fontSize: '1.5rem',
+      width: '100%',
+    },
   }));
 
   const classes = useStyles();
@@ -386,6 +416,20 @@ const Contents = () => {
                 <br/><br/>
                 With many other cloud-based services available, Campus Space is 100% open source; providing access to study files for students globally with no hidden charges to better enhance access and promote effective study habits.
               </Typography>
+            </Grid>
+          </Grid>
+        </Paper>
+
+        <Paper elevation={0} square className={classes.appPaper}>
+          <Grid container>
+            <Grid item xs={12} md={6} alignContent="center" className="content-container">
+              <Typography variant="span" component="p" className="content">
+                Our mobile application allows you to access and manage campus space resources without the need for a browser! 
+              </Typography>
+              <Button variant="contained" color="secondary" size="large" className={classes.appBtn}>Download Mobile App</Button>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <MobileApp/>
             </Grid>
           </Grid>
         </Paper>
