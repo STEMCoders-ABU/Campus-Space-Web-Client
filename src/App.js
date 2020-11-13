@@ -1,7 +1,7 @@
 import { AppBar, Button, IconButton, makeStyles, Switch, ThemeProvider, Toolbar, Typography, useScrollTrigger, withStyles } from "@material-ui/core";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContactsRounded';
-import { cloneElement, useState } from "react";
+import { cloneElement, useEffect, useState } from "react";
 import { Link, Route, Switch as Router } from "react-router-dom";
 import Moon from './images/moon.png';
 import Sun from './images/sun.png';
@@ -78,7 +78,7 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
       color: 'white',
       width: switchThumb,
       height: switchThumb,
-      marginTop: 2,
+      marginTop: 3,
       border: `.5px solid ${theme.palette.secondary.main}`,
       transition: theme.transitions.create(['all'], '1s', 'ease'),
     },
@@ -143,7 +143,7 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
 };
 
 const App = (props) => {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(window.localStorage.getItem('app-theme') || 'light');
 
   const changeTheme = () => {
     if (theme === 'dark')
@@ -151,6 +151,10 @@ const App = (props) => {
     else
       setTheme('dark');
   };
+
+  useEffect(() => {
+    window.localStorage.setItem('app-theme', theme);
+  }, [theme]);
 
   const ElevationScroll = (props) => {
     const { children, window } = props;

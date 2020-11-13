@@ -1,4 +1,5 @@
-import { Button, Grid, Hidden, makeStyles, Paper, Typography } from "@material-ui/core";
+import { Box, Button, Container, Grid, Hidden, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
+import { Form, Formik } from "formik";
 import { ReactComponent as Storage } from '../images/cloud_storage.svg';
 import { ReactComponent as Discussion } from '../images/discussion.svg';
 import largeLogo from '../images/large-logo.jpg';
@@ -6,6 +7,7 @@ import { ReactComponent as MobileApp } from '../images/mobile_app.svg';
 import { ReactComponent as Questions } from '../images/questions.svg';
 import { ReactComponent as Reading } from '../images/reading.svg';
 import { ReactComponent as TimeManagement } from '../images/time_management.svg';
+import FormikSelect from './formik-select';
 
 const RawHome = () => {
     const useStyles = makeStyles(theme => ({
@@ -106,7 +108,6 @@ const RawHome = () => {
       statPaper: {
         backgroundColor: '#212121',
         padding: '3rem',
-        //paddingTop: '1rem',
         borderRadius: '1rem',
   
         '& .header': {
@@ -171,6 +172,38 @@ const RawHome = () => {
         borderRadius: '3rem',
         fontSize: '1.5rem',
         width: '100%',
+      },
+
+      subPaperContainer: {
+        padding: '2rem',
+        paddingTop: '6rem',
+        paddingBottom: '5rem',
+        textAlign: 'center',
+      },
+      subPaperInner: {
+        backgroundColor: '#212121',
+        padding: '3rem',
+        borderRadius: '1rem',
+        
+        '& .header': {
+            marginBottom: '5rem',
+            color: 'white',
+        },
+        '& .selector': {
+            backgroundColor: theme.palette.primary.dark,
+            color: theme.palette.text.primary,
+            textAlign: 'left',
+            borderRadius: '.5rem',
+            opacity: 0.9,
+            fontFamily: "'PT Sans', sans-serif",
+        },
+      },
+      subBtn: {
+        marginTop: theme.spacing(10),
+        padding: theme.spacing(1),
+        borderRadius: '.5rem',
+        fontSize: '1.5rem',
+        width: '75%',
       },
     }));
   
@@ -310,6 +343,37 @@ const RawHome = () => {
               </Grid>
             </Paper>
           </Hidden>
+
+          <Paper elevation={0} square className={classes.subPaperContainer}>
+            <Container>
+                <Box boxShadow={3} className={classes.subPaperInner}>
+                    <Typography variant="h4" className="header">SUBSCRIBE FOR EMAIL NOTIFICATIONS</Typography>
+
+                    <Formik
+                        initialValues={{
+                            
+                        }}
+                        
+                        
+                        onSubmit={(values) => {}}
+                    >
+                        <Form>
+                            <FormikSelect name="faculty" defaultValue="test" label="Choose a Faculty" className="selector">
+                                <MenuItem value="test">Test Faculty</MenuItem>
+                            </FormikSelect>
+                            <FormikSelect name="department" defaultValue="test" label="Choose a Department" className="selector">
+                                <MenuItem value="test">Test Department</MenuItem>
+                            </FormikSelect>
+                            <FormikSelect name="department" defaultValue="test" label="Choose a Level" className="selector">
+                                <MenuItem value="test">100</MenuItem>
+                            </FormikSelect>
+
+                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.subBtn}>Subscribe</Button>
+                        </Form>
+                    </Formik>
+                </Box>
+            </Container>
+          </Paper>
         </div>
       </>
     );
