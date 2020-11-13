@@ -9,6 +9,7 @@ import Sun from './images/sun.png';
 import darkTheme from './themes/dark';
 import lightTheme from './themes/light';
 import Home from './components/home';
+import ResourcesFilter from './components/resources-filter';
 import stemLogo from './images/stemlogo.jpg';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import TwitterIcon from '@material-ui/icons/Twitter';
@@ -160,8 +161,8 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
         
         <Hidden smDown>
           <div className={classes.navlinksContainer}>
-            <Link className={classes.navlink}>Home</Link>
-            <Link className={classes.navlink}>Resources</Link>
+            <Link className={classes.navlink} to="/">Home</Link>
+            <Link className={classes.navlink} to="/resources-filter">Resources</Link>
             <Link className={classes.navlink}>Moderation</Link>
             <Link className={classes.navlink}>Contact</Link>
             <Link className={classes.navlink}>About</Link>
@@ -200,10 +201,21 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
 const Footer = () => {
   const useStyles = makeStyles(theme => ({
     root: {
+      position: 'relative',
+      minHeight: '100vh',
+      marginTop: '-40rem',
+      [theme.breakpoints.down('md')]: {
+        marginTop: '-27rem',
+      },
+    },
+    footer: {
       backgroundColor: theme.palette.primary.dark,
       padding: '10%',
       paddingTop: '2rem',
       paddingBottom: '1rem',
+      position: 'absolute',
+      bottom: 0,
+      width: '100%',
     },
 
     logo: {
@@ -280,23 +292,25 @@ const Footer = () => {
   const classes = useStyles();
 
   return (
-    <footer className={classes.root}>
-      <Grid container alignItems="center">
-        <Grid item xs={12} lg={4}>
-          <img className={classes.logo} src={stemLogo} alt="STEM Coders Logo"/>
-          <Typography variant="subtitle1" className={classes.copyright}>&copy; {new Date().getFullYear()} STEM Coders Club. All Rights Reserved</Typography>
+    <div className={classes.root}>
+      <footer className={classes.footer}>
+        <Grid container alignItems="center">
+          <Grid item xs={12} lg={4}>
+            <img className={classes.logo} src={stemLogo} alt="STEM Coders Logo"/>
+            <Typography variant="subtitle1" className={classes.copyright}>&copy; {new Date().getFullYear()} STEM Coders Club. All Rights Reserved</Typography>
+          </Grid>
+          <Grid item xs={12} lg={6} className={classes.linksContainer}>
+            <Link className={classes.link} to="/terms">Terms of Use</Link>
+            <a target="_blank" rel="noreferrer" className={classes.link} href="https://stemcoders.com.ng">STEM Coders</a>
+            <a target="_blank" rel="noreferrer" className={classes.link} href="https://abu.edu.ng">ABU Zaria</a>
+          </Grid>
+          <Grid item xs={12} lg={2}>
+            <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://facebook.com/campusspaceabu"><FacebookIcon className="icon"/></a>
+            <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://twitter.com/SpaceAbu"><TwitterIcon className="icon"/></a>
+          </Grid>
         </Grid>
-        <Grid item xs={12} lg={6} className={classes.linksContainer}>
-          <Link className={classes.link} to="/terms">Terms of Use</Link>
-          <a target="_blank" rel="noreferrer" className={classes.link} href="https://stemcoders.com.ng">STEM Coders</a>
-          <a target="_blank" rel="noreferrer" className={classes.link} href="https://abu.edu.ng">ABU Zaria</a>
-        </Grid>
-        <Grid item xs={12} lg={2}>
-          <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://facebook.com/campusspaceabu"><FacebookIcon className="icon"/></a>
-          <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://twitter.com/SpaceAbu"><TwitterIcon className="icon"/></a>
-        </Grid>
-      </Grid>
-    </footer>
+      </footer>
+    </div>
   );
 };
 
@@ -328,6 +342,12 @@ const App = (props) => {
     });
   }
 
+  const useStyles = makeStyles(theme => ({
+    contentAreaOffset: theme.mixins.toolbar,
+  }));
+
+  const classes = useStyles();
+
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <CssBaseline />
@@ -336,7 +356,10 @@ const App = (props) => {
         <NavBar themeName={theme} changeTheme={changeTheme} />
       </ElevationScroll>
       
+      <div className={classes.contentAreaOffset}/>
+  
       <Router>
+        <Route path="/resources-filter"><ResourcesFilter/></Route>
         <Route path="/"><Home/></Route>
       </Router>
       

@@ -1,4 +1,4 @@
-import { Box, Button, Container, Grid, Hidden, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
+import { Button, Grid, Hidden, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
 import { Form, Formik } from "formik";
 import ScrollAnimation from "react-animate-on-scroll";
 import { ReactComponent as Storage } from '../images/cloud_storage.svg';
@@ -12,7 +12,6 @@ import FormikSelect from './formik-select';
 
 const RawHome = () => {
     const useStyles = makeStyles(theme => ({
-      contentAreaOffset: theme.mixins.toolbar,
       root: {
         marginTop: theme.spacing(1),
         [theme.breakpoints.down('sm')]: {
@@ -322,8 +321,6 @@ const RawHome = () => {
   
     return (
       <>
-        <div className={classes.contentAreaOffset}/>
-  
         <div className={classes.root}>
           <Paper elevation={0} square className={classes.heroPaper}>
             <Grid container>
@@ -470,7 +467,7 @@ const RawHome = () => {
           </Hidden>
 
           <Paper elevation={0} square className={classes.subPaperContainer}>
-            <ScrollAnimation animatePreScroll={false} animateIn="animate__swing" duration={1}>
+            <ScrollAnimation initiallyVisible animatePreScroll={false} animateIn="animate__swing" duration={1}>
                 <Paper elevation={5} className={classes.subPaperInner}>
                     <Typography variant="h4" className="header">SUBSCRIBE FOR EMAIL NOTIFICATIONS</Typography>
 
