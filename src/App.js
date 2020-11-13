@@ -202,14 +202,7 @@ const Contents = () => {
         //borderRight: `.4rem solid ${theme.palette.secondary.main}`,
       },
     },
-    questionsPaper: {
-      paddingTop: theme.spacing(12),
-
-      '& svg': {
-        width: '100%',
-        height: 'auto'
-      },
-    },
+  
     ideaPaper: {
       textAlign: 'center',
       backgroundImage: `url(${largeLogo})`,
@@ -239,18 +232,55 @@ const Contents = () => {
           textAlign: 'left',
           color: '#fafafa',
           opacity: 0.8,
+          fontFamily: "'PT Sans', sans-serif",
         }
       }
     },
+
     statPaperContainer: {
       padding: '2rem',
       paddingTop: '4rem',
+      paddingBottom: '5rem',
       textAlign: 'center',
     },
     statPaper: {
       backgroundColor: '#212121',
       padding: '3rem',
+      //paddingTop: '1rem',
       borderRadius: '1rem',
+
+      '& .header': {
+        color: '#fafafa',
+        padding: '1rem',
+        backgroundColor: theme.palette.secondary.dark,
+        borderRadius: '.5rem',
+      },
+      '& .label': {
+        color: 'white',
+        opacity: 0.6,
+        marginTop: '1rem',
+        fontSize: '2rem',
+      },
+    },
+
+    questionsPaper: {
+      paddingTop: theme.spacing(12),
+      backgroundColor: theme.palette.primary.main,
+
+      '& svg': {
+        width: '100%',
+        height: 'auto'
+      },
+      '& .content-container': {
+        padding: '2rem',
+        paddingTop: 0,
+      },
+      '& .content': {
+        textAlign: 'left',
+        fontSize: '1.4rem',
+        opacity: 0.8,
+        fontFamily: "'PT Sans', sans-serif",
+      },
     },
   }));
 
@@ -321,8 +351,42 @@ const Contents = () => {
 
         <Paper elevation={0} square className={classes.statPaperContainer}>
           <Paper elevation={20} className={classes.statPaper}>
-
+            <Grid container justify="space-between" spacing={4}>
+              <Grid item xs={12} md={4}>
+                <Typography variant="h2" className="header">24</Typography>
+                <Typography variant="span" component="p" className="label">Departments</Typography>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Typography variant="h2" className="header">23</Typography>
+                <Typography variant="span" component="p" className="label">Resources</Typography>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Typography variant="h2" className="header">175</Typography>
+                <Typography variant="span" component="p" className="label">Downloads</Typography>
+              </Grid>
+            </Grid>
           </Paper>
+        </Paper>
+
+        <Paper elevation={0} square className={classes.questionsPaper}>
+          <Grid container>
+            <Grid item xs={12} md={6}>
+              <Questions/>
+            </Grid>
+            <Grid item xs={12} md={6} alignContent="center" className="content-container">
+              <Typography variant="span" component="p" className="content">
+                Campus Space is a cloud-based socio-academic web application built to provide students and other key players in the learning environment easy access to study materials.
+                <br/><br/>
+                This platform aims to improve communication as well as dissemination (sharing) of study materials effectively for the best learning experience!
+                <br/><br/>
+                Campus space caters for all academic institutions encompassing trainings, professional and traditional methods of learning. It seeks to bring all study materials in one place for easy access and more sustainable use.
+                <br/><br/>
+                The pilot phase for this project is targeted at Ahmadu Bello University, Zaria - Nigeria. It is managed by the STEM Coders Club as part of the plans in place for solving contemproray problems in the society.
+                <br/><br/>
+                With many other cloud-based services available, Campus Space is 100% open source; providing access to study files for students globally with no hidden charges to better enhance access and promote effective study habits.
+              </Typography>
+            </Grid>
+          </Grid>
         </Paper>
       </div>
     </>
