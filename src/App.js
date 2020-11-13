@@ -1,4 +1,4 @@
-import { AppBar, Button, Grid, IconButton, makeStyles, Switch, ThemeProvider, Toolbar, Typography, useScrollTrigger, withStyles } from "@material-ui/core";
+import { AppBar, Button, Grid, Hidden, IconButton, makeStyles, Menu, MenuItem, Switch, ThemeProvider, Toolbar, Typography, useScrollTrigger, withStyles } from "@material-ui/core";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import 'animate.css/animate.min.css';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContactsRounded';
@@ -12,6 +12,7 @@ import Home from './components/home';
 import stemLogo from './images/stemlogo.jpg';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import TwitterIcon from '@material-ui/icons/Twitter';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const NavBar = ({ themeName, changeTheme, ...props }) => {
   const useStyles = makeStyles(theme => ({
@@ -26,6 +27,9 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
     title: {
       flexGrow: 1,
       paddingTop: 3.5,
+    },
+    menuIcon: {
+      color: theme.palette.text.primary,
     },
     loginButton: {
       borderRadius: '1rem',
@@ -119,28 +123,63 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
     );
   });
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   const classes = useStyles();
 
   return (
     <AppBar position="fixed" className={classes.appBar} {...props}>
       <Toolbar>
-        <IconButton edge="start" size="medium" color="secondary" aria-label="icon">
-          <ImportContactsRoundedIcon fontSize="large" className={classes.appBarIcon} />
-        </IconButton>
+        <Hidden smDown>
+          <IconButton edge="start" size="medium" color="secondary" aria-label="icon">
+            <ImportContactsRoundedIcon fontSize="large" className={classes.appBarIcon} />
+          </IconButton>
+        </Hidden>
 
         <Typography variant="h6" className={classes.title}>Campus Space</Typography>
         
-        <div className={classes.navlinksContainer}>
-          <Link className={classes.navlink}>Home</Link>
-          <Link className={classes.navlink}>Resources</Link>
-          <Link className={classes.navlink}>Moderation</Link>
-          <Link className={classes.navlink}>Contact</Link>
-          <Link className={classes.navlink}>About</Link>
-        </div>
+        <Hidden smDown>
+          <div className={classes.navlinksContainer}>
+            <Link className={classes.navlink}>Home</Link>
+            <Link className={classes.navlink}>Resources</Link>
+            <Link className={classes.navlink}>Moderation</Link>
+            <Link className={classes.navlink}>Contact</Link>
+            <Link className={classes.navlink}>About</Link>
+          </div>
+        </Hidden>
 
         <ThemeSwitch />
 
-        <Button className={classes.loginButton} variant="contained" color="secondary" size="large">Login</Button>
+        <Hidden smDown>
+          <Button className={classes.loginButton} variant="contained" color="secondary" size="large">Login</Button>
+        </Hidden>
+
+        <Hidden mdUp>
+          <IconButton className={classes.menuIcon} edge="start" size="medium" aria-label="icon" onClick={handleMenuClick}>
+            <MoreVertIcon fontSize="large"/>
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={e => handleMenuClose()}>Home</MenuItem>
+            <MenuItem onClick={e => handleMenuClose()}>Resources</MenuItem>
+            <MenuItem onClick={e => handleMenuClose()}>Moderation</MenuItem>
+            <MenuItem onClick={e => handleMenuClose()}>Contact</MenuItem>
+            <MenuItem onClick={e => handleMenuClose()}>About</MenuItem>
+            <MenuItem onClick={e => handleMenuClose()}><Button className={classes.loginButton} variant="contained" color="secondary" size="large">Login</Button></MenuItem>
+          </Menu>
+        </Hidden>
       </Toolbar>
     </AppBar>
   );
@@ -213,12 +252,12 @@ const Footer = () => {
         </Grid>
         <Grid item xs={12} md={6}>
           <Link className={classes.link} to="/terms">Terms of Use</Link>
-          <a className={classes.link} href="https://stemcoders.com.ng">STEM Coders</a>
-          <a className={classes.link} href="https://abu.edu.ng">Ahmadu Bello University</a>
+          <a target="_blank" rel="noreferrer" className={classes.link} href="https://stemcoders.com.ng">STEM Coders</a>
+          <a target="_blank" rel="noreferrer" className={classes.link} href="https://abu.edu.ng">Ahmadu Bello University</a>
         </Grid>
         <Grid item xs={12} md={2}>
-          <a className={classes.socialLink} href="http"><FacebookIcon className="icon"/></a>
-          <a className={classes.socialLink} href="http"><TwitterIcon className="icon"/></a>
+          <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://facebook.com/campusspaceabu"><FacebookIcon className="icon"/></a>
+          <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://twitter.com/SpaceAbu"><TwitterIcon className="icon"/></a>
         </Grid>
       </Grid>
     </footer>
