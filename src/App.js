@@ -1,4 +1,4 @@
-import { AppBar, Button, Grid, IconButton, makeStyles, Paper, Switch, ThemeProvider, Toolbar, Typography, useScrollTrigger, withStyles } from "@material-ui/core";
+import { AppBar, Button, Grid, Hidden, IconButton, makeStyles, Paper, Switch, ThemeProvider, Toolbar, Typography, useScrollTrigger, withStyles } from "@material-ui/core";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContactsRounded';
 import { cloneElement, useState } from "react";
@@ -302,14 +302,14 @@ const Contents = () => {
         fontSize: '1.4rem',
         opacity: 0.8,
         fontFamily: "'PT Sans', sans-serif",
-        paddingTop: '12rem',
+        paddingTop: '2rem',
       },
     },
     appBtn: {
       marginTop: theme.spacing(20),
       textTransform: 'capitalize',
       padding: theme.spacing(3),
-      borderRadius: '.5rem',
+      borderRadius: '3rem',
       fontSize: '1.5rem',
       width: '100%',
     },
@@ -420,19 +420,37 @@ const Contents = () => {
           </Grid>
         </Paper>
 
-        <Paper elevation={0} square className={classes.appPaper}>
-          <Grid container>
-            <Grid item xs={12} md={6} alignContent="center" className="content-container">
-              <Typography variant="span" component="p" className="content">
-                Our mobile application allows you to access and manage campus space resources without the need for a browser! 
-              </Typography>
-              <Button variant="contained" color="secondary" size="large" className={classes.appBtn}>Download Mobile App</Button>
+        <Hidden smDown>
+          <Paper elevation={0} square className={classes.appPaper}>
+            <Grid container>
+              <Grid item xs={12} md={6} alignContent="center" className="content-container">
+                <Typography variant="span" component="p" className="content">
+                  Our mobile application allows you to access and manage campus space resources without the need for a browser! 
+                </Typography>
+                <Button variant="contained" color="secondary" size="large" className={classes.appBtn}>Download Mobile App</Button>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <MobileApp/>
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <MobileApp/>
+          </Paper>
+        </Hidden>
+
+        <Hidden mdUp>
+          <Paper elevation={0} square className={classes.appPaper}>
+            <Grid container>
+              <Grid item xs={12} md={6}>
+                <MobileApp/>
+              </Grid>
+              <Grid item xs={12} md={6} alignContent="center" className="content-container">
+                <Typography variant="span" component="p" className="content">
+                  Our mobile application allows you to access and manage campus space resources without the need for a browser! 
+                </Typography>
+                <Button variant="contained" color="secondary" size="large" className={classes.appBtn}>Download Mobile App</Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </Paper>
+          </Paper>
+        </Hidden>
       </div>
     </>
   );
