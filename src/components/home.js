@@ -15,6 +15,9 @@ const RawHome = () => {
       contentAreaOffset: theme.mixins.toolbar,
       root: {
         marginTop: theme.spacing(1),
+        [theme.breakpoints.down('sm')]: {
+            marginTop: theme.spacing(0),
+        },
       },
       heroPaper: {
         backgroundColor: '#006253',
@@ -26,16 +29,41 @@ const RawHome = () => {
           height: 'auto'
         },
       },
+      heroTextContainer: {
+        [theme.breakpoints.down('sm')]: {
+            padding: '1rem',
+        },
+      },
       heroTitle: {
         marginTop: theme.spacing(5),
         fontWeight: 'bold',
         color: '#fafafa',
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '2.5rem',
+        },
+        [theme.breakpoints.only('md')]: {
+            fontSize: '4rem',
+        },
+        [theme.breakpoints.only('lg')]: {
+            fontSize: '5rem',
+        },
       },
       heroSubtitle: {
         backgroundColor: theme.palette.background.default,
         opacity: 0.8,
         padding: theme.spacing(2),
         borderRadius: '.8rem',
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '1rem',
+            padding: theme.spacing(1),
+            borderRadius: '.5rem',
+        },
+        [theme.breakpoints.only('md')]: {
+            padding: theme.spacing(0.8),
+        },
+      },
+      heroBtnsContainer: {
+        textAlign: 'center',
       },
       heroBtn: {
         marginTop: theme.spacing(20),
@@ -43,13 +71,22 @@ const RawHome = () => {
         padding: theme.spacing(3),
         borderRadius: '.5rem',
         fontSize: '1.5rem',
-        width: '100%',
+        width: '90%',
+        [theme.breakpoints.down('sm')]: {
+            marginTop: theme.spacing(7),
+        },
+        [theme.breakpoints.only('md')]: {
+            marginTop: theme.spacing(7),
+        },
       },
       featuresPaper: {
         backgroundColor: theme.palette.primary.main,
         paddingTop: theme.spacing(20),
         paddingBottom: theme.spacing(1),
-        
+        [theme.breakpoints.down('sm')]: {
+            paddingTop: theme.spacing(10),
+        },
+
         '& svg': {
           width: '100%',
           height: '50%',
@@ -83,11 +120,14 @@ const RawHome = () => {
           '& .title': {
             fontSize: '3rem',
             fontWeight: 'bold',
+            [theme.breakpoints.down('sm')]: {
+                fontSize: '2rem',
+            },
           },
   
           '& hr': {
             marginBottom: '4rem',
-            width: '30%',
+            width: '40%',
           },
   
           '& .text': {
@@ -96,6 +136,10 @@ const RawHome = () => {
             color: '#fafafa',
             opacity: 0.8,
             fontFamily: "'PT Sans', sans-serif",
+            [theme.breakpoints.down('sm')]: {
+                fontSize: '1.2rem',
+                textAlign: 'justify',
+            },
           }
         }
       },
@@ -105,6 +149,11 @@ const RawHome = () => {
         paddingTop: '4rem',
         paddingBottom: '5rem',
         textAlign: 'center',
+        [theme.breakpoints.down('sm')]: {
+            padding: '1rem',
+            paddingTop: '4rem',
+            paddingBottom: '7rem',
+        },
       },
       statPaper: {
         backgroundColor: '#212121',
@@ -116,12 +165,20 @@ const RawHome = () => {
           padding: '1rem',
           backgroundColor: theme.palette.secondary.dark,
           borderRadius: '.5rem',
+          [theme.breakpoints.down('sm')]: {
+            padding: '.5rem',
+            fontSize: '2rem',
+          },
         },
         '& .label': {
           color: 'white',
           opacity: 0.6,
           marginTop: '1rem',
           fontSize: '2rem',
+          [theme.breakpoints.down('sm')]: {
+            marginTop: '.7rem',
+            fontSize: '1.5rem',
+          },
         },
       },
   
@@ -136,12 +193,22 @@ const RawHome = () => {
         '& .content-container': {
           padding: '2rem',
           paddingTop: 0,
+          [theme.breakpoints.down('sm')]: {
+            padding: '0rem',
+          },
         },
         '& .content': {
           textAlign: 'left',
           fontSize: '1.4rem',
           opacity: 0.8,
           fontFamily: "'PT Sans', sans-serif",
+          [theme.breakpoints.down('sm')]: {
+            padding: '2rem',
+            fontSize: '1.3rem',
+          },
+          [theme.breakpoints.only('md')]: {
+            fontSize: '1.3rem',
+          },
         },
       },
   
@@ -157,6 +224,9 @@ const RawHome = () => {
         '& .content-container': {
           padding: '2rem',
           paddingTop: 0,
+          [theme.breakpoints.down('sm')]: {
+            padding: '0rem',
+         },
         },
         '& .content': {
           textAlign: 'left',
@@ -164,6 +234,9 @@ const RawHome = () => {
           opacity: 0.8,
           fontFamily: "'PT Sans', sans-serif",
           paddingTop: '2rem',
+          [theme.breakpoints.down('sm')]: {
+            fontSize: '1.2',
+          },
         },
       },
       appBtn: {
@@ -173,22 +246,39 @@ const RawHome = () => {
         borderRadius: '3rem',
         fontSize: '1.5rem',
         width: '100%',
+        [theme.breakpoints.down('sm')]: {
+            marginTop: theme.spacing(9),
+            padding: theme.spacing(2),
+        },
       },
 
       subPaperContainer: {
-        padding: '2rem',
+        paddingLeft: '10rem',
+        paddingRight: '10rem',
         paddingTop: '6rem',
         paddingBottom: '5rem',
         textAlign: 'center',
+        [theme.breakpoints.down('sm')]: {
+            paddingLeft: '1rem',
+            paddingRight: '1rem',
+        },
       },
       subPaperInner: {
         backgroundColor: '#212121',
         padding: '3rem',
         borderRadius: '1rem',
+        [theme.breakpoints.down('sm')]: {
+            padding: '1rem',
+        },
         
         '& .header': {
             marginBottom: '5rem',
             color: 'white',
+            [theme.breakpoints.down('sm')]: {
+                fontSize: '1rem',
+                paddingTop: '.4rem',
+                marginBottom: '3rem',
+            },
         },
         '& .selector': {
             backgroundColor: theme.palette.primary.dark,
@@ -205,6 +295,9 @@ const RawHome = () => {
         borderRadius: '.5rem',
         fontSize: '1.5rem',
         width: '75%',
+        [theme.breakpoints.down('sm')]: {
+            marginTop: theme.spacing(5),
+        },
       },
     }));
   
@@ -224,14 +317,16 @@ const RawHome = () => {
               <Grid item xs={12} md={6}>
                 <Grid container justify="center" alignItems="center">
                   <Grid item>
-                    <Typography variant="h1" className={classes.heroTitle}>CAMPUS SPACE</Typography>
-                    <Typography variant="h5" className={classes.heroSubtitle}>More Space, More Info...</Typography>
+                    <div className={classes.heroTextContainer}>
+                        <Typography variant="h1" className={classes.heroTitle}>CAMPUS SPACE</Typography>
+                        <Typography variant="h5" className={classes.heroSubtitle}>More Space, More Info...</Typography>
+                    </div>
                     
-                    <Grid container justify="center" alignItems="center" spacing={3}>
-                      <Grid item xs={12} md={6}>
+                    <Grid container justify="center" className={classes.heroBtnsContainer}>
+                      <Grid item xs={12} lg={6}>
                         <Button variant="contained" color="secondary" size="large" className={classes.heroBtn}>Explore Resources</Button>
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} lg={6}>
                         <Button variant="contained" color="primary" size="large" className={classes.heroBtn}>Download App</Button>
                       </Grid>
                     </Grid>
@@ -278,7 +373,7 @@ const RawHome = () => {
           </Paper>
   
           <Paper elevation={0} square className={classes.statPaperContainer}>
-            <ScrollAnimation animateOnce animateIn="animate__jackInTheBox">
+            <ScrollAnimation animateOnce animateIn="animate__zoomIn">
                 <Paper elevation={20} className={classes.statPaper}>
                     <Grid container justify="space-between" spacing={4}>
                         <Grid item xs={12} md={4}>
@@ -358,36 +453,34 @@ const RawHome = () => {
           </Hidden>
 
           <Paper elevation={0} square className={classes.subPaperContainer}>
-            <Container>
-                <ScrollAnimation animatePreScroll={false} animateIn="animate__swing" duration={1}>
-                    <Box boxShadow={3} className={classes.subPaperInner}>
-                        <Typography variant="h4" className="header">SUBSCRIBE FOR EMAIL NOTIFICATIONS</Typography>
+            <ScrollAnimation animatePreScroll={false} animateIn="animate__swing" duration={1}>
+                <Paper elevation={5} className={classes.subPaperInner}>
+                    <Typography variant="h4" className="header">SUBSCRIBE FOR EMAIL NOTIFICATIONS</Typography>
 
-                        <Formik
-                            initialValues={{
-                                
-                            }}
+                    <Formik
+                        initialValues={{
                             
-                            
-                            onSubmit={(values) => {}}
-                        >
-                            <Form>
-                                <FormikSelect name="faculty" defaultValue="test" label="Choose a Faculty" className="selector">
-                                    <MenuItem value="test">Test Faculty</MenuItem>
-                                </FormikSelect>
-                                <FormikSelect name="department" defaultValue="test" label="Choose a Department" className="selector">
-                                    <MenuItem value="test">Test Department</MenuItem>
-                                </FormikSelect>
-                                <FormikSelect name="department" defaultValue="test" label="Choose a Level" className="selector">
-                                    <MenuItem value="test">100</MenuItem>
-                                </FormikSelect>
+                        }}
+                        
+                        
+                        onSubmit={(values) => {}}
+                    >
+                        <Form>
+                            <FormikSelect name="faculty" defaultValue="test" label="Choose a Faculty" className="selector">
+                                <MenuItem value="test">Test Faculty</MenuItem>
+                            </FormikSelect>
+                            <FormikSelect name="department" defaultValue="test" label="Choose a Department" className="selector">
+                                <MenuItem value="test">Test Department</MenuItem>
+                            </FormikSelect>
+                            <FormikSelect name="department" defaultValue="test" label="Choose a Level" className="selector">
+                                <MenuItem value="test">100</MenuItem>
+                            </FormikSelect>
 
-                                <Button type="submit" variant="contained" color="secondary" size="large" className={classes.subBtn}>Subscribe</Button>
-                            </Form>
-                        </Formik>
-                    </Box>
-                </ScrollAnimation>
-            </Container>
+                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.subBtn}>Subscribe</Button>
+                        </Form>
+                    </Formik>
+                </Paper>
+            </ScrollAnimation>
           </Paper>
         </div>
       </>

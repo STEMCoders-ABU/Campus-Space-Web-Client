@@ -20,6 +20,11 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
       backgroundColor: theme.palette.primary.main,
       color: theme.navbar.color,
     },
+    toolbar: {
+      [theme.breakpoints.down('sm')]: {
+        paddingRight: 0,
+      },
+    },
     appBarIcon: {
       fontSize: '3rem',
       color: theme.palette.secondary.light,
@@ -27,6 +32,9 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
     title: {
       flexGrow: 1,
       paddingTop: 3.5,
+      [theme.breakpoints.only('md')]: {
+        fontSize: '1.1rem',
+      },
     },
     menuIcon: {
       color: theme.palette.text.primary,
@@ -34,9 +42,7 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
     loginButton: {
       borderRadius: '1rem',
     },
-    navlinksContainer: {
-      
-    },
+  
     navlink: {
       color: theme.navbar.linkColor,
       textTransform: 'capitalize',
@@ -45,6 +51,9 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
       textDecoration: 'none !important',
       marginRight: theme.spacing(5),
       transition: '.1s ease',
+      [theme.breakpoints.only('md')]: {
+        fontSize: '1.1rem',
+      },
 
       '&:hover': {
         color: theme.navbar.linkHoverColor,
@@ -63,6 +72,9 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
       padding: 1.5,
       margin: theme.spacing(1),
       marginRight: theme.spacing(5),
+      [theme.breakpoints.down('sm')]: {
+        marginRight: theme.spacing(3),
+      },
     },
     switchBase: {
       padding: 1,
@@ -137,8 +149,8 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
 
   return (
     <AppBar position="fixed" className={classes.appBar} {...props}>
-      <Toolbar>
-        <Hidden smDown>
+      <Toolbar className={classes.toolbar}>
+        <Hidden mdDown>
           <IconButton edge="start" size="medium" color="secondary" aria-label="icon">
             <ImportContactsRoundedIcon fontSize="large" className={classes.appBarIcon} />
           </IconButton>
@@ -200,8 +212,17 @@ const Footer = () => {
 
     copyright: {
       fontFamily: "'PT Sans', sans-serif !important",
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '.85rem',
+    },
     },
 
+    linksContainer: {
+      [theme.breakpoints.down('md')]: {
+        marginTop: '2rem',
+        marginBottom: '2rem',
+      },
+    },
     link: {
       color: 'white',
       textDecoration: 'none',
@@ -211,6 +232,12 @@ const Footer = () => {
       borderRadius: '.4rem',
       marginRight: '1rem',
       transition: '.3s ease',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '.7rem',
+      },
+      [theme.breakpoints.only('md')]: {
+        fontSize: '.9rem',
+      },
       
       '&:hover': {
         color: theme.palette.secondary.light,
@@ -228,6 +255,9 @@ const Footer = () => {
       borderRadius: '.5rem',
       marginRight: '1rem',
       transition: '.3s ease',
+      [theme.breakpoints.down('lg')]: {
+        fontSize: '3rem',
+      },
       
       '&:hover': {
         color: theme.palette.secondary.light,
@@ -237,6 +267,9 @@ const Footer = () => {
 
       '& .icon': {
         fontSize: '4rem',
+        [theme.breakpoints.down('lg')]: {
+          fontSize: '3rem',
+        },
       },
     },
   }));
@@ -246,16 +279,16 @@ const Footer = () => {
   return (
     <footer className={classes.root}>
       <Grid container alignItems="center">
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} lg={4}>
           <img className={classes.logo} src={stemLogo} alt="STEM Coders Logo"/>
-          <Typography variant="subtitle1" className={classes.copyright}>&copy; 2020 STEM Coders Club. All Rights Reserved</Typography>
+          <Typography variant="subtitle1" className={classes.copyright}>&copy; {new Date().getFullYear()} STEM Coders Club. All Rights Reserved</Typography>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} lg={6} className={classes.linksContainer}>
           <Link className={classes.link} to="/terms">Terms of Use</Link>
           <a target="_blank" rel="noreferrer" className={classes.link} href="https://stemcoders.com.ng">STEM Coders</a>
-          <a target="_blank" rel="noreferrer" className={classes.link} href="https://abu.edu.ng">Ahmadu Bello University</a>
+          <a target="_blank" rel="noreferrer" className={classes.link} href="https://abu.edu.ng">ABU Zaria</a>
         </Grid>
-        <Grid item xs={12} md={2}>
+        <Grid item xs={12} lg={2}>
           <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://facebook.com/campusspaceabu"><FacebookIcon className="icon"/></a>
           <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://twitter.com/SpaceAbu"><TwitterIcon className="icon"/></a>
         </Grid>
