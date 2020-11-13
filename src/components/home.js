@@ -1,5 +1,6 @@
 import { Box, Button, Container, Grid, Hidden, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
 import { Form, Formik } from "formik";
+import ScrollAnimation from "react-animate-on-scroll";
 import { ReactComponent as Storage } from '../images/cloud_storage.svg';
 import { ReactComponent as Discussion } from '../images/discussion.svg';
 import largeLogo from '../images/large-logo.jpg';
@@ -241,137 +242,151 @@ const RawHome = () => {
           </Paper>
   
           <Paper elevation={0}  className={classes.featuresPaper}>
-            <Grid container justify="space-around">
-              <Grid item xs={12} md={4}>
-                <Typography variant="h4">Save Space</Typography>
-                <Storage/>
-              </Grid>
-  
-              <Grid item xs={12} md={4}>
-                <Typography variant="h4">Share Thoughts</Typography>
-                <Discussion/>
-              </Grid>
-              
-              <Grid item xs={12} md={4}>
-                <Typography variant="h4">Save Time</Typography>
-                <TimeManagement/>
-              </Grid>
-            </Grid>
+            <ScrollAnimation animateOnce animateIn="animate__fadeIn" duration={2}>
+                <Grid container justify="space-around">
+                    <Grid item xs={12} md={4}>
+                        <Typography variant="h4">Save Space</Typography>
+                        <Storage/>
+                    </Grid>
+        
+                    <Grid item xs={12} md={4}>
+                        <Typography variant="h4">Share Thoughts</Typography>
+                        <Discussion/>
+                    </Grid>
+                    
+                    <Grid item xs={12} md={4}>
+                        <Typography variant="h4">Save Time</Typography>
+                        <TimeManagement/>
+                    </Grid>
+                </Grid>
+            </ScrollAnimation>
           </Paper>
   
           <Paper elevation={0} square className={classes.ideaPaper}>
             <div className="inner">
-              <Typography variant="h1" className="title">HOW IT WORKS</Typography>
-              <hr/>
-  
-              <Typography variant="span" component="p" className="text">
-                We give class representatives the opportunity to keep class members up to date with resources and useful information in an organised and student friendly manner. At Campus Space, we let you focus on what you're actually interested in. You no longer have to scroll through hundreds of not so useful messages to get updated.
-                <br/><br/>
-                You're not limited to just your departmental resources, you have access to every other faculty, department and level! Basically, you can access resources for higher levels even before you get there!
-              </Typography>
+              <ScrollAnimation animateOnce animateIn="animate__fadeIn" duration={2}>
+                <Typography variant="h1" className="title">HOW IT WORKS</Typography>
+                <hr/>
+    
+                <Typography variant="span" component="p" className="text">
+                    We give class representatives the opportunity to keep class members up to date with resources and useful information in an organised and student friendly manner. At Campus Space, we let you focus on what you're actually interested in. You no longer have to scroll through hundreds of not so useful messages to get updated.
+                    <br/><br/>
+                    You're not limited to just your departmental resources, you have access to every other faculty, department and level! Basically, you can access resources for higher levels even before you get there!
+                </Typography>
+              </ScrollAnimation>
             </div>
           </Paper>
   
           <Paper elevation={0} square className={classes.statPaperContainer}>
-            <Paper elevation={20} className={classes.statPaper}>
-              <Grid container justify="space-between" spacing={4}>
-                <Grid item xs={12} md={4}>
-                  <Typography variant="h2" className="header">24</Typography>
-                  <Typography variant="span" component="p" className="label">Departments</Typography>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <Typography variant="h2" className="header">23</Typography>
-                  <Typography variant="span" component="p" className="label">Resources</Typography>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <Typography variant="h2" className="header">175</Typography>
-                  <Typography variant="span" component="p" className="label">Downloads</Typography>
-                </Grid>
-              </Grid>
-            </Paper>
+            <ScrollAnimation animateOnce animateIn="animate__jackInTheBox">
+                <Paper elevation={20} className={classes.statPaper}>
+                    <Grid container justify="space-between" spacing={4}>
+                        <Grid item xs={12} md={4}>
+                        <Typography variant="h2" className="header">24</Typography>
+                        <Typography variant="span" component="p" className="label">Departments</Typography>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                        <Typography variant="h2" className="header">23</Typography>
+                        <Typography variant="span" component="p" className="label">Resources</Typography>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                        <Typography variant="h2" className="header">175</Typography>
+                        <Typography variant="span" component="p" className="label">Downloads</Typography>
+                        </Grid>
+                    </Grid>
+                </Paper>
+            </ScrollAnimation>
           </Paper>
   
           <Paper elevation={0} square className={classes.questionsPaper}>
-            <Grid container>
-              <Grid item xs={12} md={6}>
-                <Questions/>
-              </Grid>
-              <Grid item xs={12} md={6} alignContent="center" className="content-container">
-                <Typography variant="span" component="p" className="content">
-                  Campus Space is a cloud-based socio-academic web application built to provide students and other key players in the learning environment easy access to study materials.
-                  <br/><br/>
-                  This platform aims to improve communication as well as dissemination (sharing) of study materials effectively for the best learning experience!
-                  <br/><br/>
-                  Campus space caters for all academic institutions encompassing trainings, professional and traditional methods of learning. It seeks to bring all study materials in one place for easy access and more sustainable use.
-                  <br/><br/>
-                  The pilot phase for this project is targeted at Ahmadu Bello University, Zaria - Nigeria. It is managed by the STEM Coders Club as part of the plans in place for solving contemproray problems in the society.
-                  <br/><br/>
-                  With many other cloud-based services available, Campus Space is 100% open source; providing access to study files for students globally with no hidden charges to better enhance access and promote effective study habits.
-                </Typography>
-              </Grid>
-            </Grid>
+            <ScrollAnimation animateOnce animateIn="animate__slideInLeft">
+                <Grid container>
+                    <Grid item xs={12} md={6}>
+                        <Questions/>
+                    </Grid>
+                    <Grid item xs={12} md={6} alignContent="center" className="content-container">
+                        <Typography variant="span" component="p" className="content">
+                        Campus Space is a cloud-based socio-academic web application built to provide students and other key players in the learning environment easy access to study materials.
+                        <br/><br/>
+                        This platform aims to improve communication as well as dissemination (sharing) of study materials effectively for the best learning experience!
+                        <br/><br/>
+                        Campus space caters for all academic institutions encompassing trainings, professional and traditional methods of learning. It seeks to bring all study materials in one place for easy access and more sustainable use.
+                        <br/><br/>
+                        The pilot phase for this project is targeted at Ahmadu Bello University, Zaria - Nigeria. It is managed by the STEM Coders Club as part of the plans in place for solving contemproray problems in the society.
+                        <br/><br/>
+                        With many other cloud-based services available, Campus Space is 100% open source; providing access to study files for students globally with no hidden charges to better enhance access and promote effective study habits.
+                        </Typography>
+                    </Grid>
+                </Grid>
+            </ScrollAnimation>
           </Paper>
   
           <Hidden smDown>
             <Paper elevation={0} square className={classes.appPaper}>
-              <Grid container>
-                <Grid item xs={12} md={6} alignContent="center" className="content-container">
-                  <Typography variant="span" component="p" className="content">
-                    Our mobile application allows you to access and manage campus space resources without the need for a browser! 
-                  </Typography>
-                  <Button variant="contained" color="secondary" size="large" className={classes.appBtn}>Download Mobile App</Button>
+              <ScrollAnimation animateOnce animateIn="animate__slideInRight">
+                <Grid container>
+                    <Grid item xs={12} md={6} alignContent="center" className="content-container">
+                    <Typography variant="span" component="p" className="content">
+                        Our mobile application allows you to access and manage campus space resources without the need for a browser! 
+                    </Typography>
+                    <Button variant="contained" color="secondary" size="large" className={classes.appBtn}>Download Mobile App</Button>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                    <MobileApp/>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <MobileApp/>
-                </Grid>
-              </Grid>
+              </ScrollAnimation>
             </Paper>
           </Hidden>
   
           <Hidden mdUp>
             <Paper elevation={0} square className={classes.appPaper}>
-              <Grid container>
-                <Grid item xs={12} md={6}>
-                  <MobileApp/>
+              <ScrollAnimation animateOnce animateIn="animate__slideInRight">
+                <Grid container>
+                    <Grid item xs={12} md={6}>
+                    <MobileApp/>
+                    </Grid>
+                    <Grid item xs={12} md={6} alignContent="center" className="content-container">
+                    <Typography variant="span" component="p" className="content">
+                        Our mobile application allows you to access and manage campus space resources without the need for a browser! 
+                    </Typography>
+                    <Button variant="contained" color="secondary" size="large" className={classes.appBtn}>Download Mobile App</Button>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12} md={6} alignContent="center" className="content-container">
-                  <Typography variant="span" component="p" className="content">
-                    Our mobile application allows you to access and manage campus space resources without the need for a browser! 
-                  </Typography>
-                  <Button variant="contained" color="secondary" size="large" className={classes.appBtn}>Download Mobile App</Button>
-                </Grid>
-              </Grid>
+              </ScrollAnimation>
             </Paper>
           </Hidden>
 
           <Paper elevation={0} square className={classes.subPaperContainer}>
             <Container>
-                <Box boxShadow={3} className={classes.subPaperInner}>
-                    <Typography variant="h4" className="header">SUBSCRIBE FOR EMAIL NOTIFICATIONS</Typography>
+                <ScrollAnimation animatePreScroll={false} animateIn="animate__swing" duration={1}>
+                    <Box boxShadow={3} className={classes.subPaperInner}>
+                        <Typography variant="h4" className="header">SUBSCRIBE FOR EMAIL NOTIFICATIONS</Typography>
 
-                    <Formik
-                        initialValues={{
+                        <Formik
+                            initialValues={{
+                                
+                            }}
                             
-                        }}
-                        
-                        
-                        onSubmit={(values) => {}}
-                    >
-                        <Form>
-                            <FormikSelect name="faculty" defaultValue="test" label="Choose a Faculty" className="selector">
-                                <MenuItem value="test">Test Faculty</MenuItem>
-                            </FormikSelect>
-                            <FormikSelect name="department" defaultValue="test" label="Choose a Department" className="selector">
-                                <MenuItem value="test">Test Department</MenuItem>
-                            </FormikSelect>
-                            <FormikSelect name="department" defaultValue="test" label="Choose a Level" className="selector">
-                                <MenuItem value="test">100</MenuItem>
-                            </FormikSelect>
+                            
+                            onSubmit={(values) => {}}
+                        >
+                            <Form>
+                                <FormikSelect name="faculty" defaultValue="test" label="Choose a Faculty" className="selector">
+                                    <MenuItem value="test">Test Faculty</MenuItem>
+                                </FormikSelect>
+                                <FormikSelect name="department" defaultValue="test" label="Choose a Department" className="selector">
+                                    <MenuItem value="test">Test Department</MenuItem>
+                                </FormikSelect>
+                                <FormikSelect name="department" defaultValue="test" label="Choose a Level" className="selector">
+                                    <MenuItem value="test">100</MenuItem>
+                                </FormikSelect>
 
-                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.subBtn}>Subscribe</Button>
-                        </Form>
-                    </Formik>
-                </Box>
+                                <Button type="submit" variant="contained" color="secondary" size="large" className={classes.subBtn}>Subscribe</Button>
+                            </Form>
+                        </Formik>
+                    </Box>
+                </ScrollAnimation>
             </Container>
           </Paper>
         </div>

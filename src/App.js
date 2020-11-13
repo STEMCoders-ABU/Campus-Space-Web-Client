@@ -1,5 +1,6 @@
 import { AppBar, Button, IconButton, makeStyles, Switch, ThemeProvider, Toolbar, Typography, useScrollTrigger, withStyles } from "@material-ui/core";
 import CssBaseline from '@material-ui/core/CssBaseline';
+import 'animate.css/animate.min.css';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContactsRounded';
 import { cloneElement, useEffect, useState } from "react";
 import { Link, Route, Switch as Router } from "react-router-dom";
