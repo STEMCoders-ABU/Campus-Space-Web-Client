@@ -12,6 +12,7 @@ import {ReactComponent as Storage} from './images/cloud_storage.svg';
 import {ReactComponent as Discussion} from './images/discussion.svg';
 import {ReactComponent as TimeManagement} from './images/time_management.svg';
 import {ReactComponent as Questions} from './images/questions.svg';
+import {ReactComponent as MobileApp} from './images/mobile_app.svg';
 import largeLogo from './images/large-logo.jpg';
 
 const NavBar = ({ themeName, changeTheme, ...props }) => {
