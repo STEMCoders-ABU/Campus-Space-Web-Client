@@ -1,4 +1,4 @@
-import { BottomNavigation, BottomNavigationAction, FormControl, InputLabel, makeStyles, MenuItem, Paper, Select } from "@material-ui/core";
+import { BottomNavigation, BottomNavigationAction, FormControl, InputLabel, makeStyles, MenuItem, Paper, Select, Typography } from "@material-ui/core";
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
@@ -8,6 +8,23 @@ import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { scrollToTop } from "./utils";
+
+const useVideoCardStyles = makeStyles(theme => ({
+    root: {
+
+    },
+}));
+
+const VideoCard = () => {
+    
+    const classes = useVideoCardStyles();
+
+    return (
+        <div>
+            Popular baby!
+        </div>
+    );
+};
 
 const Home = () => {
     const useStyles = makeStyles(theme => ({
@@ -20,15 +37,30 @@ const Home = () => {
         },
         optionsPaper: {
             padding: '3rem',
+
+            '& .header': {
+                textAlign: 'center',
+                padding: '1rem',
+                borderRadius: '.8rem',
+                marginBottom: '3rem',
+                backgroundColor: theme.palette.primary.dark,
+                opacity: 0.7,
+            },
         },
     }));
+
+    useEffect(() => {
+        scrollToTop();
+    }, []);
 
     const classes = useStyles();
 
     return (
         <div className={classes.root}>
             <div className={classes.optionsPaperContainer}>
-                <Paper square elevation={4} className={classes.optionsPaper}>
+                <Paper variant="outlined" square elevation={10} className={classes.optionsPaper}>
+                    <Typography variant="h5" className="header">COSC201 Materials</Typography>
+
                     <FormControl variant="filled" style={{width: '100%', marginBottom: '1rem' }} className="w-100 my-3">
                         <InputLabel></InputLabel>
                         <Select
@@ -65,6 +97,10 @@ const Popular = () => {
         },
     }));
 
+    useEffect(() => {
+        scrollToTop();
+    }, []);
+
     const classes = useStyles();
 
     return (
@@ -80,6 +116,10 @@ const Comments = () => {
 
         },
     }));
+
+    useEffect(() => {
+        scrollToTop();
+    }, []);
 
     const classes = useStyles();
 
@@ -142,10 +182,6 @@ const Resources = ({ showFooter }) => {
             right: 10,
         },
     }));
-
-    useEffect(() => {
-        scrollToTop();
-    }, []);
 
     useEffect(() => showFooter(false), [showFooter]);
 
