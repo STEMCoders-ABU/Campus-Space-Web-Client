@@ -1,10 +1,11 @@
 import { Button, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
 import { Form, Formik } from "formik";
 import { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import FormikSelect from "./formik-select";
 import { scrollToTop } from "./utils";
 
-const ResourcesFilter = () => {
+const ResourcesFilter = ({ showFooter }) => {
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: theme.spacing(15),
@@ -50,6 +51,13 @@ const ResourcesFilter = () => {
         scrollToTop();
     }, []);
 
+    useEffect(() => showFooter(false), [showFooter]);
+
+    const onSubmit = () => {
+        history.push('/resources');
+    };
+
+    const history = useHistory();
     const classes = useStyles();
 
     return (
@@ -64,7 +72,7 @@ const ResourcesFilter = () => {
                         }}
                         
                         
-                        onSubmit={(values) => {}}
+                        onSubmit={(values) => onSubmit()}
                     >
                         <Form>
                             <FormikSelect name="faculty" defaultValue="test" label="Choose a Faculty" className="selector">

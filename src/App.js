@@ -14,6 +14,7 @@ import stemLogo from './images/stemlogo.jpg';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Resources from "./components/resources";
 
 const NavBar = ({ themeName, changeTheme, ...props }) => {
   const useStyles = makeStyles(theme => ({
@@ -306,6 +307,7 @@ const Footer = () => {
 
 const App = (props) => {
   const [theme, setTheme] = useState(window.localStorage.getItem('app-theme') || 'light');
+  const [showFooter, setShowFooter] = useState(true);
 
   const changeTheme = () => {
     if (theme === 'dark')
@@ -362,12 +364,13 @@ const App = (props) => {
       <main className={classes.contentArea}>
         <div className="inner">
           <Router>
-            <Route path="/resources-filter"><ResourcesFilter/></Route>
-            <Route path="/"><Home/></Route>
+            <Route path="/resources"><Resources showFooter={setShowFooter}/></Route>
+            <Route path="/resources-filter"><ResourcesFilter showFooter={setShowFooter}/></Route>
+            <Route path="/"><Home showFooter={setShowFooter}/></Route>
           </Router>
         </div>
 
-        <Footer/>
+        {showFooter && <Footer/>}
       </main>
     </ThemeProvider>
   );

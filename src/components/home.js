@@ -12,7 +12,7 @@ import { ReactComponent as TimeManagement } from '../images/time_management.svg'
 import FormikSelect from './formik-select';
 import { scrollToTop } from "./utils";
 
-const RawHome = () => {
+const RawHome = ({ showFooter }) => {
     const useStyles = makeStyles(theme => ({
       root: {
         marginTop: theme.spacing(1),
@@ -322,6 +322,8 @@ const RawHome = () => {
     useEffect(() => {
         scrollToTop();
     }, []);
+
+    useEffect(() => showFooter(true), [showFooter]);
 
     const classes = useStyles();
   
