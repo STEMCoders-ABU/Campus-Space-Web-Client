@@ -1,8 +1,10 @@
-import { BottomNavigation, BottomNavigationAction, Fab, makeStyles } from "@material-ui/core";
+import { BottomNavigation, BottomNavigationAction, makeStyles } from "@material-ui/core";
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
-import AddRoundedIcon from '@material-ui/icons/AddRounded';
+import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
+import SettingsRoundedIcon from '@material-ui/icons/SettingsRounded';
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { scrollToTop } from "./utils";
@@ -57,7 +59,8 @@ const Comments = () => {
 
 const Resources = ({ showFooter }) => {
     const [navigationIndex, setNavigationIndex] = useState(0);
-
+    const [speedDialOpen, setSpeedDialOpen] = useState(false);
+    
     const links = ['/resources/home', '/resources/popular', '/resources/comments'];
     const history = useHistory();
 
@@ -97,7 +100,7 @@ const Resources = ({ showFooter }) => {
             },
         },
 
-        optionsFab: {
+        optionsSpeedDial: {
             position: 'fixed',
             bottom: 70,
             right: 10,
@@ -109,6 +112,14 @@ const Resources = ({ showFooter }) => {
     }, []);
 
     useEffect(() => showFooter(false), [showFooter]);
+
+    const handleCloseSpeedDial = () => {
+        setSpeedDialOpen(false);
+    };
+
+    const handleOpenSpeedDial = () => {
+        setSpeedDialOpen(true);
+    };
 
     const classes = useStyles();
 
@@ -123,7 +134,28 @@ const Resources = ({ showFooter }) => {
                 </Switch>
             </BrowserRouter>
 
-            <Fab color="secondary" aria-label="options" size="large" className={classes.optionsFab}><AddRoundedIcon/></Fab>
+            <SpeedDial
+                ariaLabel="Options"
+                className={classes.optionsSpeedDial}
+                icon={<SpeedDialIcon />}
+                onClose={handleCloseSpeedDial}
+                onOpen={handleOpenSpeedDial}
+                open={speedDialOpen}
+                direction="up"
+            >
+                <SpeedDialAction
+                    key="Search Resources"
+                    icon={<SearchRoundedIcon/>}
+                    tooltipTitle="Search Resources"
+                    onClick={handleCloseSpeedDial}
+                />
+                <SpeedDialAction
+                    key="Change Filters"
+                    icon={<SettingsRoundedIcon/>}
+                    tooltipTitle="Change Filters"
+                    onClick={handleCloseSpeedDial}
+                />
+            </SpeedDial>
 
             <BottomNavigation
                 value={navigationIndex}
