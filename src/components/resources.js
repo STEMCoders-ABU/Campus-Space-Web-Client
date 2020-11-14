@@ -1,4 +1,4 @@
-import { BottomNavigation, BottomNavigationAction, FormControl, InputLabel, makeStyles, MenuItem, Paper, Select, Typography } from "@material-ui/core";
+import { BottomNavigation, BottomNavigationAction, Button, Card, CardActions, CardContent, CardMedia, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, Slider, Typography, withStyles } from "@material-ui/core";
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
@@ -8,10 +8,25 @@ import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { scrollToTop } from "./utils";
+import ReactPlayer from 'react-player';
+import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 
 const useVideoCardStyles = makeStyles(theme => ({
     root: {
+        padding: '1rem 1rem 0 1rem',
+        [theme.breakpoints.down('xs')]: {
+            padding: '1rem .2rem 0 .2rem',
+        },
+    },
 
+    title: {
+        [theme.breakpoints.down('xs')]: {
+            fontSize: '1rem',
+        },
+    },
+
+    controlsContainer: {
+        marginTop: '3rem',
     },
 }));
 
@@ -20,9 +35,29 @@ const VideoCard = () => {
     const classes = useVideoCardStyles();
 
     return (
-        <div>
-            Popular baby!
-        </div>
+        <Grid item sm={12} md={4} className={classes.root}>
+            <Card>
+                <Grid container>
+                    <Grid item xs={12} className="player-container">
+                       <ReactPlayer
+                            url="https://campus-space.com.ng/assets/resources/files/another-video-resource2ö.mp4"
+                            width="100%"
+                            height="100%"
+                            controls
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <CardContent>
+                            <Typography variant="h6" className={classes.title}>Excellent Video Resource</Typography>
+                            <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
+                        </CardActions>
+                    </Grid>
+                </Grid>
+            </Card>
+        </Grid>
     );
 };
 
@@ -34,17 +69,36 @@ const Home = () => {
 
         optionsPaperContainer: {
             padding: '0 10rem 0 10rem',
+            [theme.breakpoints.down('sm')]: {
+                padding: '0 .5rem 0 .5rem',
+            },
         },
         optionsPaper: {
             padding: '3rem',
+            [theme.breakpoints.down('sm')]: {
+                padding: '2rem',
+            },
 
             '& .header': {
                 textAlign: 'center',
                 padding: '1rem',
-                borderRadius: '.8rem',
+                borderRadius: '.6rem',
                 marginBottom: '3rem',
                 backgroundColor: theme.palette.primary.dark,
                 opacity: 0.7,
+
+                [theme.breakpoints.down('xs')]: {
+                    fontSize: '1.2rem',
+                    padding: '.5rem',
+                },
+            },
+        },
+
+        resourcesContainer: {
+            marginTop: '4rem',
+            padding: '0 3rem 0 3rem',
+            [theme.breakpoints.down('xs')]: {
+                padding: '0 .1rem 0 .1rem',
             },
         },
     }));
@@ -86,6 +140,10 @@ const Home = () => {
                     </FormControl>
                 </Paper>
             </div>
+
+            <Grid container justify="start" className={classes.resourcesContainer}>
+                <VideoCard/>
+            </Grid>
         </div>
     );
 };
