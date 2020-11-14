@@ -38,6 +38,11 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
         fontSize: '1.1rem',
       },
     },
+    menu: {
+      '& div': {
+        width: '50%',
+      }
+    },
     menuIcon: {
       color: theme.palette.text.primary,
     },
@@ -185,6 +190,7 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
+            className={classes.menu}
           >
             <MenuItem onClick={e => handleMenuClose()}>Home</MenuItem>
             <MenuItem onClick={e => handleMenuClose()}>Resources</MenuItem>

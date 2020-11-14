@@ -1,20 +1,37 @@
-import { BottomNavigation, BottomNavigationAction, makeStyles } from "@material-ui/core";
-import { useEffect, useState } from "react";
-import { scrollToTop } from "./utils";
-import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
-import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
+import { BottomNavigation, BottomNavigationAction, Fab, makeStyles } from "@material-ui/core";
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
-import { BrowserRouter, HashRouter, Link, Redirect, Route, Switch, useHistory } from "react-router-dom";
+import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
+import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
+import AddRoundedIcon from '@material-ui/icons/AddRounded';
+import { useEffect, useState } from "react";
+import { BrowserRouter, Redirect, Route, Switch, useHistory } from "react-router-dom";
+import { scrollToTop } from "./utils";
 
 const Home = () => {
+    const useStyles = makeStyles(theme => ({
+        root: {
+
+        },
+    }));
+
+    const classes = useStyles();
+
     return (
-        <div>
+        <div className={classes.root}>
             Home baby!
         </div>
     );
 };
 
 const Popular = () => {
+    const useStyles = makeStyles(theme => ({
+        root: {
+
+        },
+    }));
+
+    const classes = useStyles();
+
     return (
         <div>
             Popular baby!
@@ -23,6 +40,14 @@ const Popular = () => {
 };
 
 const Comments = () => {
+    const useStyles = makeStyles(theme => ({
+        root: {
+
+        },
+    }));
+
+    const classes = useStyles();
+
     return (
         <div>
             Comments baby!
@@ -69,6 +94,12 @@ const Resources = ({ showFooter }) => {
                 borderRadius: '.2rem',
             },
         },
+
+        optionsFab: {
+            position: 'fixed',
+            bottom: 80,
+            right: 20,
+        },
     }));
 
     useEffect(() => {
@@ -89,6 +120,8 @@ const Resources = ({ showFooter }) => {
                     <Route path="/"><Redirect to="/resources/home"></Redirect></Route>
                 </Switch>
             </BrowserRouter>
+
+            <Fab color="secondary" aria-label="options" size="large" className={classes.optionsFab}><AddRoundedIcon/></Fab>
 
             <BottomNavigation
                 value={navigationIndex}
