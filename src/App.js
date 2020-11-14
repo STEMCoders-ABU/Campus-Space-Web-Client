@@ -328,7 +328,7 @@ const App = (props) => {
     });
   
     return cloneElement(children, {
-      elevation: trigger ? 4 : 0,
+      elevation: trigger ? 4 : 1,
     });
   }
 

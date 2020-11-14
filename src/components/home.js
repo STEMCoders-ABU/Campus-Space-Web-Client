@@ -1,5 +1,6 @@
 import { Button, Grid, Hidden, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
 import { Form, Formik } from "formik";
+import { useEffect } from "react";
 import ScrollAnimation from "react-animate-on-scroll";
 import { ReactComponent as Storage } from '../images/cloud_storage.svg';
 import { ReactComponent as Discussion } from '../images/discussion.svg';
@@ -9,6 +10,7 @@ import { ReactComponent as Questions } from '../images/questions.svg';
 import { ReactComponent as Reading } from '../images/reading.svg';
 import { ReactComponent as TimeManagement } from '../images/time_management.svg';
 import FormikSelect from './formik-select';
+import { scrollToTop } from "./utils";
 
 const RawHome = () => {
     const useStyles = makeStyles(theme => ({
@@ -317,6 +319,10 @@ const RawHome = () => {
       },
     }));
   
+    useEffect(() => {
+        scrollToTop();
+    }, []);
+
     const classes = useStyles();
   
     return (
