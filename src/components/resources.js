@@ -75,11 +75,13 @@ const Resources = ({ showFooter }) => {
             width: '100%',
             position: 'fixed',
             bottom: 0,
-            backgroundColor: '#212121',
+            backgroundColor: '#424242',
+            boxShadow: '0px -2px 4px -1px rgba(0,0,0,0.2),0px -4px 5px 0px rgba(0,0,0,0.14),0px -1px 10px 0px rgba(0,0,0,0.12)',
         },
         navigationAction: {
             '& .MuiBottomNavigationAction-label': {
                 color: 'white',
+                fontFamily: "'PT Sans', sans-serif",
             },
             '& .MuiBottomNavigationAction-wrapper': {
                 color: 'white',
@@ -91,14 +93,14 @@ const Resources = ({ showFooter }) => {
             '& .Mui-selected': {
                 backgroundColor: '#2d2d2d',
                 padding: '.1rem .5rem .1rem .5rem',
-                borderRadius: '.2rem',
+                borderRadius: '.5rem',
             },
         },
 
         optionsFab: {
             position: 'fixed',
-            bottom: 80,
-            right: 20,
+            bottom: 70,
+            right: 10,
         },
     }));
 
