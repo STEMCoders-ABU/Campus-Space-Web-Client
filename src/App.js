@@ -200,14 +200,6 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
 
 const Footer = () => {
   const useStyles = makeStyles(theme => ({
-    root: {
-      position: 'relative',
-      minHeight: '100vh',
-      marginTop: '-40rem',
-      [theme.breakpoints.down('md')]: {
-        marginTop: '-27rem',
-      },
-    },
     footer: {
       backgroundColor: theme.palette.primary.dark,
       padding: '10%',
@@ -292,25 +284,23 @@ const Footer = () => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <footer className={classes.footer}>
-        <Grid container alignItems="center">
-          <Grid item xs={12} lg={4}>
-            <img className={classes.logo} src={stemLogo} alt="STEM Coders Logo"/>
-            <Typography variant="subtitle1" className={classes.copyright}>&copy; {new Date().getFullYear()} STEM Coders Club. All Rights Reserved</Typography>
-          </Grid>
-          <Grid item xs={12} lg={6} className={classes.linksContainer}>
-            <Link className={classes.link} to="/terms">Terms of Use</Link>
-            <a target="_blank" rel="noreferrer" className={classes.link} href="https://stemcoders.com.ng">STEM Coders</a>
-            <a target="_blank" rel="noreferrer" className={classes.link} href="https://abu.edu.ng">ABU Zaria</a>
-          </Grid>
-          <Grid item xs={12} lg={2}>
-            <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://facebook.com/campusspaceabu"><FacebookIcon className="icon"/></a>
-            <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://twitter.com/SpaceAbu"><TwitterIcon className="icon"/></a>
-          </Grid>
+    <footer className={classes.footer}>
+      <Grid container alignItems="center">
+        <Grid item xs={12} lg={4}>
+          <img className={classes.logo} src={stemLogo} alt="STEM Coders Logo"/>
+          <Typography variant="subtitle1" className={classes.copyright}>&copy; {new Date().getFullYear()} STEM Coders Club. All Rights Reserved</Typography>
         </Grid>
-      </footer>
-    </div>
+        <Grid item xs={12} lg={6} className={classes.linksContainer}>
+          <Link className={classes.link} to="/terms">Terms of Use</Link>
+          <a target="_blank" rel="noreferrer" className={classes.link} href="https://stemcoders.com.ng">STEM Coders</a>
+          <a target="_blank" rel="noreferrer" className={classes.link} href="https://abu.edu.ng">ABU Zaria</a>
+        </Grid>
+        <Grid item xs={12} lg={2}>
+          <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://facebook.com/campusspaceabu"><FacebookIcon className="icon"/></a>
+          <a target="_blank" rel="noreferrer" className={classes.socialLink} href="https://twitter.com/SpaceAbu"><TwitterIcon className="icon"/></a>
+        </Grid>
+      </Grid>
+    </footer>
   );
 };
 
@@ -344,6 +334,17 @@ const App = (props) => {
 
   const useStyles = makeStyles(theme => ({
     contentAreaOffset: theme.mixins.toolbar,
+    contentArea: {
+      position: 'relative',
+      minHeight: '100vh',
+
+      '& .inner': {
+        paddingBottom: '10rem',
+        [theme.breakpoints.down('md')]: {
+          paddingBottom: '20rem',
+        },
+      },
+    },
   }));
 
   const classes = useStyles();
@@ -358,12 +359,16 @@ const App = (props) => {
       
       <div className={classes.contentAreaOffset}/>
   
-      <Router>
-        <Route path="/resources-filter"><ResourcesFilter/></Route>
-        <Route path="/"><Home/></Route>
-      </Router>
-      
-      <Footer/>
+      <main className={classes.contentArea}>
+        <div className="inner">
+          <Router>
+            <Route path="/resources-filter"><ResourcesFilter/></Route>
+            <Route path="/"><Home/></Route>
+          </Router>
+        </div>
+
+        <Footer/>
+      </main>
     </ThemeProvider>
   );
 };
