@@ -51,7 +51,7 @@ const ResourcesFilter = ({ showFooter }) => {
         scrollToTop();
     }, []);
 
-    useEffect(() => showFooter(false), [showFooter]);
+    useEffect(() => showFooter(true), [showFooter]);
 
     const onSubmit = () => {
         history.push('/resources');
@@ -63,7 +63,7 @@ const ResourcesFilter = ({ showFooter }) => {
     return (
         <div className={classes.root}>
             <div className={classes.filterPaperContainer}>
-                <Paper elevation={1} className={classes.filterPaper}>
+                <Paper elevation={2} className={classes.filterPaper}>
                     <Typography variant="h4" className="header">Filter Resources</Typography>
 
                     <Formik

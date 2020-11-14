@@ -4,12 +4,41 @@ import { scrollToTop } from "./utils";
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
+import { BrowserRouter, HashRouter, Link, Redirect, Route, Switch, useHistory } from "react-router-dom";
+
+const Home = () => {
+    return (
+        <div>
+            Home baby!
+        </div>
+    );
+};
+
+const Popular = () => {
+    return (
+        <div>
+            Popular baby!
+        </div>
+    );
+};
+
+const Comments = () => {
+    return (
+        <div>
+            Comments baby!
+        </div>
+    );
+};
 
 const Resources = ({ showFooter }) => {
     const [navigationIndex, setNavigationIndex] = useState(0);
 
+    const links = ['/resources/home', '/resources/popular', '/resources/comments'];
+    const history = useHistory();
+
     const onNavigate = (event, newValue) => {
         setNavigationIndex(newValue);
+        history.push(links[newValue]);
     };
 
     const useStyles = makeStyles(theme => ({
@@ -52,14 +81,24 @@ const Resources = ({ showFooter }) => {
 
     return (
         <div className={classes.root}>
+            <BrowserRouter key={navigationIndex}>
+                <Switch>
+                    <Route path="/resources/comments"><Comments/></Route>
+                    <Route path="/resources/popular"><Popular/></Route>
+                    <Route path="/resources/home"><Home/></Route>
+                    <Route path="/"><Redirect to="/resources/home"></Redirect></Route>
+                </Switch>
+            </BrowserRouter>
+
             <BottomNavigation
                 value={navigationIndex}
                 onChange={onNavigate}
-                //showLabels
                 className={classes.navigation}
                 >
                 <BottomNavigationAction className={classes.navigationAction} label="Home" icon={<HomeRoundedIcon className="icon"/>} />
-                <BottomNavigationAction className={classes.navigationAction} label="Favorites" icon={<FavoriteRoundedIcon />} />
+                <BottomNavigationAction className={classes.navigationAction} label="Favorites" icon={<FavoriteRoundedIcon />}>
+                    
+                </BottomNavigationAction>
                 <BottomNavigationAction className={classes.navigationAction} label="Comments" icon={<CommentRoundedIcon />} />
             </BottomNavigation>
         </div>
