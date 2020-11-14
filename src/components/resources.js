@@ -1,4 +1,4 @@
-import { BottomNavigation, BottomNavigationAction, makeStyles } from "@material-ui/core";
+import { BottomNavigation, BottomNavigationAction, FormControl, InputLabel, makeStyles, MenuItem, Paper, Select } from "@material-ui/core";
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
@@ -6,13 +6,20 @@ import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import SettingsRoundedIcon from '@material-ui/icons/SettingsRounded';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import { useEffect, useState } from "react";
-import { BrowserRouter, Redirect, Route, Switch, useHistory } from "react-router-dom";
+import { BrowserRouter, Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { scrollToTop } from "./utils";
 
 const Home = () => {
     const useStyles = makeStyles(theme => ({
         root: {
+            marginTop: '3rem',
+        },
 
+        optionsPaperContainer: {
+            padding: '0 10rem 0 10rem',
+        },
+        optionsPaper: {
+            padding: '3rem',
         },
     }));
 
@@ -20,7 +27,33 @@ const Home = () => {
 
     return (
         <div className={classes.root}>
-            Home baby!
+            <div className={classes.optionsPaperContainer}>
+                <Paper square elevation={4} className={classes.optionsPaper}>
+                    <FormControl variant="filled" style={{width: '100%', marginBottom: '1rem' }} className="w-100 my-3">
+                        <InputLabel></InputLabel>
+                        <Select
+                            name="course"
+                            defaultValue="test"
+                        >
+                        <MenuItem value="test">COSC201</MenuItem>
+                        <MenuItem value="test2">COSC203</MenuItem>
+                        <MenuItem value="test3">COSC211</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    <FormControl variant="filled" style={{width: '100%'}} className="w-100 my-3">
+                        <InputLabel></InputLabel>
+                        <Select
+                            name="category"
+                            defaultValue="test"
+                        >
+                        <MenuItem value="test">Materials</MenuItem>
+                        <MenuItem value="test2">Videos</MenuItem>
+                        <MenuItem value="test3">Ebooks</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Paper>
+            </div>
         </div>
     );
 };
@@ -58,12 +91,15 @@ const Comments = () => {
 };
 
 const Resources = ({ showFooter }) => {
-    const [navigationIndex, setNavigationIndex] = useState(0);
-    const [speedDialOpen, setSpeedDialOpen] = useState(false);
-    
     const links = ['/resources/home', '/resources/popular', '/resources/comments'];
     const history = useHistory();
+    const location = useLocation();
 
+    const currentNavigationIndex = links.indexOf(location.pathname);
+
+    const [navigationIndex, setNavigationIndex] = useState(currentNavigationIndex === -1 ? 0 : currentNavigationIndex);
+    const [speedDialOpen, setSpeedDialOpen] = useState(false);
+    
     const onNavigate = (event, newValue) => {
         setNavigationIndex(newValue);
         history.push(links[newValue]);
