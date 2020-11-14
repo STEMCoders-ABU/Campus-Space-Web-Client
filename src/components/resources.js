@@ -10,8 +10,29 @@ import { BrowserRouter, Redirect, Route, Switch, useHistory, useLocation } from 
 import { scrollToTop } from "./utils";
 import ReactPlayer from 'react-player';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
+import { Document, Page, pdfjs } from 'react-pdf';
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const useVideoCardStyles = makeStyles(theme => ({
+    root: {
+        padding: '1rem 1rem 0 1rem',
+        [theme.breakpoints.down('xs')]: {
+            padding: '1rem .2rem 0 .2rem',
+        },
+    },
+
+    title: {
+        [theme.breakpoints.down('xs')]: {
+            fontSize: '1rem',
+        },
+    },
+
+    controlsContainer: {
+        marginTop: '3rem',
+    },
+}));
+
+const usePDFCardStyles = makeStyles(theme => ({
     root: {
         padding: '1rem 1rem 0 1rem',
         [theme.breakpoints.down('xs')]: {
@@ -49,6 +70,44 @@ const VideoCard = () => {
                     <Grid item xs={12}>
                         <CardContent>
                             <Typography variant="h6" className={classes.title}>Excellent Video Resource</Typography>
+                            <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
+                        </CardActions>
+                    </Grid>
+                </Grid>
+            </Card>
+        </Grid>
+    );
+};
+
+const PDFCard = () => {
+    const [numPages, setNumPages] = useState(null);
+    const [pageNumber, setPageNumber] = useState(1);
+    
+    const onDocumentLoadSuccess = ({ numPages }) => {
+        setNumPages(numPages);
+    };
+
+    const classes = usePDFCardStyles();
+
+    return (
+        <Grid item sm={12} md={4} className={classes.root}>
+            <Card>
+                <Grid container>
+                    <Grid item xs={12} className="player-container">
+                       <Document
+                            file="https://campus-space.com.ng/assets/resources/files/othello-algo.pdf"
+                            onLoadSuccess={onDocumentLoadSuccess}
+                            loading="Loading...."
+                        >
+                            <Page pageNumber={pageNumber} />
+                        </Document>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <CardContent>
+                            <Typography variant="h6" className={classes.title}>Excellent PDF Resource</Typography>
                             <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
                         </CardContent>
                         <CardActions>
@@ -141,8 +200,8 @@ const Home = () => {
                 </Paper>
             </div>
 
-            <Grid container justify="start" className={classes.resourcesContainer}>
-                <VideoCard/>
+            <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
+                <VideoCard/> <PDFCard/>
             </Grid>
         </div>
     );
