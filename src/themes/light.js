@@ -13,7 +13,7 @@ const theme = createMuiTheme({
   },
 
   resourceCard: {
-    background: 'linear-gradient(to right, #134e5e, #71b280)',
+    background: '#e5e5e5',
   },
 });
 
