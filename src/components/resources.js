@@ -10,9 +10,9 @@ import { BrowserRouter, Redirect, Route, Switch, useHistory, useLocation } from 
 import { scrollToTop } from "./utils";
 import ReactPlayer from 'react-player';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
-import { Document, Page, pdfjs } from 'react-pdf';
-import DocViewer from "react-doc-viewer";
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
+import Test from '../test_assets/test.pdf';
+import PDFImage from '../images/pdf.png';
 
 const useVideoCardStyles = makeStyles(theme => ({
     root: {
@@ -28,27 +28,8 @@ const useVideoCardStyles = makeStyles(theme => ({
         },
     },
 
-    controlsContainer: {
-        marginTop: '3rem',
-    },
-}));
-
-const usePDFCardStyles = makeStyles(theme => ({
-    root: {
-        padding: '1rem 1rem 0 1rem',
-        [theme.breakpoints.down('xs')]: {
-            padding: '1rem .2rem 0 .2rem',
-        },
-    },
-
-    title: {
-        [theme.breakpoints.down('xs')]: {
-            fontSize: '1rem',
-        },
-    },
-
-    controlsContainer: {
-        marginTop: '3rem',
+    imgContainer: {
+        padding: '3rem',
     },
 }));
 
@@ -78,63 +59,20 @@ const VideoCard = () => {
     return (
         <Grid item xs={12} md={4} className={classes.root}>
             <Card>
-                <Grid container>
-                    <Grid item xs={12} className="player-container">
-                       <ReactPlayer
-                            url="http://localhost/project1/assets/resources/files/another-video-resource4.mp4"
-                            width="100%"
-                            height="100%"
-                            controls
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <CardContent>
-                            <Typography variant="h6" className={classes.title}>Excellent Video Resource</Typography>
-                            <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
-                        </CardContent>
-                        <CardActions>
-                            <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
-                        </CardActions>
-                    </Grid>
-                </Grid>
-            </Card>
-        </Grid>
-    );
-};
-
-const PDFCard = () => {
-    const [numPages, setNumPages] = useState(null);
-    const [pageNumber, setPageNumber] = useState(1);
-    
-    const onDocumentLoadSuccess = ({ numPages }) => {
-        setNumPages(numPages);
-    };
-
-    const classes = usePDFCardStyles();
-
-    return (
-        <Grid item xs={12} md={6} className={classes.root}>
-            <Card>
-                <Grid container>
-                    <Grid item xs={12} className="player-container">
-                       <Document
-                            file="file:///C:/Users/Imran/Documents/Personal/Imran%20Student%20Resume.pdf"
-                            onLoadSuccess={onDocumentLoadSuccess}
-                            loading="Loading...."
-                        >
-                            <Page pageNumber={pageNumber} />
-                        </Document>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <CardContent>
-                            <Typography variant="h6" className={classes.title}>Excellent PDF Resource</Typography>
-                            <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
-                        </CardContent>
-                        <CardActions>
-                            <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
-                        </CardActions>
-                    </Grid>
-                </Grid>
+                <div className={classes.imgContainer}>
+                    <CardMedia
+                        component="img"
+                        image={PDFImage}
+                    />
+                </div>
+                <CardContent>
+                    <Typography variant="h6" className={classes.title}>Excellent Video Resource</Typography>
+                    <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
+                </CardContent>
+                <CardActions>
+                    <Button variant="outlined" color="primary.dark">Open</Button>
+                    <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
+                </CardActions>
             </Card>
         </Grid>
     );
@@ -150,7 +88,13 @@ const DocumentCard = () => {
                 <Grid container>
                     <Grid item xs={12}>
                     <DocViewer 
-                        documents={[{uri: 'http://localhost/project1/assets/resources/files/test-101-document.docx'}]} 
+                        documents={[{uri: Test}]}
+                        pluginRenderers={DocViewerRenderers}
+                        config={{
+                            header: {
+                                disableFileName: true,
+                            }
+                        }}
                     />
                     </Grid>
                     <Grid item xs={12}>
@@ -159,7 +103,7 @@ const DocumentCard = () => {
                             <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
                         </CardContent>
                         <CardActions>
-                            <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
+                            <Button variant="contained" color="primary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
                         </CardActions>
                     </Grid>
                 </Grid>
@@ -249,7 +193,7 @@ const Home = () => {
             </div>
 
             <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
-                <VideoCard/> <PDFCard/> <DocumentCard/>
+                <VideoCard/> <VideoCard/>
             </Grid>
         </div>
     );
