@@ -14,7 +14,7 @@ import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import Test from '../test_assets/test.pdf';
 import PDFImage from '../images/pdf.png';
 
-const useVideoCardStyles = makeStyles(theme => ({
+const useResourceCardStyles = makeStyles(theme => ({
     root: {
         padding: '1rem 1rem 0 1rem',
         [theme.breakpoints.down('xs')]: {
@@ -30,6 +30,8 @@ const useVideoCardStyles = makeStyles(theme => ({
 
     imgContainer: {
         padding: '3rem',
+        background: theme.resourceCard.background,
+
     },
 }));
 
@@ -54,7 +56,7 @@ const useDocumentCardStyles = makeStyles(theme => ({
 
 const VideoCard = () => {
     
-    const classes = useVideoCardStyles();
+    const classes = useResourceCardStyles();
 
     return (
         <Grid item xs={12} md={4} className={classes.root}>
