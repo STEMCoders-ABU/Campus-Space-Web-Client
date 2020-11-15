@@ -11,6 +11,7 @@ import { scrollToTop } from "./utils";
 import ReactPlayer from 'react-player';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 import { Document, Page, pdfjs } from 'react-pdf';
+import DocViewer from "react-doc-viewer";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const useVideoCardStyles = makeStyles(theme => ({
@@ -51,17 +52,36 @@ const usePDFCardStyles = makeStyles(theme => ({
     },
 }));
 
+const useDocumentCardStyles = makeStyles(theme => ({
+    root: {
+        padding: '1rem 1rem 0 1rem',
+        [theme.breakpoints.down('xs')]: {
+            padding: '1rem .2rem 0 .2rem',
+        },
+    },
+
+    title: {
+        [theme.breakpoints.down('xs')]: {
+            fontSize: '1rem',
+        },
+    },
+
+    controlsContainer: {
+        marginTop: '3rem',
+    },
+}));
+
 const VideoCard = () => {
     
     const classes = useVideoCardStyles();
 
     return (
-        <Grid item sm={12} md={4} className={classes.root}>
+        <Grid item xs={12} md={4} className={classes.root}>
             <Card>
                 <Grid container>
                     <Grid item xs={12} className="player-container">
                        <ReactPlayer
-                            url="https://campus-space.com.ng/assets/resources/files/another-video-resource2ö.mp4"
+                            url="http://localhost/project1/assets/resources/files/another-video-resource4.mp4"
                             width="100%"
                             height="100%"
                             controls
@@ -93,12 +113,12 @@ const PDFCard = () => {
     const classes = usePDFCardStyles();
 
     return (
-        <Grid item sm={12} md={4} className={classes.root}>
+        <Grid item xs={12} md={6} className={classes.root}>
             <Card>
                 <Grid container>
                     <Grid item xs={12} className="player-container">
                        <Document
-                            file="https://campus-space.com.ng/assets/resources/files/othello-algo.pdf"
+                            file="file:///C:/Users/Imran/Documents/Personal/Imran%20Student%20Resume.pdf"
                             onLoadSuccess={onDocumentLoadSuccess}
                             loading="Loading...."
                         >
@@ -108,6 +128,34 @@ const PDFCard = () => {
                     <Grid item xs={12}>
                         <CardContent>
                             <Typography variant="h6" className={classes.title}>Excellent PDF Resource</Typography>
+                            <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
+                        </CardActions>
+                    </Grid>
+                </Grid>
+            </Card>
+        </Grid>
+    );
+};
+
+const DocumentCard = () => {
+    
+    const classes = useDocumentCardStyles();
+
+    return (
+        <Grid item xs={12} md={6} className={classes.root}>
+            <Card>
+                <Grid container>
+                    <Grid item xs={12}>
+                    <DocViewer 
+                        documents={[{uri: 'http://localhost/project1/assets/resources/files/test-101-document.docx'}]} 
+                    />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <CardContent>
+                            <Typography variant="h6" className={classes.title}>Excellent Document Resource</Typography>
                             <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
                         </CardContent>
                         <CardActions>
@@ -201,7 +249,7 @@ const Home = () => {
             </div>
 
             <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
-                <VideoCard/> <PDFCard/>
+                <VideoCard/> <PDFCard/> <DocumentCard/>
             </Grid>
         </div>
     );
