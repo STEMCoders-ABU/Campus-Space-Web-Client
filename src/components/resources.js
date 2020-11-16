@@ -16,6 +16,8 @@ import PDFImage from '../images/pdf.png';
 import DocumentImage from '../images/documents.png';
 import VideoImage from '../images/youtube.png';
 import ManImage from '../images/man.png';
+import { Form, Formik } from "formik";
+import FormikField from "./formik-field";
 
 const useResourceCardStyles = makeStyles(theme => ({
     root: {
@@ -328,6 +330,11 @@ const Comments = () => {
             marginTop: '4rem',
             padding: '0 6rem 0 6rem',
         },
+
+        addCommentContainer: {
+            padding: '1rem',
+            marginBottom: '4rem',
+        },
     }));
 
     useEffect(() => {
@@ -340,7 +347,26 @@ const Comments = () => {
         <div className={classes.root}>
             <Typography variant="h5" className={classes.header}>Comments for  <span>COSC201 Materials</span></Typography>
             
+            
+
             <div className={classes.commentsContainer}>
+                <Paper className={classes.addCommentContainer}>
+                    <Formik
+                            initialValues={{
+                                
+                            }}
+                            
+                            
+                            onSubmit={(values) => {}}
+                        >
+                            <Form>
+                                <FormikField name="display_name" label="Display Name" variant="outlined" color="secondary"/>
+                                <FormikField multiline rows={5} name="comment" label="Your comment" variant="outlined" color="secondary"/>
+                                <Button startIcon={<CommentRoundedIcon/>} type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>Comment</Button>
+                            </Form>
+                        </Formik>
+                </Paper>
+
                 <CommentCard/> <CommentCard/>
             </div>
         </div>
