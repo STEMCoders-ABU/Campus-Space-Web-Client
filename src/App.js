@@ -15,6 +15,7 @@ import FacebookIcon from '@material-ui/icons/Facebook';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Resources from "./components/resources";
+import Resource from "./components/resource";
 
 const NavBar = ({ themeName, changeTheme, ...props }) => {
   const useStyles = makeStyles(theme => ({
@@ -370,6 +371,7 @@ const App = (props) => {
       <main className={classes.contentArea}>
         <div className="inner">
           <Router>
+            <Route path="/resource/:id"><Resource showFooter={setShowFooter}/></Route>
             <Route path="/resources"><Resources showFooter={setShowFooter}/></Route>
             <Route path="/resources-filter"><ResourcesFilter showFooter={setShowFooter}/></Route>
             <Route path="/"><Home showFooter={setShowFooter}/></Route>

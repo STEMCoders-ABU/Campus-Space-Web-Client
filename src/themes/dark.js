@@ -15,6 +15,8 @@ const theme = createMuiTheme({
   resourceCard: {
     background: 'rgba(1, 1, 1, 0.4)',
   },
+
+  fontFamily: "'PT Sans', sans-serif",
 });
 
 export default theme;

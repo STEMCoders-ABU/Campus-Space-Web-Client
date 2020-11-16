@@ -6,7 +6,7 @@ import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import SettingsRoundedIcon from '@material-ui/icons/SettingsRounded';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import { forwardRef, useEffect, useState } from "react";
-import { BrowserRouter, Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
+import { BrowserRouter, Link, Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { scrollToTop } from "./utils";
 import ReactPlayer from 'react-player';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
@@ -69,7 +69,7 @@ const useCommentCardStyles = makeStyles(theme => ({
     },
 }));
 
-const VideoCard = ({ downloads = null }) => {
+const VideoCard = ({ downloads = null, resource = {id: 1} }) => {
     
     const classes = useResourceCardStyles();
 
@@ -88,7 +88,7 @@ const VideoCard = ({ downloads = null }) => {
                     {downloads && <Typography variant="subtitle1" color="textSecondary">1 Downloads</Typography>}
                 </CardContent>
                 <CardActions>
-                    <Button variant="outlined" color="primary.dark">View</Button>
+                    <Button variant="outlined" color="primary.dark" component={Link} to={`../resource/${resource.id}`}>View</Button>
                     <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
                 </CardActions>
             </Card>
@@ -96,7 +96,7 @@ const VideoCard = ({ downloads = null }) => {
     );
 };
 
-const DocumentCard = ({ downloads = null }) => {
+const DocumentCard = ({ downloads = null, resource = {id: 1}  }) => {
     
     const classes = useResourceCardStyles();
 
@@ -115,7 +115,7 @@ const DocumentCard = ({ downloads = null }) => {
                     {downloads && <Typography variant="subtitle1" color="textSecondary">1 Downloads</Typography>}
                 </CardContent>
                 <CardActions>
-                    <Button variant="outlined" color="primary.dark">View</Button>
+                    <Button variant="outlined" color="primary.dark" component={Link} to={`../resource/${resource.id}`}>View</Button>
                     <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
                 </CardActions>
             </Card>
@@ -123,7 +123,7 @@ const DocumentCard = ({ downloads = null }) => {
     );
 };
 
-const PDFCard = ({ downloads = null }) => {
+const PDFCard = ({ downloads = null, resource = {id: 1}  }) => {
     
     const classes = useResourceCardStyles();
 
@@ -142,7 +142,7 @@ const PDFCard = ({ downloads = null }) => {
                     {downloads && <Typography variant="subtitle1" color="textSecondary">1 Downloads</Typography>}
                 </CardContent>
                 <CardActions>
-                    <Button variant="outlined" color="primary.dark">View</Button>
+                    <Button variant="outlined" color="primary.dark" component={Link} to={`../resource/${resource.id}`}>View</Button>
                     <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
                 </CardActions>
             </Card>
@@ -302,7 +302,7 @@ const Popular = () => {
 
     return (
         <div className={classes.root}>
-            <Typography variant="h5" className={classes.header}>Top Downloaded  <span>COSC201 Materials</span></Typography>
+            <Typography variant="h5" className={classes.header}>Popular  <span>COSC201 Materials</span></Typography>
             
             <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
                 <VideoCard downloads/> <VideoCard/> <DocumentCard downloads/> <PDFCard downloads/>
@@ -349,8 +349,6 @@ const Comments = () => {
         <div className={classes.root}>
             <Typography variant="h5" className={classes.header}>Comments for  <span>COSC201 Materials</span></Typography>
             
-            
-
             <div className={classes.commentsContainer}>
                 <Paper className={classes.addCommentContainer}>
                     <Formik
@@ -466,14 +464,12 @@ const Resources = ({ showFooter }) => {
 
     return (
         <div className={classes.root}>
-            <BrowserRouter key={navigationIndex}>
-                <Switch>
-                    <Route path="/resources/comments"><Comments/></Route>
-                    <Route path="/resources/popular"><Popular/></Route>
-                    <Route path="/resources/home"><Home/></Route>
-                    <Route path="/"><Redirect to="/resources/home"></Redirect></Route>
-                </Switch>
-            </BrowserRouter>
+            <Switch>
+                <Route path="/resources/comments"><Comments/></Route>
+                <Route path="/resources/popular"><Popular/></Route>
+                <Route path="/resources/home"><Home/></Route>
+                <Route path="/"><Redirect to="/resources/home"></Redirect></Route>
+            </Switch>
 
             <SpeedDial
                 ariaLabel="Options"
