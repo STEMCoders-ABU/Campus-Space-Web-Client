@@ -33,11 +33,16 @@ const useResourceCardStyles = makeStyles(theme => ({
     imgContainer: {
         padding: '3rem',
         background: theme.resourceCard.background,
+    },
+}));
+
+const useCommentCardStyles = makeStyles(theme => ({
+    root: {
 
     },
 }));
 
-const VideoCard = () => {
+const VideoCard = ({ downloads = null }) => {
     
     const classes = useResourceCardStyles();
 
@@ -53,6 +58,7 @@ const VideoCard = () => {
                 <CardContent>
                     <Typography variant="h6" className={classes.title}>Excellent Video Resource</Typography>
                     <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
+                    {downloads && <Typography variant="subtitle1" color="textSecondary">1 Downloads</Typography>}
                 </CardContent>
                 <CardActions>
                     <Button variant="outlined" color="primary.dark">View</Button>
@@ -63,7 +69,7 @@ const VideoCard = () => {
     );
 };
 
-const DocumentCard = () => {
+const DocumentCard = ({ downloads = null }) => {
     
     const classes = useResourceCardStyles();
 
@@ -79,6 +85,7 @@ const DocumentCard = () => {
                 <CardContent>
                     <Typography variant="h6" className={classes.title}>Excellent Video Resource</Typography>
                     <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
+                    {downloads && <Typography variant="subtitle1" color="textSecondary">1 Downloads</Typography>}
                 </CardContent>
                 <CardActions>
                     <Button variant="outlined" color="primary.dark">View</Button>
@@ -89,7 +96,7 @@ const DocumentCard = () => {
     );
 };
 
-const PDFCard = () => {
+const PDFCard = ({ downloads = null }) => {
     
     const classes = useResourceCardStyles();
 
@@ -105,6 +112,7 @@ const PDFCard = () => {
                 <CardContent>
                     <Typography variant="h6" className={classes.title}>Excellent Video Resource</Typography>
                     <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
+                    {downloads && <Typography variant="subtitle1" color="textSecondary">1 Downloads</Typography>}
                 </CardContent>
                 <CardActions>
                     <Button variant="outlined" color="primary.dark">View</Button>
@@ -112,6 +120,16 @@ const PDFCard = () => {
                 </CardActions>
             </Card>
         </Grid>
+    );
+};
+
+const CommentCard = () => {
+    const classes = useCommentCardStyles();
+
+    return (
+        <Card classes={classes.root}>
+            
+        </Card>
     );
 };
 
@@ -205,7 +223,30 @@ const Home = () => {
 const Popular = () => {
     const useStyles = makeStyles(theme => ({
         root: {
+            marginTop: '3rem',
+        },
 
+        header: {
+            textAlign: 'center',
+
+            '& span': {
+                backgroundColor: theme.palette.primary.dark,
+                padding: '.3rem',
+                opacity: 0.8,
+                borderRadius: '1rem',
+            },
+        },
+
+        underline: {
+            width: '40%',
+        },
+
+        resourcesContainer: {
+            marginTop: '4rem',
+            padding: '0 3rem 0 3rem',
+            [theme.breakpoints.down('xs')]: {
+                padding: '0 .1rem 0 .1rem',
+            },
         },
     }));
 
@@ -216,8 +257,12 @@ const Popular = () => {
     const classes = useStyles();
 
     return (
-        <div>
-            Popular baby!
+        <div className={classes.root}>
+            <Typography variant="h5" className={classes.header}>Top Downloaded  <span>COSC201 Materials</span></Typography>
+            
+            <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
+                <VideoCard downloads/> <VideoCard/> <DocumentCard downloads/> <PDFCard downloads/>
+            </Grid>
         </div>
     );
 };
@@ -225,7 +270,18 @@ const Popular = () => {
 const Comments = () => {
     const useStyles = makeStyles(theme => ({
         root: {
+            marginTop: '3rem',
+        },
 
+        header: {
+            textAlign: 'center',
+
+            '& span': {
+                backgroundColor: theme.palette.primary.dark,
+                padding: '.3rem',
+                opacity: 0.8,
+                borderRadius: '1rem',
+            },
         },
     }));
 
@@ -236,8 +292,9 @@ const Comments = () => {
     const classes = useStyles();
 
     return (
-        <div>
-            Comments baby!
+        <div className={classes.root}>
+            <Typography variant="h5" className={classes.header}>Comments for  <span>COSC201 Materials</span></Typography>
+            
         </div>
     );
 };
@@ -347,8 +404,7 @@ const Resources = ({ showFooter }) => {
                 className={classes.navigation}
                 >
                 <BottomNavigationAction className={classes.navigationAction} label="Home" icon={<HomeRoundedIcon className="icon"/>} />
-                <BottomNavigationAction className={classes.navigationAction} label="Favorites" icon={<FavoriteRoundedIcon />}>
-                    
+                <BottomNavigationAction className={classes.navigationAction} label="Popular" icon={<FavoriteRoundedIcon />}>
                 </BottomNavigationAction>
                 <BottomNavigationAction className={classes.navigationAction} label="Comments" icon={<CommentRoundedIcon />} />
             </BottomNavigation>
