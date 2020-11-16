@@ -1,25 +1,22 @@
-import { BottomNavigation, BottomNavigationAction, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, Slide, Slider, TextField, Typography, withStyles } from "@material-ui/core";
+import { BottomNavigation, BottomNavigationAction, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, Slide, Typography } from "@material-ui/core";
+import { KeyboardArrowRightRounded } from "@material-ui/icons";
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
+import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import SettingsRoundedIcon from '@material-ui/icons/SettingsRounded';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
-import { forwardRef, useEffect, useState } from "react";
-import { BrowserRouter, Link, Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
-import { scrollToTop } from "./utils";
-import ReactPlayer from 'react-player';
-import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
-import Test from '../test_assets/test.pdf';
-import PDFImage from '../images/pdf.png';
-import DocumentImage from '../images/documents.png';
-import VideoImage from '../images/youtube.png';
-import ManImage from '../images/man.png';
 import { Form, Formik } from "formik";
+import { forwardRef, useEffect, useState } from "react";
+import { Link, Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
+import DocumentImage from '../images/folder.svg';
+import ManImage from '../images/man.svg';
+import PDFImage from '../images/pdf.svg';
+import VideoImage from '../images/youtube.svg';
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { KeyboardArrowRightRounded } from "@material-ui/icons";
+import { scrollToTop } from "./utils";
 
 const useResourceCardStyles = makeStyles(theme => ({
     root: {
@@ -58,14 +55,19 @@ const useCommentCardStyles = makeStyles(theme => ({
         width: '100px',
         height: '100px',
         borderRadius: '50%',
+
+        [theme.breakpoints.down('xs')]: {
+            width: '60px',
+            height: '60px',
+        },
     },
     
     commentContainer: {
         paddingLeft: '2rem',
     },
     comment: {
-        marginTop: '2rem',
-        marginLeft: '1rem',
+        marginTop: '1.5rem',
+        //marginLeft: '1rem',
     },
 }));
 
@@ -156,7 +158,7 @@ const CommentCard = () => {
     return (
         <Card className={classes.root}>
             <Grid container>
-                <Grid item xs={1}>
+                <Grid item xs={3} md={2} lg={1}>
                     <div className={classes.imgContainer}>
                         <CardMedia
                             component="img"
@@ -165,7 +167,7 @@ const CommentCard = () => {
                         />
                     </div>
                 </Grid>
-                <Grid item xs={11}>
+                <Grid item xs={9} md={10} lg={11}>
                     <CardContent className={classes.commentContainer}>
                         <Typography variant="h6">Commenter</Typography>
                         <Typography variant="subtitle1" color="textSecondary">on 2020-01-12</Typography>
@@ -275,9 +277,13 @@ const Popular = () => {
 
             '& span': {
                 backgroundColor: theme.palette.primary.dark,
-                padding: '.3rem',
+                padding: '.1rem',
                 opacity: 0.8,
-                borderRadius: '1rem',
+                borderRadius: '.4rem',
+            },
+
+            [theme.breakpoints.down('xs')]: {
+                fontSize: '1.3rem',
             },
         },
 
@@ -322,15 +328,26 @@ const Comments = () => {
 
             '& span': {
                 backgroundColor: theme.palette.primary.dark,
-                padding: '.3rem',
+                padding: '.1rem',
                 opacity: 0.8,
-                borderRadius: '1rem',
+                borderRadius: '.4rem',
+            },
+
+            [theme.breakpoints.down('xs')]: {
+                fontSize: '1.2rem',
             },
         },
 
         commentsContainer: {
             marginTop: '4rem',
             padding: '0 6rem 0 6rem',
+
+            [theme.breakpoints.down('xs')]: {
+                padding: '0 1rem 0 1rem',
+            },
+            [theme.breakpoints.only('sm')]: {
+                padding: '0 1rem 0 1rem',
+            },
         },
 
         addCommentContainer: {
