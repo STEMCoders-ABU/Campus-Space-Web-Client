@@ -43,7 +43,7 @@ const Resource = ({ showFooter }) => {
         viewerContainer: {
             padding: '0 10rem 0 10rem',
             [theme.breakpoints.down('xs')]: {
-                padding: '0 1rem 0 1rem',
+                padding: '0 .6rem 0 .6rem',
             },
             [theme.breakpoints.only('sm')]: {
                 padding: '0 2rem 0 2rem',
@@ -59,7 +59,7 @@ const Resource = ({ showFooter }) => {
             padding: '0 5rem 0 5rem',
             marginTop: '4rem',
             [theme.breakpoints.down('xs')]: {
-                padding: '0 1rem 0 1rem',
+                padding: '0 .6rem 0 .6rem',
             },
             [theme.breakpoints.only('sm')]: {
                 padding: '0 2rem 0 2rem',
