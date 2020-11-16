@@ -1,11 +1,11 @@
-import { BottomNavigation, BottomNavigationAction, Button, Card, CardActions, CardContent, CardMedia, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, Slider, Typography, withStyles } from "@material-ui/core";
+import { BottomNavigation, BottomNavigationAction, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, Slide, Slider, TextField, Typography, withStyles } from "@material-ui/core";
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import SettingsRoundedIcon from '@material-ui/icons/SettingsRounded';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { BrowserRouter, Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { scrollToTop } from "./utils";
 import ReactPlayer from 'react-player';
@@ -18,6 +18,8 @@ import VideoImage from '../images/youtube.png';
 import ManImage from '../images/man.png';
 import { Form, Formik } from "formik";
 import FormikField from "./formik-field";
+import FormikSelect from "./formik-select";
+import { KeyboardArrowRightRounded } from "@material-ui/icons";
 
 const useResourceCardStyles = makeStyles(theme => ({
     root: {
@@ -360,7 +362,7 @@ const Comments = () => {
                             onSubmit={(values) => {}}
                         >
                             <Form>
-                                <FormikField name="display_name" label="Display Name" variant="outlined" color="secondary"/>
+                                <FormikField name="display_name" label="Display Name" variant="standard" color="secondary"/>
                                 <FormikField multiline rows={5} name="comment" label="Your comment" variant="outlined" color="secondary"/>
                                 <Button startIcon={<CommentRoundedIcon/>} type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>Comment</Button>
                             </Form>
@@ -373,6 +375,10 @@ const Comments = () => {
     );
 };
 
+const Transition = forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const Resources = ({ showFooter }) => {
     const links = ['/resources/home', '/resources/popular', '/resources/comments'];
     const history = useHistory();
@@ -382,7 +388,17 @@ const Resources = ({ showFooter }) => {
 
     const [navigationIndex, setNavigationIndex] = useState(currentNavigationIndex === -1 ? 0 : currentNavigationIndex);
     const [speedDialOpen, setSpeedDialOpen] = useState(false);
+    const [showSearchDialog, setShowSearchDialog] = useState(false);
+    const [showFiltersDialog, setShowFiltersDialog] = useState(false);
     
+    const handleCloseSearchDialog = () => {
+      setShowSearchDialog(false);
+    };
+
+    const handleCloseFiltersDialog = () => {
+        setShowFiltersDialog(false);
+    };
+
     const onNavigate = (event, newValue) => {
         setNavigationIndex(newValue);
         history.push(links[newValue]);
@@ -436,6 +452,16 @@ const Resources = ({ showFooter }) => {
         setSpeedDialOpen(true);
     };
 
+    const handleShowSearchDialog = () => {
+        handleCloseSpeedDial();
+        setShowSearchDialog(true);
+    };
+
+    const handleShowFiltersDialog = () => {
+        handleCloseSpeedDial();
+        setShowFiltersDialog(true);
+    };
+
     const classes = useStyles();
 
     return (
@@ -462,15 +488,121 @@ const Resources = ({ showFooter }) => {
                     key="Search Resources"
                     icon={<SearchRoundedIcon/>}
                     tooltipTitle="Search Resources"
-                    onClick={handleCloseSpeedDial}
+                    onClick={e => handleShowSearchDialog()}
                 />
                 <SpeedDialAction
                     key="Change Filters"
                     icon={<SettingsRoundedIcon/>}
                     tooltipTitle="Change Filters"
-                    onClick={handleCloseSpeedDial}
+                    onClick={e => handleShowFiltersDialog()}
                 />
             </SpeedDial>
+
+            <Dialog 
+                open={showSearchDialog} 
+                onClose={handleCloseSearchDialog}
+                keepMounted
+                aria-labelledby="search-dialog-title" 
+                TransitionComponent={Transition}
+            >
+                <DialogTitle id="search-dialog-title">Search COS201 Materials</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Enter a keyword to search. Resources matching the provided keyword in their title or description will be displayed.
+                    </DialogContentText>
+                        <Formik
+                            initialValues={{
+                                
+                            }}
+                            
+                            
+                            onSubmit={(values) => {}}
+                        >
+                            <Form>
+                                <FormikField  
+                                    color="secondary"
+                                    autoFocus
+                                    margin="dense"
+                                    name="keyword"
+                                    label="Search Keyword"
+                                    fullWidth
+                                />
+                            </Form>
+                        </Formik>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseSearchDialog} variant="contained" color="primary">
+                        Cancel
+                    </Button>
+                    <Button type="submit" variant="contained" color="secondary" endIcon={<SearchRoundedIcon/>}>
+                        Search
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog 
+                open={showFiltersDialog} 
+                onClose={handleCloseFiltersDialog}
+                keepMounted
+                aria-labelledby="filters-dialog-title" 
+                TransitionComponent={Transition}
+            >
+                <DialogTitle id="filters-dialog-title">Change Filters</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Choose a faculty, department and level.
+                    </DialogContentText>
+                        <Formik
+                            initialValues={{
+                                
+                            }}
+                            
+                            
+                            onSubmit={(values) => {}}
+                        >
+                            <Form>
+                                <FormikSelect 
+                                    margin="dense" 
+                                    name="faculty" 
+                                    defaultValue="test" 
+                                    label="Faculty" 
+                                    className="selector"
+                                    fullWidth
+                                >
+                                    <MenuItem value="test">Test Faculty</MenuItem>
+                                </FormikSelect>
+                                <FormikSelect 
+                                    margin="dense" 
+                                    name="department" 
+                                    defaultValue="test" 
+                                    label="Department" 
+                                    className="selector"
+                                    fullWidth
+                                >
+                                    <MenuItem value="test">Test Department</MenuItem>
+                                </FormikSelect>
+                                <FormikSelect 
+                                    margin="dense" 
+                                    name="level" 
+                                    defaultValue="test" 
+                                    label="Level" 
+                                    className="selector"
+                                    fullWidth
+                                >
+                                    <MenuItem value="test">200</MenuItem>
+                                </FormikSelect>
+                            </Form>
+                        </Formik>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseFiltersDialog} variant="contained" color="primary">
+                        Cancel
+                    </Button>
+                    <Button type="submit" variant="contained" color="secondary" endIcon={<KeyboardArrowRightRounded/>}>
+                        Find Resources
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             <BottomNavigation
                 value={navigationIndex}
