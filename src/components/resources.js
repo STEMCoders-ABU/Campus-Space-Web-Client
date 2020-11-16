@@ -15,6 +15,7 @@ import Test from '../test_assets/test.pdf';
 import PDFImage from '../images/pdf.png';
 import DocumentImage from '../images/documents.png';
 import VideoImage from '../images/youtube.png';
+import ManImage from '../images/man.png';
 
 const useResourceCardStyles = makeStyles(theme => ({
     root: {
@@ -38,7 +39,29 @@ const useResourceCardStyles = makeStyles(theme => ({
 
 const useCommentCardStyles = makeStyles(theme => ({
     root: {
+        marginBottom: '2rem',
+        borderRadius: '1rem',
+    },
 
+    imgContainer: {
+        padding: '.5rem',
+        background: theme.resourceCard.background,
+        borderTopRightRadius: '1rem',
+        borderBottomRightRadius: '1rem',
+    },
+
+    avatar: {
+        width: '100px',
+        height: '100px',
+        borderRadius: '50%',
+    },
+    
+    commentContainer: {
+        paddingLeft: '2rem',
+    },
+    comment: {
+        marginTop: '2rem',
+        marginLeft: '1rem',
     },
 }));
 
@@ -127,8 +150,25 @@ const CommentCard = () => {
     const classes = useCommentCardStyles();
 
     return (
-        <Card classes={classes.root}>
-            
+        <Card className={classes.root}>
+            <Grid container>
+                <Grid item xs={1}>
+                    <div className={classes.imgContainer}>
+                        <CardMedia
+                            component="img"
+                            image={ManImage}
+                            className={classes.avatar}
+                        />
+                    </div>
+                </Grid>
+                <Grid item xs={11}>
+                    <CardContent className={classes.commentContainer}>
+                        <Typography variant="h6">Commenter</Typography>
+                        <Typography variant="subtitle1" color="textSecondary">on 2020-01-12</Typography>
+                        <Typography className={classes.comment} variant="body1">This is my comment!</Typography>
+                    </CardContent>
+                </Grid>
+            </Grid>
         </Card>
     );
 };
@@ -283,6 +323,11 @@ const Comments = () => {
                 borderRadius: '1rem',
             },
         },
+
+        commentsContainer: {
+            marginTop: '4rem',
+            padding: '0 6rem 0 6rem',
+        },
     }));
 
     useEffect(() => {
@@ -295,6 +340,9 @@ const Comments = () => {
         <div className={classes.root}>
             <Typography variant="h5" className={classes.header}>Comments for  <span>COSC201 Materials</span></Typography>
             
+            <div className={classes.commentsContainer}>
+                <CommentCard/> <CommentCard/>
+            </div>
         </div>
     );
 };
