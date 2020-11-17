@@ -7,7 +7,7 @@ import { scrollToTop } from "./utils";
 import addResourceImage from '../images/add.svg';
 import manageResourceImage from '../images/settings.svg';
 import editProfileImage from '../images/edit.svg';
-import { EditRounded } from "@material-ui/icons";
+import { CloudUploadRounded, EditRounded } from "@material-ui/icons";
 import FormikSelect from "./formik-select";
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -100,6 +100,7 @@ const Login = () => {
 
 const Home = () => {
     const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
+    const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
 
     const handleCloseEditProfileDialog = () => {
         setShowEditProfileDialog(false);
@@ -107,6 +108,14 @@ const Home = () => {
 
     const handleShowEditProfileDialog = () => {
         setShowEditProfileDialog(true);
+    };
+
+    const handleCloseAddResourceDialog = () => {
+        setShowAddResourceDialog(false);
+    };
+
+    const handleShowAddResourceDialog = () => {
+        setShowAddResourceDialog(true);
     };
 
     const useStyles = makeStyles(theme => ({
@@ -143,7 +152,30 @@ const Home = () => {
 
         optionsContainer: {
             marginTop: '4rem',
-            padding: '0 0rem 0 0rem',
+        },
+
+        optionContainer: {
+            padding: '2rem 3rem 0 3rem',
+            [theme.breakpoints.down('xs')]: {
+                padding: '2rem 1.3rem 0 1.3rem',
+            },
+            [theme.breakpoints.only('sm')]: {
+                padding: '2rem 2rem 0 2rem',
+            },
+
+            '& .header': {
+                marginBottom: '2rem',
+                fontFamily: theme.fontFamily,
+                textAlign: 'center',
+                [theme.breakpoints.down('xs')]: {
+                    fontSize: '1.5rem',
+                },
+            },
+
+            '& img': {
+                width: '100%',
+                height: 'auto',
+            }
         },
 
         editProfilePaper: {
@@ -153,23 +185,13 @@ const Home = () => {
             cursor: 'pointer',
             transition: '.3s ease',
             height: '100%',
+            borderRadius: '2rem',
 
             '&:hover': {
                 boxShadow: theme.shadows[24],
                 backgroundColor: theme.resourceCard.background,
                 transition: '.3s ease',
             },
-
-            '& .header': {
-                marginBottom: '2rem',
-                fontFamily: theme.fontFamily,
-                textAlign: 'center',
-            },
-
-            '& img': {
-                width: '100%',
-                height: 'auto',
-            }
         },
 
         addResourcePaper: {
@@ -179,23 +201,13 @@ const Home = () => {
             cursor: 'pointer',
             transition: '.3s ease',
             height: '100%',
+            borderRadius: '2rem',
 
             '&:hover': {
                 boxShadow: theme.shadows[24],
                 backgroundColor: theme.resourceCard.background,
                 transition: '.3s ease',
             },
-
-            '& .header': {
-                marginBottom: '2rem',
-                fontFamily: theme.fontFamily,
-                textAlign: 'center',
-            },
-
-            '& img': {
-                width: '100%',
-                height: 'auto',
-            }
         },
 
         manageResourcesPaper: {
@@ -205,23 +217,13 @@ const Home = () => {
             cursor: 'pointer',
             transition: '.3s ease',
             height: '100%',
+            borderRadius: '2rem',
 
             '&:hover': {
                 boxShadow: theme.shadows[24],
                 backgroundColor: theme.resourceCard.background,
                 transition: '.3s ease',
             },
-
-            '& .header': {
-                marginBottom: '2rem',
-                fontFamily: theme.fontFamily,
-                textAlign: 'center',
-            },
-
-            '& img': {
-                width: '100%',
-                height: 'auto',
-            }
         },
     }));
 
@@ -265,22 +267,22 @@ const Home = () => {
             </div>
 
             <div className={classes.optionsContainer}>
-                <Grid container justify="center" spacing={4} alignItems="stretch">
-                    <Grid item lg={3} xs={12}>
+                <Grid container justify="center" spacing={0} alignItems="stretch">
+                    <Grid item lg={4} xs={12} sm={6} className={classes.optionContainer}>
                         <Paper className={classes.editProfilePaper} onClick={handleShowEditProfileDialog}>
                             <Typography variant="h4" className="header">Edit Profile</Typography>
                             <img src={editProfileImage} alt="Edit Profile"/>
                         </Paper>
                     </Grid>
 
-                    <Grid item lg={3} xs={12}>
-                        <Paper className={classes.addResourcePaper}>
+                    <Grid item lg={4} xs={12} sm={6} className={classes.optionContainer}>
+                        <Paper className={classes.addResourcePaper} onClick={handleShowAddResourceDialog}>
                             <Typography variant="h4" className="header">Upload Resources</Typography>
                             <img src={addResourceImage} alt="Upload Resources"/>
                         </Paper>
                     </Grid>
 
-                    <Grid item lg={3} xs={12}>
+                    <Grid item lg={4} xs={12} sm={6} className={classes.optionContainer}>
                         <Paper className={classes.manageResourcesPaper}>
                             <Typography variant="h4" className="header">Manage Resources</Typography>
                             <img src={manageResourceImage} alt="Upload Resources"/>
@@ -366,7 +368,89 @@ const Home = () => {
                         Cancel
                     </Button>
                     <Button type="submit" variant="contained" color="secondary" startIcon={<EditRounded/>}>
-                        Update Profile
+                        Update
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={showAddResourceDialog} 
+                onClose={handleCloseAddResourceDialog}
+                aria-labelledby="addresource-dialog-title" 
+                TransitionComponent={Transition}
+            >
+                <DialogTitle id="addresource-dialog-title">Upload Resource</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Enter new values for fields that you want to update. Fields marked with asteriks are required.
+                    </DialogContentText>
+                        <Formik
+                            initialValues={{
+                                
+                            }}
+                            
+                            
+                            onSubmit={(values) => {}}
+                        >
+                            <Form>
+                                <FormikField
+                                    color="secondary"
+                                    margin="dense"
+                                    name="email"
+                                    label="Email"
+                                    type="email"
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                />
+                                <FormikField
+                                    color="secondary"
+                                    margin="dense"
+                                    name="full_name"
+                                    label="Full Name"
+                                    type="text"
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                />
+                                <FormikSelect 
+                                    name="gender" 
+                                    defaultValue="male" 
+                                    label="Gender"
+                                    variant="outlined"
+                                    fullWidth
+                                >
+                                    <MenuItem value="male">Male</MenuItem>
+                                    <MenuItem value="female">Female</MenuItem>
+                                </FormikSelect>
+                                <FormikField
+                                    color="secondary"
+                                    margin="dense"
+                                    name="phone"
+                                    label="Phone"
+                                    type="tel"
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                />
+                                <FormikField
+                                    color="secondary"
+                                    margin="dense"
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    variant="outlined"
+                                    fullWidth
+                                />
+                            </Form>
+                        </Formik>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseAddResourceDialog} variant="contained" color="primary">
+                        Cancel
+                    </Button>
+                    <Button type="submit" variant="contained" color="secondary" startIcon={<CloudUploadRounded/>}>
+                        Upload
                     </Button>
                 </DialogActions>
             </Dialog>
