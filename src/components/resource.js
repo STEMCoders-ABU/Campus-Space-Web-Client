@@ -4,10 +4,13 @@ import { Form, Formik } from "formik";
 import ReactPlayer from "react-player";
 import { useParams } from "react-router-dom";
 import testVideo from '../test_assets/video.mp4';
+import testPdf from '../test_assets/test.pdf';
 import CommentCard from './comment-card';
 import FormikField from "./formik-field";
+import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
+import DocumentImage from '../images/folder.svg';
 
-const { makeStyles, Paper, Card, CardContent, Typography, CardActions, Button } = require("@material-ui/core");
+const { makeStyles, Paper, Card, CardContent, Typography, CardActions, Button, CardMedia, useTheme } = require("@material-ui/core");
 const { useEffect } = require("react");
 const { scrollToTop } = require("./utils");
 
@@ -29,6 +32,38 @@ const VideoViewer = () => {
                     top: 0,
                     left: 0,
                 }}
+            />
+        </div>
+    );
+};
+
+const PDFViewer = () => {
+    const theme = useTheme();
+
+    return (
+        <DocViewer
+            key={theme.palette.primary.main}
+            documents={[{ uri: testPdf }]}
+            pluginRenderers={DocViewerRenderers}
+        />
+    );
+};
+
+const DocumentViewer = () => {
+    const useStyles = makeStyles(theme => ({
+        root: {
+            padding: '10rem',
+            background: theme.resourceCard.background,
+        }
+    }));
+
+    const classes = useStyles();
+
+    return (
+        <div className={classes.root}>
+            <CardMedia
+                component="img"
+                image={DocumentImage}
             />
         </div>
     );
@@ -104,7 +139,7 @@ const Resource = ({ showFooter }) => {
         <div className={classes.root}>
             <div className={classes.viewerContainer}>
                 <Card>
-                    <VideoViewer />
+                    <PDFViewer />
                     <CardContent>
                         <Typography variant="h6">The Excellent Resource Title</Typography>
                         <div className="info">
