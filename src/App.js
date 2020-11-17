@@ -17,6 +17,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Resources from "./components/resources";
 import Resource from "./components/resource";
 import Moderation from "./components/moderation";
+import Admin from "./components/admin";
 
 const NavBar = ({ themeName, changeTheme, ...props }) => {
   const useStyles = makeStyles(theme => ({
@@ -376,6 +377,7 @@ const App = (props) => {
             <Route path="/resources"><Resources showFooter={setShowFooter}/></Route>
             <Route path="/resources-filter"><ResourcesFilter showFooter={setShowFooter}/></Route>
             <Route path="/moderation"><Moderation showFooter={setShowFooter}/></Route>
+            <Route path="/admin"><Admin showFooter={setShowFooter}/></Route>
             <Route path="/"><Home showFooter={setShowFooter}/></Route>
           </Router>
         </div>

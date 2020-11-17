@@ -1,17 +1,14 @@
-import { AppBar, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, makeStyles, MenuItem, Paper, Slide, Toolbar, Typography } from "@material-ui/core";
-import { AccountCircleRounded, CloudUploadRounded, DeleteRounded, EditRounded, KeyboardArrowLeftRounded, SearchRounded } from "@material-ui/icons";
+import { AppBar, Button, Card, CardActions, CardContent, Dialog, DialogContent, DialogContentText, Grid, IconButton, makeStyles, MenuItem, Paper, Select, Slide, Toolbar, Typography } from "@material-ui/core";
+import { AccountCircleRounded, AddRounded, CloudUploadRounded, DeleteRounded, EditRounded, KeyboardArrowLeftRounded } from "@material-ui/icons";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
-import { Link, Redirect, Route, Switch, useHistory } from "react-router-dom";
+import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import addResourceImage from '../images/add.svg';
 import editProfileImage from '../images/edit.svg';
 import manageResourceImage from '../images/settings.svg';
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
 import { scrollToTop } from "./utils";
-import documentImage from '../images/folder.svg';
-import pdfImage from '../images/pdf.svg';
-import videoImage from '../images/youtube.svg';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -80,7 +77,7 @@ const Login = () => {
                         onSubmit={(values) => {}}
                     >
                         <Form>
-                            <FormikField  
+                            <FormikField 
                                 color="secondary"
                                 name="username"
                                 label="Username"
@@ -107,25 +104,25 @@ const Login = () => {
 };
 
 const Home = () => {
-    const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
-    const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
+    const [showEditFacultyDialog, setShowEditFacultyDialog] = useState(false);
+    const [showEditDepartmentDialog, setShowEditDepartmentDialog] = useState(false);
 
     const history = useHistory();
     
-    const handleCloseEditProfileDialog = () => {
-        setShowEditProfileDialog(false);
+    const handleCloseEditFacultyDialog = () => {
+        setShowEditFacultyDialog(false);
     };
 
-    const handleShowEditProfileDialog = () => {
-        setShowEditProfileDialog(true);
+    const handleShowEditFacultyDialog = () => {
+        setShowEditFacultyDialog(true);
     };
 
-    const handleCloseAddResourceDialog = () => {
-        setShowAddResourceDialog(false);
+    const handleCloseEditDepartmentDialog = () => {
+        setShowEditDepartmentDialog(false);
     };
 
-    const handleShowAddResourceDialog = () => {
-        setShowAddResourceDialog(true);
+    const handleShowEditDepartmentDialog = () => {
+        setShowEditDepartmentDialog(true);
     };
 
     const useStyles = makeStyles(theme => ({
@@ -133,8 +130,9 @@ const Home = () => {
             marginTop: '3rem',
         },
 
-        coursePaperContainer: {
-            padding: '0 20rem 0 20rem',
+        heroCardContainer: {
+            padding: '0 2rem 0 2rem',
+            marginTop: '3rem',
             [theme.breakpoints.down('xs')]: {
                 padding: '0 1rem 0 1rem',
             },
@@ -145,18 +143,25 @@ const Home = () => {
                 padding: '0 10rem 0 10rem',
             },
         },
-        coursePaper: {
-            padding: '2rem',
+        heroCard: {
+            padding: '1rem',
+            boxShadow: theme.shadows[5],
+            [theme.breakpoints.down('xs')]: {
+                padding: '1rem 0.3rem 0.3rem 0.3rem',
+            },
 
             '& .header': {
-                marginBottom: '5rem',
+                marginBottom: '3rem',
                 textAlign: 'center',
+                [theme.breakpoints.down('xs')]: {
+                    fontSize: '1.6rem',
+                },
             },
             '& .selector': {
                 textAlign: 'left',
             },
         },
-        addCourseBtn: {
+        heroBtnContainer: {
             marginTop: '1rem',
         },
 
@@ -261,52 +266,76 @@ const Home = () => {
 
     return (
         <div className={classes.root}>
-            <div className={classes.coursePaperContainer}>
-                <Paper className={classes.coursePaper} elevation={4}>
-                    <Typography variant="h4" className="header">Add a Course</Typography>
-
-                    <Formik
-                        initialValues={{
-                            
-                        }}
-                        
-                        
-                        onSubmit={(values) => {}}
-                    >
-                        <Form>
-                            <FormikField  
-                                color="secondary"
-                                margin="dense"
-                                name="course_title"
-                                label="Course Title"
+            <Grid container justify="center" alignItems="stretch">
+                <Grid item xs={12} lg={6} className={classes.heroCardContainer}>
+                    <Card className={classes.heroCard}>
+                        <Typography variant="h4" className="header">Manage Faculty</Typography>
+                        <CardContent>
+                            <Select 
+                                name="faculty" 
+                                defaultValue="0" 
+                                label="Faculty"
                                 variant="outlined"
+                                required
                                 fullWidth
-                            />
-                            <FormikField  
-                                color="secondary"
-                                margin="dense"
-                                name="course_code"
-                                label="Course Code"
-                                variant="outlined"
-                                fullWidth
-                            />
-                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.addCourseBtn}>Add Course</Button>
-                        </Form>
-                    </Formik>
-                </Paper>
-            </div>
+                            >
+                                <MenuItem value="0">Test Faculty</MenuItem>
+                            </Select>
+                        </CardContent>
+                        <CardActions className={classes.heroBtnContainer}>
+                            <Button variant="contained" color="secondary" startIcon={<EditRounded/>}>Edit</Button>
+                            <Button variant="contained" color="secondary" startIcon={<DeleteRounded/>}>Remove</Button>
+                            <Button variant="contained" color="secondary" startIcon={<AddRounded/>}>Add</Button>
+                        </CardActions>
+                    </Card>
+                </Grid>
 
+                <Grid item xs={12} lg={6} className={classes.heroCardContainer}>
+                    <Card className={classes.heroCard}>
+                        <Typography variant="h4" className="header">Manage Department</Typography>
+                        <CardContent>
+                            <Select
+                                style={{width: '100%', marginBottom: '1rem' }}
+                                name="faculty" 
+                                defaultValue="0" 
+                                label="Faculty"
+                                variant="outlined"
+                                required
+                                fullWidth
+                            >
+                                <MenuItem value="0">Test Faculty</MenuItem>
+                            </Select>
+                            <Select
+                                name="department" 
+                                defaultValue="0" 
+                                label="Department"
+                                variant="outlined"
+                                required
+                                fullWidth
+                            >
+                                <MenuItem value="0">Test Department</MenuItem>
+                            </Select>
+                        </CardContent>
+                        <CardActions className={classes.heroBtnContainer}>
+                            <Button variant="contained" color="secondary" startIcon={<EditRounded/>}>Edit</Button>
+                            <Button variant="contained" color="secondary" startIcon={<DeleteRounded/>}>Remove</Button>
+                            <Button variant="contained" color="secondary" startIcon={<AddRounded/>}>Add</Button>
+                        </CardActions>
+                    </Card>
+                </Grid>
+            </Grid>
+            
             <div className={classes.optionsContainer}>
                 <Grid container justify="center" spacing={0} alignItems="stretch">
                     <Grid item lg={4} xs={12} sm={6} className={classes.optionContainer}>
-                        <Paper className={classes.editProfilePaper} onClick={handleShowEditProfileDialog}>
+                        <Paper className={classes.editProfilePaper} onClick={handleShowEditFacultyDialog}>
                             <Typography variant="h4" className="header">Edit Profile</Typography>
                             <img src={editProfileImage} alt="Edit Profile"/>
                         </Paper>
                     </Grid>
 
                     <Grid item lg={4} xs={12} sm={6} className={classes.optionContainer}>
-                        <Paper className={classes.addResourcePaper} onClick={handleShowAddResourceDialog}>
+                        <Paper className={classes.addResourcePaper} onClick={handleShowEditDepartmentDialog}>
                             <Typography variant="h4" className="header">Upload Resources</Typography>
                             <img src={addResourceImage} alt="Upload Resources"/>
                         </Paper>
@@ -322,14 +351,14 @@ const Home = () => {
             </div>
 
             <Dialog
-                open={showEditProfileDialog} 
-                onClose={handleCloseEditProfileDialog}
+                open={showEditFacultyDialog} 
+                onClose={handleCloseEditFacultyDialog}
                 TransitionComponent={Transition}
                 fullScreen
             >
                 <AppBar className={classes.dialogAppBar} color="primary">
                     <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleCloseEditProfileDialog} aria-label="close">
+                        <IconButton edge="start" color="inherit" onClick={handleCloseEditFacultyDialog} aria-label="close">
                             <KeyboardArrowLeftRounded/>
                         </IconButton>
                         <Typography variant="h6" className={classes.dialogTitle}>
@@ -405,14 +434,14 @@ const Home = () => {
             </Dialog>
 
             <Dialog
-                open={showAddResourceDialog} 
-                onClose={handleCloseAddResourceDialog}
+                open={showEditDepartmentDialog} 
+                onClose={handleCloseEditDepartmentDialog}
                 TransitionComponent={Transition}
                 fullScreen
             >
                 <AppBar className={classes.dialogAppBar} color="primary">
                     <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleCloseAddResourceDialog} aria-label="close">
+                        <IconButton edge="start" color="inherit" onClick={handleCloseEditDepartmentDialog} aria-label="close">
                             <KeyboardArrowLeftRounded/>
                         </IconButton>
                         <Typography variant="h6" className={classes.dialogTitle}>
@@ -507,288 +536,7 @@ const Home = () => {
     );
 };
 
-const ResourceCard = ({ resource = {category: 'Video'}, editResource, removeResource }) => {
-    const useStyles = makeStyles(theme => ({
-        imgContainer: {
-            padding: '3rem',
-            background: theme.resourceCard.background,
-        },
-
-        root: {
-            padding: '2rem 3rem 0 3rem',
-            [theme.breakpoints.down('xs')]: {
-                padding: '2rem 1.3rem 0 1.3rem',
-            },
-            [theme.breakpoints.only('sm')]: {
-                padding: '2rem 2rem 0 2rem',
-            },
-
-            '& img': {
-                width: '100%',
-                height: 'auto',
-            }
-        },
-    }));
-
-    const classes = useStyles();
-    let image = null;
-    if (resource.category === 'Video')
-        image = videoImage;
-    else if (resource.category === 'Material')
-        image = pdfImage;
-    else if (resource.category === 'Textbook')
-        image = pdfImage;
-    else if (resource.category === 'Document')
-        image = documentImage;
-
-    return (
-        <Grid item lg={4} xs={12} sm={6} className={classes.root}>
-            <Card>
-                <div className={classes.imgContainer}>
-                    <CardMedia
-                        component="img"
-                        image={image}
-                    />
-                </div>
-                <CardContent>
-                    <Typography variant="h6" className={classes.title}>Excellent Resource</Typography>
-                    <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
-                    <Typography variant="subtitle1" color="textSecondary">COSC101</Typography>
-                </CardContent>
-                <CardActions>
-                    <Button variant="outlined" color="primary.dark" component={Link} to={`../resource/${resource.id}`}>View</Button>
-                    <Button variant="contained" color="secondary" startIcon={<EditRounded/>} onClick={() => editResource(resource)}>Edit</Button>
-                    <Button variant="contained" color="secondary" startIcon={<DeleteRounded/>} onClick={() => removeResource(resource)}>Remove</Button>
-                </CardActions>
-            </Card>         
-        </Grid>
-    );
-};
-
-const Manage = () => {
-    const [showEditResourceDialog, setShowEditResourceDialog] = useState(false);
-    const [showDeleteResourceDialog, setShowDeleteResourceDialog] = useState(false);
-
-    const handleCloseEditResourceDialog = () => {
-        setShowEditResourceDialog(false);
-    };
-
-    const handleShowEditResourceDialog = (resource) => {
-        setShowEditResourceDialog(true);
-    };
-
-    const handleCloseDeleteResourceDialog = () => {
-        setShowDeleteResourceDialog(false);
-    };
-
-    const handleShowDeleteResourceDialog = (resource) => {
-        setShowDeleteResourceDialog(true);
-    };
-
-    const useStyles = makeStyles(theme => ({
-        root: {
-            marginTop: '3rem',
-        },
-
-        filterPaperContainer: {
-            padding: '0 20rem 0 20rem',
-            [theme.breakpoints.down('xs')]: {
-                padding: '0 1rem 0 1rem',
-            },
-            [theme.breakpoints.only('sm')]: {
-                padding: '0 5rem 0 5rem',
-            },
-            [theme.breakpoints.only('md')]: {
-                padding: '0 10rem 0 10rem',
-            },
-        },
-        filterPaper: {
-            padding: '2rem',
-
-            '& .header': {
-                marginBottom: '5rem',
-                textAlign: 'center',
-            },
-            '& .selector': {
-                textAlign: 'left',
-            },
-        },
-        filterBtn: {
-            marginTop: '1rem',
-        },
-
-        resourcesContainer: {
-            marginTop: '4rem',
-        },
-
-        dialogContent: {
-            fontFamily: theme.fontFamily,
-            marginBottom: '2rem',
-        },
-
-        dialogAppBar: {
-            position: 'relative',
-        },
-        dialogTitle: {
-            marginLeft: theme.spacing(2),
-            flex: 1,
-            [theme.breakpoints.down('xs')]: {
-                fontSize: '1rem',
-            }
-        },
-    }));
-
-    const classes = useStyles();
-
-    useEffect(() => {
-        scrollToTop();
-    }, []);
-
-    return (
-        <div className={classes.root}>
-            <div className={classes.filterPaperContainer}>
-                <Paper className={classes.filterPaper} elevation={4}>
-                    <Typography variant="h4" className="header">Filter Resources</Typography>
-
-                    <Formik
-                        initialValues={{
-                            
-                        }}
-                        
-                        onSubmit={(values) => {}}
-                    >
-                        <Form>
-                            <FormikSelect 
-                                name="resource_category" 
-                                defaultValue="0" 
-                                label="Category"
-                                variant="outlined"
-                                required
-                                fullWidth
-                            >
-                                <MenuItem value="0">All</MenuItem>
-                            </FormikSelect>
-                            <FormikSelect 
-                                name="course" 
-                                defaultValue="0" 
-                                label="Course"
-                                variant="outlined"
-                                required
-                                fullWidth
-                            >
-                                <MenuItem value="0">COSC101</MenuItem>
-                            </FormikSelect>
-                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.filterBtn} startIcon={<SearchRounded/>}>Filter</Button>
-                        </Form>
-                    </Formik>
-                </Paper>
-            </div>
-
-            <div className={classes.resourcesContainer}>
-                <Grid container justify="start" spacing={0} alignItems="stretch">
-                    <ResourceCard editResource={handleShowEditResourceDialog} removeResource={handleShowDeleteResourceDialog} resource={{ category: 'Document' }}/> <ResourceCard resource={{ category: 'Textbook' }}/> <ResourceCard/>
-                    <ResourceCard resource={{ category: 'Material' }}/>
-                </Grid>
-            </div>
-
-            <Dialog
-                open={showEditResourceDialog} 
-                onClose={handleCloseEditResourceDialog}
-                TransitionComponent={Transition}
-                fullScreen
-            >
-                <AppBar className={classes.dialogAppBar} color="primary">
-                    <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleCloseEditResourceDialog} aria-label="close">
-                            <KeyboardArrowLeftRounded/>
-                        </IconButton>
-                        <Typography variant="h6" className={classes.dialogTitle}>
-                            Edit Resource
-                        </Typography>
-                        <Button color="inherit" variant="outlined" type="submit" form="edit-resource-form" startIcon={<EditRounded/>}>
-                            Update
-                        </Button>
-                    </Toolbar>
-                </AppBar>
-                <DialogContent>
-                    <DialogContentText className={classes.dialogContent}>
-                        Enter new values for fields that you want to update. Fields marked with asteriks are required.<br/>
-                        <strong>Please note that you are not allowed to change the category or file of an uploaded resource. If that's your requirement, you'll have
-                        to delete the resource and add it again with the desired configurations.</strong>
-                    </DialogContentText>
-                        <Formik
-                            initialValues={{
-                                
-                            }}
-                            
-                            
-                            onSubmit={(values) => { alert('hello'); }}
-                        >
-                            <Form id="edit-resource-form">
-                            <FormikSelect 
-                                    name="course_code" 
-                                    label="Course Code"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                >
-                                    <MenuItem value="test1">COSC101</MenuItem>
-                                    <MenuItem value="test2">COSC102</MenuItem>
-                                </FormikSelect>
-                                <FormikField
-                                    color="secondary"
-                                    name="resource_name"
-                                    label="Resource Title"
-                                    type="text"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                />
-                                <FormikField
-                                    color="secondary"
-                                    name="resource_description"
-                                    label="Resource Description"
-                                    type="text"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    multiline
-                                    rows={6}
-                                />
-                            </Form>
-                        </Formik>
-                </DialogContent>
-            </Dialog>
-
-            <Dialog
-                open={showDeleteResourceDialog} 
-                onClose={handleCloseDeleteResourceDialog}
-                TransitionComponent={Transition}
-                fullWidth
-            >
-                <DialogTitle>
-                    Confirm Delete
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText className={classes.dialogContent}>
-                        Are you sure you want to permanently remove this resource?<br/>
-                        <strong>Please note that you cannot reverse this process.</strong>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDeleteResourceDialog} variant="contained" color="primary">
-                        Cancel
-                    </Button>
-                    <Button type="submit" variant="contained" color="secondary" startIcon={<DeleteRounded/>}>
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
-    );
-};
-
-const Moderation = ({ showFooter }) => {
+const Admin = ({ showFooter }) => {
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: '1rem',
@@ -802,13 +550,12 @@ const Moderation = ({ showFooter }) => {
     return (
         <div className={classes.root}>
             <Switch>
-                <Route path="/moderation/manage"><Manage/></Route>
-                <Route path="/moderation/login"><Login/></Route>
-                <Route path="/moderation/home"><Home/></Route>
-                <Route path="/"><Redirect to="/moderation/home"/></Route>
+                <Route path="/admin/login"><Login/></Route>
+                <Route path="/admin/home"><Home/></Route>
+                <Route path="/"><Redirect to="/admin/home"/></Route>
             </Switch>
         </div>
     );
 };
 
-export default Moderation;
+export default Admin;
