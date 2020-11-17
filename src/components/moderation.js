@@ -1,12 +1,18 @@
-import { Button, Grid, makeStyles, Paper, Typography } from "@material-ui/core";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, makeStyles, MenuItem, Paper, Slide, Typography } from "@material-ui/core";
 import { Form, Formik } from "formik";
-import { useEffect } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import FormikField from "./formik-field";
 import { scrollToTop } from "./utils";
 import addResourceImage from '../images/add.svg';
 import manageResourceImage from '../images/settings.svg';
 import editProfileImage from '../images/edit.svg';
+import { EditRounded } from "@material-ui/icons";
+import FormikSelect from "./formik-select";
+
+const Transition = forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const Login = () => {
     const useStyles = makeStyles(theme => ({
@@ -93,6 +99,16 @@ const Login = () => {
 };
 
 const Home = () => {
+    const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
+
+    const handleCloseEditProfileDialog = () => {
+        setShowEditProfileDialog(false);
+    };
+
+    const handleShowEditProfileDialog = () => {
+        setShowEditProfileDialog(true);
+    };
+
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: '3rem',
@@ -251,7 +267,7 @@ const Home = () => {
             <div className={classes.optionsContainer}>
                 <Grid container justify="center" spacing={4} alignItems="stretch">
                     <Grid item lg={3} xs={12}>
-                        <Paper className={classes.editProfilePaper}>
+                        <Paper className={classes.editProfilePaper} onClick={handleShowEditProfileDialog}>
                             <Typography variant="h4" className="header">Edit Profile</Typography>
                             <img src={editProfileImage} alt="Edit Profile"/>
                         </Paper>
@@ -272,6 +288,89 @@ const Home = () => {
                     </Grid>
                 </Grid>
             </div>
+
+            <Dialog
+                open={showEditProfileDialog} 
+                onClose={handleCloseEditProfileDialog}
+                keepMounted
+                aria-labelledby="editprofile-dialog-title" 
+                TransitionComponent={Transition}
+            >
+                <DialogTitle id="editprofile-dialog-title">Edit Profile</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Enter new values for fields that you want to update. Fields marked with asteriks are required.
+                    </DialogContentText>
+                        <Formik
+                            initialValues={{
+                                
+                            }}
+                            
+                            
+                            onSubmit={(values) => {}}
+                        >
+                            <Form>
+                                <FormikField
+                                    color="secondary"
+                                    margin="dense"
+                                    name="email"
+                                    label="Email"
+                                    type="email"
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                />
+                                <FormikField
+                                    color="secondary"
+                                    margin="dense"
+                                    name="full_name"
+                                    label="Full Name"
+                                    type="text"
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                />
+                                <FormikSelect 
+                                    name="gender" 
+                                    defaultValue="male" 
+                                    label="Gender"
+                                    variant="outlined"
+                                    fullWidth
+                                >
+                                    <MenuItem value="male">Male</MenuItem>
+                                    <MenuItem value="female">Female</MenuItem>
+                                </FormikSelect>
+                                <FormikField
+                                    color="secondary"
+                                    margin="dense"
+                                    name="phone"
+                                    label="Phone"
+                                    type="tel"
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                />
+                                <FormikField
+                                    color="secondary"
+                                    margin="dense"
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    variant="outlined"
+                                    fullWidth
+                                />
+                            </Form>
+                        </Formik>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseEditProfileDialog} variant="contained" color="primary">
+                        Cancel
+                    </Button>
+                    <Button type="submit" variant="contained" color="secondary" startIcon={<EditRounded/>}>
+                        Update Profile
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };
