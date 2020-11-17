@@ -292,7 +292,6 @@ const Home = () => {
             <Dialog
                 open={showEditProfileDialog} 
                 onClose={handleCloseEditProfileDialog}
-                keepMounted
                 aria-labelledby="editprofile-dialog-title" 
                 TransitionComponent={Transition}
             >
