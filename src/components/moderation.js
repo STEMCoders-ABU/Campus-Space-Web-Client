@@ -1,14 +1,14 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, makeStyles, MenuItem, Paper, Slide, Typography } from "@material-ui/core";
+import { AppBar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, makeStyles, MenuItem, Paper, Slide, Toolbar, Typography } from "@material-ui/core";
+import { CloudUploadRounded, EditRounded, KeyboardArrowLeftRounded, SearchRounded } from "@material-ui/icons";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
-import FormikField from "./formik-field";
-import { scrollToTop } from "./utils";
+import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import addResourceImage from '../images/add.svg';
-import manageResourceImage from '../images/settings.svg';
 import editProfileImage from '../images/edit.svg';
-import { CloudUploadRounded, EditRounded } from "@material-ui/icons";
+import manageResourceImage from '../images/settings.svg';
+import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
+import { scrollToTop } from "./utils";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -57,6 +57,10 @@ const Login = () => {
 
     const classes = useStyles();
 
+    useEffect(() => {
+        scrollToTop();
+    }, []);
+
     return (
         <div className={classes.root}>
             <div className={classes.paperContainer}>
@@ -74,7 +78,6 @@ const Login = () => {
                         <Form>
                             <FormikField  
                                 color="secondary"
-                                margin="dense"
                                 name="username"
                                 label="Username"
                                 variant="outlined"
@@ -82,7 +85,6 @@ const Login = () => {
                             />
                             <FormikField  
                                 color="secondary"
-                                margin="dense"
                                 name="password"
                                 label="Password"
                                 variant="outlined"
@@ -102,6 +104,8 @@ const Home = () => {
     const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
     const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
 
+    const history = useHistory();
+    
     const handleCloseEditProfileDialog = () => {
         setShowEditProfileDialog(false);
     };
@@ -225,9 +229,28 @@ const Home = () => {
                 transition: '.3s ease',
             },
         },
+
+        dialogContent: {
+            fontFamily: theme.fontFamily,
+        },
+
+        dialogAppBar: {
+            position: 'relative',
+        },
+        dialogTitle: {
+            marginLeft: theme.spacing(2),
+            flex: 1,
+            [theme.breakpoints.down('xs')]: {
+                fontSize: '1rem',
+            }
+        },
     }));
 
     const classes = useStyles();
+
+    useEffect(() => {
+        scrollToTop();
+    }, []);
 
     return (
         <div className={classes.root}>
@@ -283,7 +306,7 @@ const Home = () => {
                     </Grid>
 
                     <Grid item lg={4} xs={12} sm={6} className={classes.optionContainer}>
-                        <Paper className={classes.manageResourcesPaper}>
+                        <Paper className={classes.manageResourcesPaper} onClick={() => history.push('/moderation/manage')}>
                             <Typography variant="h4" className="header">Manage Resources</Typography>
                             <img src={manageResourceImage} alt="Upload Resources"/>
                         </Paper>
@@ -294,12 +317,24 @@ const Home = () => {
             <Dialog
                 open={showEditProfileDialog} 
                 onClose={handleCloseEditProfileDialog}
-                aria-labelledby="editprofile-dialog-title" 
                 TransitionComponent={Transition}
+                fullScreen
             >
-                <DialogTitle id="editprofile-dialog-title">Edit Profile</DialogTitle>
+                <AppBar className={classes.dialogAppBar} color="secondary">
+                    <Toolbar>
+                        <IconButton edge="start" color="inherit" onClick={handleCloseEditProfileDialog} aria-label="close">
+                            <KeyboardArrowLeftRounded/>
+                        </IconButton>
+                        <Typography variant="h6" className={classes.dialogTitle}>
+                            Edit Profile
+                        </Typography>
+                        <Button color="primary" variant="outlined" type="submit" form="edit-profile-form" startIcon={<EditRounded/>}>
+                            Update
+                        </Button>
+                    </Toolbar>
+                </AppBar>
                 <DialogContent>
-                    <DialogContentText>
+                    <DialogContentText className={classes.dialogContent}>
                         Enter new values for fields that you want to update. Fields marked with asteriks are required.
                     </DialogContentText>
                         <Formik
@@ -308,12 +343,11 @@ const Home = () => {
                             }}
                             
                             
-                            onSubmit={(values) => {}}
+                            onSubmit={(values) => { alert('hello'); }}
                         >
-                            <Form>
+                            <Form id="edit-profile-form">
                                 <FormikField
                                     color="secondary"
-                                    margin="dense"
                                     name="email"
                                     label="Email"
                                     type="email"
@@ -323,7 +357,6 @@ const Home = () => {
                                 />
                                 <FormikField
                                     color="secondary"
-                                    margin="dense"
                                     name="full_name"
                                     label="Full Name"
                                     type="text"
@@ -336,6 +369,7 @@ const Home = () => {
                                     defaultValue="male" 
                                     label="Gender"
                                     variant="outlined"
+                                    required
                                     fullWidth
                                 >
                                     <MenuItem value="male">Male</MenuItem>
@@ -343,7 +377,6 @@ const Home = () => {
                                 </FormikSelect>
                                 <FormikField
                                     color="secondary"
-                                    margin="dense"
                                     name="phone"
                                     label="Phone"
                                     type="tel"
@@ -353,7 +386,6 @@ const Home = () => {
                                 />
                                 <FormikField
                                     color="secondary"
-                                    margin="dense"
                                     name="password"
                                     label="Password"
                                     type="password"
@@ -363,26 +395,44 @@ const Home = () => {
                             </Form>
                         </Formik>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseEditProfileDialog} variant="contained" color="primary">
-                        Cancel
-                    </Button>
-                    <Button type="submit" variant="contained" color="secondary" startIcon={<EditRounded/>}>
-                        Update
-                    </Button>
-                </DialogActions>
             </Dialog>
 
             <Dialog
                 open={showAddResourceDialog} 
                 onClose={handleCloseAddResourceDialog}
-                aria-labelledby="addresource-dialog-title" 
                 TransitionComponent={Transition}
+                fullScreen
             >
-                <DialogTitle id="addresource-dialog-title">Upload Resource</DialogTitle>
+                <AppBar className={classes.dialogAppBar} color="secondary">
+                    <Toolbar>
+                        <IconButton edge="start" color="inherit" onClick={handleCloseAddResourceDialog} aria-label="close">
+                            <KeyboardArrowLeftRounded/>
+                        </IconButton>
+                        <Typography variant="h6" className={classes.dialogTitle}>
+                            Upload Resources
+                        </Typography>
+                        <Button color="primary" variant="outlined" type="submit" form="add-resource-form" startIcon={<CloudUploadRounded/>}>
+                            Upload
+                        </Button>
+                    </Toolbar>
+                </AppBar>
                 <DialogContent>
-                    <DialogContentText>
-                        Enter new values for fields that you want to update. Fields marked with asteriks are required.
+                    <DialogContentText className={classes.dialogContent}>
+                        A resource category determines the type of resource that can be uploaded. The list below explains the type of resources allowed for each category:
+                        <ul>
+                            <li>
+                                <strong>Document</strong>: For Microsoft documents like Word (doc, docx), Excel (xls, xlsx) or Power Point (ppt, pptx).
+                            </li>
+                            <li>
+                                <strong>Material</strong>: For lecture materials released by lecturers. This must be in PDF format.
+                            </li>
+                            <li>
+                                <strong>Textbook</strong>: For other useful textual resources like e-books. This must also be in PDF format.
+                            </li>
+                            <li>
+                                <strong>Video</strong>: For visual resources like tutorial vidoes. This must be in MP4 format.
+                            </li>
+                        </ul>
                     </DialogContentText>
                         <Formik
                             initialValues={{
@@ -392,68 +442,155 @@ const Home = () => {
                             
                             onSubmit={(values) => {}}
                         >
-                            <Form>
-                                <FormikField
-                                    color="secondary"
-                                    margin="dense"
-                                    name="email"
-                                    label="Email"
-                                    type="email"
+                            <Form id="add-resource-form">
+                                <FormikSelect 
+                                    name="course_code" 
+                                    label="Course Code"
                                     variant="outlined"
                                     required
                                     fullWidth
-                                />
+                                >
+                                    <MenuItem value="test1">COSC101</MenuItem>
+                                    <MenuItem value="test2">COSC102</MenuItem>
+                                </FormikSelect>
                                 <FormikField
                                     color="secondary"
-                                    margin="dense"
-                                    name="full_name"
-                                    label="Full Name"
+                                    name="resource_name"
+                                    label="Resource Title"
                                     type="text"
                                     variant="outlined"
                                     required
                                     fullWidth
                                 />
                                 <FormikSelect 
-                                    name="gender" 
-                                    defaultValue="male" 
-                                    label="Gender"
-                                    variant="outlined"
-                                    fullWidth
-                                >
-                                    <MenuItem value="male">Male</MenuItem>
-                                    <MenuItem value="female">Female</MenuItem>
-                                </FormikSelect>
-                                <FormikField
-                                    color="secondary"
-                                    margin="dense"
-                                    name="phone"
-                                    label="Phone"
-                                    type="tel"
+                                    name="resource_category" 
+                                    label="Resource Category"
                                     variant="outlined"
                                     required
                                     fullWidth
+                                >
+                                    <MenuItem value="test1">Material</MenuItem>
+                                    <MenuItem value="test2">Document</MenuItem>
+                                </FormikSelect>
+                                <FormikField
+                                    color="secondary"
+                                    name="resource_description"
+                                    label="Resource Description"
+                                    type="text"
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    mutliline
+                                    rows={6}
                                 />
                                 <FormikField
                                     color="secondary"
-                                    margin="dense"
-                                    name="password"
-                                    label="Password"
-                                    type="password"
+                                    name="resource_file"
+                                    label=""
+                                    type="file"
                                     variant="outlined"
+                                    required
                                     fullWidth
                                 />
                             </Form>
                         </Formik>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseAddResourceDialog} variant="contained" color="primary">
-                        Cancel
-                    </Button>
-                    <Button type="submit" variant="contained" color="secondary" startIcon={<CloudUploadRounded/>}>
-                        Upload
-                    </Button>
-                </DialogActions>
             </Dialog>
+        </div>
+    );
+};
+
+const Manage = () => {
+    const useStyles = makeStyles(theme => ({
+        root: {
+            marginTop: '3rem',
+        },
+
+        filterPaperContainer: {
+            padding: '0 20rem 0 20rem',
+            [theme.breakpoints.down('xs')]: {
+                padding: '0 1rem 0 1rem',
+            },
+            [theme.breakpoints.only('sm')]: {
+                padding: '0 5rem 0 5rem',
+            },
+            [theme.breakpoints.only('md')]: {
+                padding: '0 10rem 0 10rem',
+            },
+        },
+        filterPaper: {
+            padding: '2rem',
+
+            '& .header': {
+                marginBottom: '5rem',
+                textAlign: 'center',
+            },
+            '& .selector': {
+                textAlign: 'left',
+            },
+        },
+        filterBtn: {
+            marginTop: '1rem',
+        },
+
+        resourcesContainer: {
+            marginTop: '4rem',
+        }
+    }));
+
+    const classes = useStyles();
+
+    useEffect(() => {
+        scrollToTop();
+    }, []);
+
+    return (
+        <div className={classes.root}>
+            <div className={classes.filterPaperContainer}>
+                <Paper className={classes.filterPaper} elevation={4}>
+                    <Typography variant="h4" className="header">Filter Resources</Typography>
+
+                    <Formik
+                        initialValues={{
+                            
+                        }}
+                        
+                        onSubmit={(values) => {}}
+                    >
+                        <Form>
+                            <FormikSelect 
+                                name="resource_category" 
+                                defaultValue="0" 
+                                label="Category"
+                                variant="outlined"
+                                required
+                                fullWidth
+                            >
+                                <MenuItem value="0">All</MenuItem>
+                            </FormikSelect>
+                            <FormikSelect 
+                                name="course" 
+                                defaultValue="0" 
+                                label="Course"
+                                variant="outlined"
+                                required
+                                fullWidth
+                            >
+                                <MenuItem value="0">COSC101</MenuItem>
+                            </FormikSelect>
+                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.filterBtn} startIcon={<SearchRounded/>}>Filter</Button>
+                        </Form>
+                    </Formik>
+                </Paper>
+            </div>
+
+            <div className={classes.resourcesContainer}>
+                <Grid container justify="center" spacing={0} alignItems="stretch">
+                    <Grid item lg={4} xs={12} sm={6} className={classes.optionContainer}>
+                        
+                    </Grid>
+                </Grid>
+            </div>
         </div>
     );
 };
@@ -467,15 +604,12 @@ const Moderation = ({ showFooter }) => {
 
     const classes = useStyles();
 
-    useEffect(() => {
-        scrollToTop();
-    }, []);
-
     useEffect(() => showFooter(false), [showFooter]);
 
     return (
         <div className={classes.root}>
             <Switch>
+                <Route path="/moderation/manage"><Manage/></Route>
                 <Route path="/moderation/login"><Login/></Route>
                 <Route path="/moderation/home"><Home/></Route>
                 <Route path="/"><Redirect to="/moderation/home"/></Route>
