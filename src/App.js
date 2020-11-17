@@ -16,6 +16,7 @@ import TwitterIcon from '@material-ui/icons/Twitter';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Resources from "./components/resources";
 import Resource from "./components/resource";
+import Moderation from "./components/moderation";
 
 const NavBar = ({ themeName, changeTheme, ...props }) => {
   const useStyles = makeStyles(theme => ({
@@ -170,7 +171,7 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
           <div className={classes.navlinksContainer}>
             <Link className={classes.navlink} to="/">Home</Link>
             <Link className={classes.navlink} to="/resources-filter">Resources</Link>
-            <Link className={classes.navlink}>Moderation</Link>
+            <Link className={classes.navlink} to="/moderation">Moderation</Link>
             <Link className={classes.navlink}>Contact</Link>
             <Link className={classes.navlink}>About</Link>
           </div>
@@ -374,6 +375,7 @@ const App = (props) => {
             <Route path="/resource/:id"><Resource showFooter={setShowFooter}/></Route>
             <Route path="/resources"><Resources showFooter={setShowFooter}/></Route>
             <Route path="/resources-filter"><ResourcesFilter showFooter={setShowFooter}/></Route>
+            <Route path="/moderation"><Moderation showFooter={setShowFooter}/></Route>
             <Route path="/"><Home showFooter={setShowFooter}/></Route>
           </Router>
         </div>

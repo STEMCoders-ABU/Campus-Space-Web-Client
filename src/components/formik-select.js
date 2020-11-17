@@ -6,7 +6,7 @@ const FormikSelect = ({label, children, ...props}) => {
   
     return (
       <>
-        <FormControl color="secondary" variant="filled" style={{width: '100%', marginBottom: '1rem' }}>
+        <FormControl color="secondary" variant="outlined" style={{width: '100%', marginBottom: '1rem' }}>
             <InputLabel>{label}</InputLabel>
             <Select
                 label={label}
