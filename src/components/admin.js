@@ -1,11 +1,8 @@
-import { AppBar, Button, Card, CardActions, CardContent, Dialog, DialogContent, DialogContentText, Grid, IconButton, makeStyles, MenuItem, Paper, Select, Slide, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, makeStyles, MenuItem, Paper, Select, Slide, Toolbar, Typography } from "@material-ui/core";
 import { AccountCircleRounded, AddRounded, CloudUploadRounded, DeleteRounded, EditRounded, KeyboardArrowLeftRounded } from "@material-ui/icons";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
-import addResourceImage from '../images/add.svg';
-import editProfileImage from '../images/edit.svg';
-import manageResourceImage from '../images/settings.svg';
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
 import { scrollToTop } from "./utils";
@@ -106,9 +103,11 @@ const Login = () => {
 const Home = () => {
     const [showEditFacultyDialog, setShowEditFacultyDialog] = useState(false);
     const [showEditDepartmentDialog, setShowEditDepartmentDialog] = useState(false);
+    const [showDeleteFacultyDialog, setShowDeleteFacultyDialog] = useState(false);
+    const [showDeleteDepartmentDialog, setShowDeleteDepartmentDialog] = useState(false);
+    const [showAddFacultyDialog, setShowAddFacultyDialog] = useState(false);
+    const [showAddDepartmentDialog, setShowAddDepartmentDialog] = useState(false);
 
-    const history = useHistory();
-    
     const handleCloseEditFacultyDialog = () => {
         setShowEditFacultyDialog(false);
     };
@@ -125,13 +124,45 @@ const Home = () => {
         setShowEditDepartmentDialog(true);
     };
 
+    const handleCloseDeleteFacultyDialog = () => {
+        setShowDeleteFacultyDialog(false);
+    };
+
+    const handleShowDeleteFacultyDialog = () => {
+        setShowDeleteFacultyDialog(true);
+    };
+
+    const handleCloseDeleteDepartmentDialog = () => {
+        setShowDeleteDepartmentDialog(false);
+    };
+
+    const handleShowDeleteDepartmentDialog = () => {
+        setShowDeleteDepartmentDialog(true);
+    };
+
+    const handleCloseAddFacultyDialog = () => {
+        setShowAddFacultyDialog(false);
+    };
+
+    const handleShowAddFacultyDialog = () => {
+        setShowAddFacultyDialog(true);
+    };
+
+    const handleCloseAddDepartmentDialog = () => {
+        setShowAddDepartmentDialog(false);
+    };
+
+    const handleShowAddDepartmentDialog = () => {
+        setShowAddDepartmentDialog(true);
+    };
+
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: '3rem',
         },
 
         heroCardContainer: {
-            padding: '0 2rem 0 2rem',
+            padding: '0 20rem 0 20rem',
             marginTop: '3rem',
             [theme.breakpoints.down('xs')]: {
                 padding: '0 1rem 0 1rem',
@@ -165,82 +196,6 @@ const Home = () => {
             marginTop: '1rem',
         },
 
-        optionsContainer: {
-            marginTop: '4rem',
-        },
-
-        optionContainer: {
-            padding: '2rem 3rem 0 3rem',
-            [theme.breakpoints.down('xs')]: {
-                padding: '2rem 1.3rem 0 1.3rem',
-            },
-            [theme.breakpoints.only('sm')]: {
-                padding: '2rem 2rem 0 2rem',
-            },
-
-            '& .header': {
-                marginBottom: '2rem',
-                fontFamily: theme.fontFamily,
-                textAlign: 'center',
-                [theme.breakpoints.down('xs')]: {
-                    fontSize: '1.5rem',
-                },
-            },
-
-            '& img': {
-                width: '100%',
-                height: 'auto',
-            }
-        },
-
-        editProfilePaper: {
-            textAlign: 'center',
-            padding: '3rem',
-            backgroundColor: '#ff7d6c',
-            cursor: 'pointer',
-            transition: '.3s ease',
-            height: '100%',
-            borderRadius: '2rem',
-
-            '&:hover': {
-                boxShadow: theme.shadows[24],
-                backgroundColor: theme.resourceCard.background,
-                transition: '.3s ease',
-            },
-        },
-
-        addResourcePaper: {
-            textAlign: 'center',
-            padding: '3rem',
-            backgroundColor: '#1ceb9f',
-            cursor: 'pointer',
-            transition: '.3s ease',
-            height: '100%',
-            borderRadius: '2rem',
-
-            '&:hover': {
-                boxShadow: theme.shadows[24],
-                backgroundColor: theme.resourceCard.background,
-                transition: '.3s ease',
-            },
-        },
-
-        manageResourcesPaper: {
-            textAlign: 'center',
-            padding: '3rem',
-            backgroundColor: '#47daea',
-            cursor: 'pointer',
-            transition: '.3s ease',
-            height: '100%',
-            borderRadius: '2rem',
-
-            '&:hover': {
-                boxShadow: theme.shadows[24],
-                backgroundColor: theme.resourceCard.background,
-                transition: '.3s ease',
-            },
-        },
-
         dialogContent: {
             fontFamily: theme.fontFamily,
             marginBottom: '2rem',
@@ -267,7 +222,7 @@ const Home = () => {
     return (
         <div className={classes.root}>
             <Grid container justify="center" alignItems="stretch">
-                <Grid item xs={12} lg={6} className={classes.heroCardContainer}>
+                <Grid item xs={12} className={classes.heroCardContainer}>
                     <Card className={classes.heroCard}>
                         <Typography variant="h4" className="header">Manage Faculty</Typography>
                         <CardContent>
@@ -283,14 +238,14 @@ const Home = () => {
                             </Select>
                         </CardContent>
                         <CardActions className={classes.heroBtnContainer}>
-                            <Button variant="contained" color="secondary" startIcon={<EditRounded/>}>Edit</Button>
-                            <Button variant="contained" color="secondary" startIcon={<DeleteRounded/>}>Remove</Button>
-                            <Button variant="contained" color="secondary" startIcon={<AddRounded/>}>Add</Button>
+                            <Button variant="contained" color="secondary" startIcon={<EditRounded/>} onClick={handleShowEditFacultyDialog}>Edit</Button>
+                            <Button variant="contained" color="secondary" startIcon={<DeleteRounded/>} onClick={handleShowDeleteFacultyDialog}>Remove</Button>
+                            <Button variant="contained" color="secondary" startIcon={<AddRounded/>} onClick={handleShowAddFacultyDialog}>Add</Button>
                         </CardActions>
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} lg={6} className={classes.heroCardContainer}>
+                <Grid item xs={12} className={classes.heroCardContainer}>
                     <Card className={classes.heroCard}>
                         <Typography variant="h4" className="header">Manage Department</Typography>
                         <CardContent>
@@ -317,220 +272,305 @@ const Home = () => {
                             </Select>
                         </CardContent>
                         <CardActions className={classes.heroBtnContainer}>
-                            <Button variant="contained" color="secondary" startIcon={<EditRounded/>}>Edit</Button>
-                            <Button variant="contained" color="secondary" startIcon={<DeleteRounded/>}>Remove</Button>
-                            <Button variant="contained" color="secondary" startIcon={<AddRounded/>}>Add</Button>
+                            <Button variant="contained" color="secondary" startIcon={<EditRounded/>} onClick={handleShowEditDepartmentDialog}>Edit</Button>
+                            <Button variant="contained" color="secondary" startIcon={<DeleteRounded/>} onClick={handleShowDeleteDepartmentDialog}>Remove</Button>
+                            <Button variant="contained" color="secondary" startIcon={<AddRounded/>} onClick={handleShowAddDepartmentDialog}>Add</Button>
                         </CardActions>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} className={classes.heroCardContainer}>
+                    <Card className={classes.heroCard}>
+                        <Typography variant="h4" className="header">Add Class Rep</Typography>
+                        <CardContent>
+                            <Formik
+                                initialValues={{
+                                    
+                                }}
+                                
+                                
+                                onSubmit={(values) => {}}
+                            >
+                                <Form>
+                                    <FormikSelect
+                                        name="faculty" 
+                                        defaultValue="0" 
+                                        label="Faculty"
+                                        variant="outlined"
+                                        required
+                                        fullWidth
+                                    >
+                                        <MenuItem value="0">Test Faculty</MenuItem>
+                                    </FormikSelect>
+                                    <FormikSelect
+                                        name="department" 
+                                        defaultValue="0" 
+                                        label="Department"
+                                        variant="outlined"
+                                        required
+                                        fullWidth
+                                    >
+                                        <MenuItem value="0">Test Department</MenuItem>
+                                    </FormikSelect>
+                                    <FormikField  
+                                        color="secondary"
+                                        name="username"
+                                        label="Username"
+                                        variant="outlined"
+                                        fullWidth
+                                    />
+                                    <FormikField  
+                                        color="secondary"
+                                        name="email"
+                                        label="Email"
+                                        variant="outlined"
+                                        fullWidth
+                                    />
+                                    <FormikField  
+                                        color="secondary"
+                                        name="full_name"
+                                        label="Full Name"
+                                        variant="outlined"
+                                        fullWidth
+                                    />
+                                    <FormikSelect 
+                                        name="gender" 
+                                        defaultValue="male" 
+                                        label="Gender"
+                                        variant="outlined"
+                                        required
+                                        fullWidth
+                                    >
+                                        <MenuItem value="male">Male</MenuItem>
+                                        <MenuItem value="female">Female</MenuItem>
+                                    </FormikSelect>
+                                    <FormikField
+                                        color="secondary"
+                                        name="phone"
+                                        label="Phone"
+                                        type="tel"
+                                        variant="outlined"
+                                        required
+                                        fullWidth
+                                    />
+                                    <FormikField  
+                                        color="secondary"
+                                        name="password"
+                                        label="Password"
+                                        variant="outlined"
+                                        type="password"
+                                        fullWidth
+                                    />
+                                    <div className={classes.heroBtnContainer}>
+                                        <Button type="submit" variant="contained" color="secondary" size="large">Submit</Button>
+                                    </div>
+                                </Form>
+                            </Formik>
+                        </CardContent>
                     </Card>
                 </Grid>
             </Grid>
             
-            <div className={classes.optionsContainer}>
-                <Grid container justify="center" spacing={0} alignItems="stretch">
-                    <Grid item lg={4} xs={12} sm={6} className={classes.optionContainer}>
-                        <Paper className={classes.editProfilePaper} onClick={handleShowEditFacultyDialog}>
-                            <Typography variant="h4" className="header">Edit Profile</Typography>
-                            <img src={editProfileImage} alt="Edit Profile"/>
-                        </Paper>
-                    </Grid>
-
-                    <Grid item lg={4} xs={12} sm={6} className={classes.optionContainer}>
-                        <Paper className={classes.addResourcePaper} onClick={handleShowEditDepartmentDialog}>
-                            <Typography variant="h4" className="header">Upload Resources</Typography>
-                            <img src={addResourceImage} alt="Upload Resources"/>
-                        </Paper>
-                    </Grid>
-
-                    <Grid item lg={4} xs={12} sm={6} className={classes.optionContainer}>
-                        <Paper className={classes.manageResourcesPaper} onClick={() => history.push('/moderation/manage')}>
-                            <Typography variant="h4" className="header">Manage Resources</Typography>
-                            <img src={manageResourceImage} alt="Upload Resources"/>
-                        </Paper>
-                    </Grid>
-                </Grid>
-            </div>
-
             <Dialog
                 open={showEditFacultyDialog} 
                 onClose={handleCloseEditFacultyDialog}
                 TransitionComponent={Transition}
-                fullScreen
+                fullWidth
             >
-                <AppBar className={classes.dialogAppBar} color="primary">
-                    <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleCloseEditFacultyDialog} aria-label="close">
-                            <KeyboardArrowLeftRounded/>
-                        </IconButton>
-                        <Typography variant="h6" className={classes.dialogTitle}>
-                            Edit Profile
-                        </Typography>
-                        <Button color="inherit" variant="outlined" type="submit" form="edit-profile-form" startIcon={<EditRounded/>}>
-                            Update
-                        </Button>
-                    </Toolbar>
-                </AppBar>
+                <DialogTitle>
+                    Edit Faculty
+                </DialogTitle>
                 <DialogContent>
-                    <DialogContentText className={classes.dialogContent}>
-                        Enter new values for fields that you want to update. Fields marked with asteriks are required.
-                    </DialogContentText>
-                        <Formik
-                            initialValues={{
-                                
-                            }}
+                    <Formik
+                        initialValues={{
                             
-                            
-                            onSubmit={(values) => { alert('hello'); }}
-                        >
-                            <Form id="edit-profile-form">
-                                <FormikField
-                                    color="secondary"
-                                    name="email"
-                                    label="Email"
-                                    type="email"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                />
-                                <FormikField
-                                    color="secondary"
-                                    name="full_name"
-                                    label="Full Name"
-                                    type="text"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                />
-                                <FormikSelect 
-                                    name="gender" 
-                                    defaultValue="male" 
-                                    label="Gender"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                >
-                                    <MenuItem value="male">Male</MenuItem>
-                                    <MenuItem value="female">Female</MenuItem>
-                                </FormikSelect>
-                                <FormikField
-                                    color="secondary"
-                                    name="phone"
-                                    label="Phone"
-                                    type="tel"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                />
-                                <FormikField
-                                    color="secondary"
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    variant="outlined"
-                                    fullWidth
-                                />
-                            </Form>
-                        </Formik>
+                        }}
+                        
+                        onSubmit={(values) => {}}
+                    >
+                        <Form id="edit-faculty">
+                            <FormikField  
+                                color="secondary"
+                                name="faculty_name"
+                                label="Faculty Name"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        </Form>
+                    </Formik>
                 </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseEditFacultyDialog} variant="contained" color="primary">
+                        Cancel
+                    </Button>
+                    <Button type="submit" variant="contained" form="edit-faculty" color="secondary" startIcon={<EditRounded/>}>
+                        Update
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={showAddFacultyDialog} 
+                onClose={handleCloseAddFacultyDialog}
+                TransitionComponent={Transition}
+                fullWidth
+            >
+                <DialogTitle>
+                    Add Faculty
+                </DialogTitle>
+                <DialogContent>
+                    <Formik
+                        initialValues={{
+                            
+                        }}
+                        
+                        onSubmit={(values) => {}}
+                    >
+                        <Form id="edit-faculty">
+                            <FormikField  
+                                color="secondary"
+                                name="faculty_name"
+                                label="Faculty Name"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        </Form>
+                    </Formik>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseAddFacultyDialog} variant="contained" color="primary">
+                        Cancel
+                    </Button>
+                    <Button type="submit" variant="contained" form="edit-faculty" color="secondary" startIcon={<AddRounded/>}>
+                        Add
+                    </Button>
+                </DialogActions>
             </Dialog>
 
             <Dialog
                 open={showEditDepartmentDialog} 
                 onClose={handleCloseEditDepartmentDialog}
                 TransitionComponent={Transition}
-                fullScreen
+                fullWidth
             >
-                <AppBar className={classes.dialogAppBar} color="primary">
-                    <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleCloseEditDepartmentDialog} aria-label="close">
-                            <KeyboardArrowLeftRounded/>
-                        </IconButton>
-                        <Typography variant="h6" className={classes.dialogTitle}>
-                            Upload Resources
-                        </Typography>
-                        <Button color="inherit" variant="outlined" type="submit" form="add-resource-form" startIcon={<CloudUploadRounded/>}>
-                            Upload
-                        </Button>
-                    </Toolbar>
-                </AppBar>
+                <DialogTitle>
+                    Edit Department
+                </DialogTitle>
+                <DialogContent>
+                    <Formik
+                        initialValues={{
+                            
+                        }}
+                        
+                        onSubmit={(values) => {}}
+                    >
+                        <Form id="edit-faculty">
+                            <FormikField  
+                                color="secondary"
+                                name="department_name"
+                                label="Department Name"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        </Form>
+                    </Formik>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseEditFacultyDialog} variant="contained" color="primary">
+                        Cancel
+                    </Button>
+                    <Button type="submit" variant="contained" form="edit-faculty" color="secondary" startIcon={<EditRounded/>}>
+                        Update
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={showAddDepartmentDialog} 
+                onClose={handleCloseAddDepartmentDialog}
+                TransitionComponent={Transition}
+                fullWidth
+            >
+                <DialogTitle>
+                    Add Department
+                </DialogTitle>
+                <DialogContent>
+                    <Formik
+                        initialValues={{
+                            
+                        }}
+                        
+                        onSubmit={(values) => {}}
+                    >
+                        <Form id="edit-faculty">
+                            <FormikField  
+                                color="secondary"
+                                name="department_name"
+                                label="Department Name"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        </Form>
+                    </Formik>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseAddDepartmentDialog} variant="contained" color="primary">
+                        Cancel
+                    </Button>
+                    <Button type="submit" variant="contained" form="edit-faculty" color="secondary" startIcon={<AddRounded/>}>
+                        Add
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={showDeleteFacultyDialog} 
+                onClose={handleCloseDeleteFacultyDialog}
+                TransitionComponent={Transition}
+                fullWidth
+            >
+                <DialogTitle>
+                    Confirm Delete
+                </DialogTitle>
                 <DialogContent>
                     <DialogContentText className={classes.dialogContent}>
-                        A resource category determines the type of resource that can be uploaded. The list below explains the type of resources allowed for each category:
-                        <ul>
-                            <li>
-                                <strong>Document</strong>: For Microsoft documents like Word (doc, docx), Excel (xls, xlsx) or Power Point (ppt, pptx).
-                            </li>
-                            <li>
-                                <strong>Material</strong>: For lecture materials released by lecturers. This must be in PDF format.
-                            </li>
-                            <li>
-                                <strong>Textbook</strong>: For other useful textual resources like e-books. This must also be in PDF format.
-                            </li>
-                            <li>
-                                <strong>Video</strong>: For visual resources like tutorial vidoes. This must be in MP4 format.
-                            </li>
-                        </ul>
+                        Are you sure you want to permanently remove this faculty?<br/>
+                        <strong>Please note that you cannot reverse this process.</strong>
                     </DialogContentText>
-                        <Formik
-                            initialValues={{
-                                
-                            }}
-                            
-                            
-                            onSubmit={(values) => {}}
-                        >
-                            <Form id="add-resource-form">
-                                <FormikSelect 
-                                    name="course_code" 
-                                    label="Course Code"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                >
-                                    <MenuItem value="test1">COSC101</MenuItem>
-                                    <MenuItem value="test2">COSC102</MenuItem>
-                                </FormikSelect>
-                                <FormikField
-                                    color="secondary"
-                                    name="resource_name"
-                                    label="Resource Title"
-                                    type="text"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                />
-                                <FormikSelect 
-                                    name="resource_category" 
-                                    label="Resource Category"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                >
-                                    <MenuItem value="test1">Material</MenuItem>
-                                    <MenuItem value="test2">Document</MenuItem>
-                                </FormikSelect>
-                                <FormikField
-                                    color="secondary"
-                                    name="resource_description"
-                                    label="Resource Description"
-                                    type="text"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    multiline
-                                    rows={6}
-                                />
-                                <FormikField
-                                    color="secondary"
-                                    name="resource_file"
-                                    label=""
-                                    type="file"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                />
-                            </Form>
-                        </Formik>
                 </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteFacultyDialog} variant="contained" color="primary">
+                        Cancel
+                    </Button>
+                    <Button type="submit" variant="contained" color="secondary" startIcon={<DeleteRounded/>}>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={showDeleteDepartmentDialog} 
+                onClose={handleCloseDeleteDepartmentDialog}
+                TransitionComponent={Transition}
+                fullWidth
+            >
+                <DialogTitle>
+                    Confirm Delete
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText className={classes.dialogContent}>
+                        Are you sure you want to permanently remove this department?<br/>
+                        <strong>Please note that you cannot reverse this process.</strong>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteDepartmentDialog} variant="contained" color="primary">
+                        Cancel
+                    </Button>
+                    <Button type="submit" variant="contained" color="secondary" startIcon={<DeleteRounded/>}>
+                        Delete
+                    </Button>
+                </DialogActions>
             </Dialog>
         </div>
     );
