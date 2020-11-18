@@ -1,11 +1,14 @@
 import { Button, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
 import { Form, Formik } from "formik";
 import { useEffect } from "react";
+import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import FormikSelect from "./formik-select";
 import { scrollToTop } from "./utils";
+import * as creators from '../redux/actions/creators';
+import * as constants from '../redux/actions/constants';
 
-const ResourcesFilter = ({ showFooter }) => {
+const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: theme.spacing(15),
@@ -47,9 +50,26 @@ const ResourcesFilter = ({ showFooter }) => {
         },
     }));
 
+    const dispatch = useDispatch();
+
     useEffect(() => {
         scrollToTop();
     }, []);
+
+    useEffect(() => {
+        if (faculties === constants.flags.INITIAL_VALUE)
+            dispatch(creators.app.getFaculties());
+    }, [dispatch, faculties]);
+
+    useEffect(() => {
+        if (departments === constants.flags.INITIAL_VALUE)
+            dispatch(creators.app.getDepartments());
+    }, [dispatch, departments]);
+
+    useEffect(() => {
+        if (levels === constants.flags.INITIAL_VALUE)
+            dispatch(creators.app.getLevels());
+    }, [dispatch, levels]);
 
     useEffect(() => showFooter(true), [showFooter]);
 
@@ -94,4 +114,8 @@ const ResourcesFilter = ({ showFooter }) => {
     );
 };
 
-export default ResourcesFilter;
+export default connect(state => ({
+    faculties: state.appReducer.faculties,
+    departments: state.appReducer.departments,
+    levels: state.appReducer.levels,
+}))(ResourcesFilter);
