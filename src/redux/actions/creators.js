@@ -15,9 +15,11 @@ export const app = {
         };
     },
 
-    getDepartments: () => {
+    getDepartments: (faculty_id) => {
         return (dispatch) => {
-            return axios.get('departments')
+            dispatch({ type: constants.app.GET_DEPARTMENTS_SUCCESS, payload: constants.flags.INITIAL_VALUE });
+
+            return axios.get('departments?faculty_id=' + faculty_id)
                 .then(response => {
                     if (response.status === 200)
                         dispatch({ type: constants.app.GET_DEPARTMENTS_SUCCESS, payload: response.data });

@@ -7,6 +7,7 @@ import FormikSelect from "./formik-select";
 import { scrollToTop } from "./utils";
 import * as creators from '../redux/actions/creators';
 import * as constants from '../redux/actions/constants';
+import { Skeleton } from "@material-ui/lab";
 
 const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
     const useStyles = makeStyles(theme => ({
@@ -59,12 +60,9 @@ const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
     useEffect(() => {
         if (faculties === constants.flags.INITIAL_VALUE)
             dispatch(creators.app.getFaculties());
+        else 
+            dispatch(creators.app.getDepartments(faculties[0].id));
     }, [dispatch, faculties]);
-
-    useEffect(() => {
-        if (departments === constants.flags.INITIAL_VALUE)
-            dispatch(creators.app.getDepartments());
-    }, [dispatch, departments]);
 
     useEffect(() => {
         if (levels === constants.flags.INITIAL_VALUE)
@@ -72,6 +70,10 @@ const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
     }, [dispatch, levels]);
 
     useEffect(() => showFooter(true), [showFooter]);
+
+    const facultyChanged = evt => {
+        dispatch(creators.app.getDepartments(evt.target.value));
+    };
 
     const onSubmit = () => {
         history.push('/resources');
@@ -95,15 +97,26 @@ const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
                         onSubmit={(values) => onSubmit()}
                     >
                         <Form>
-                            <FormikSelect name="faculty" defaultValue="test" label="Choose a Faculty" className="selector">
-                                <MenuItem value="test">Test Faculty</MenuItem>
-                            </FormikSelect>
-                            <FormikSelect name="department" defaultValue="test" label="Choose a Department" className="selector">
-                                <MenuItem value="test">Test Department</MenuItem>
-                            </FormikSelect>
-                            <FormikSelect name="department" defaultValue="test" label="Choose a Level" className="selector">
-                                <MenuItem value="test">100</MenuItem>
-                            </FormikSelect>
+                            {faculties !== constants.flags.INITIAL_VALUE ? 
+                            <FormikSelect name="faculty_id" defaultValue={faculties[0].id} label="Choose a Faculty" className="selector" onChange={facultyChanged}>
+                                {faculties.map((item, index) => (
+                                    <MenuItem key={index} value={item.id}>{item.faculty}</MenuItem>
+                                ))}
+                            </FormikSelect> : <Skeleton variant="rect" height={40} />}
+
+                            {departments !== constants.flags.INITIAL_VALUE ? 
+                            <FormikSelect name="department_id" defaultValue={departments[0].id} label="Choose a Department" className="selector">
+                                {departments.map((item, index) => (
+                                    <MenuItem key={index} value={item.id}>{item.department}</MenuItem>
+                                ))}
+                            </FormikSelect> : <Skeleton variant="rect" height={40} />}
+
+                            {levels !== constants.flags.INITIAL_VALUE ? 
+                            <FormikSelect name="level_id" defaultValue={levels[0].id} label="Choose a Level" className="selector">
+                                {levels.map((item, index) => (
+                                    <MenuItem key={index} value={item.id}>{item.level}</MenuItem>
+                                ))}
+                            </FormikSelect> : <Skeleton variant="rect" height={40} />}
 
                             <Button type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>Find Resources</Button>
                         </Form>

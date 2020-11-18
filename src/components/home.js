@@ -326,7 +326,6 @@ const RawHome = ({ showFooter }) => {
 
     useEffect(() => {
         dispatch(creators.app.getFaculties());
-        dispatch(creators.app.getDepartments());
         dispatch(creators.app.getLevels());
     }, [dispatch]);
 
