@@ -1,0 +1,24 @@
+export const flags = {
+    INITIAL_VALUE: 'CS/FLAGS/INITIAL_VALUE',
+    ERROR: 'CS/FLAGS/ERROR',
+    NOT_FOUND: 'CS/FLAGS/NOT_FOUND'
+};
+
+export const app = {
+    LOGOUT: 'CS/APP/LOGOUT',
+
+    VERIFY_SESSION: 'CS/APP/VERIFY_SESSION',
+    VERIFY_SESSION_SUCCESSFUL: 'CS/APP/VERIFY_SESSION_SUCCESSFUL',
+    VERIFY_SESSION_FAILED: 'CS/APP/VERIFY_SESSION_FAILED',
+
+    GET_FACULTIES_SUCESS: 'CS/APP/GET_FACULTIES',
+    
+};
+
+export const user = {
+    
+};
+
+export const group = {
+    
+};
