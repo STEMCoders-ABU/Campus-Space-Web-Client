@@ -2,6 +2,7 @@ import { Button, Grid, Hidden, makeStyles, MenuItem, Paper, Typography } from "@
 import { Form, Formik } from "formik";
 import { useEffect } from "react";
 import ScrollAnimation from "react-animate-on-scroll";
+import { useDispatch } from "react-redux";
 import { ReactComponent as Storage } from '../images/cloud_storage.svg';
 import { ReactComponent as Discussion } from '../images/discussion.svg';
 import largeLogo from '../images/large-logo.jpg';
@@ -9,6 +10,7 @@ import { ReactComponent as MobileApp } from '../images/mobile_app.svg';
 import { ReactComponent as Questions } from '../images/questions.svg';
 import { ReactComponent as Reading } from '../images/reading.svg';
 import { ReactComponent as TimeManagement } from '../images/time_management.svg';
+import { getFaculties } from "../redux/slices/app-slice";
 import FormikSelect from './formik-select';
 import { scrollToTop } from "./utils";
 
@@ -315,10 +317,16 @@ const RawHome = ({ showFooter }) => {
         },
       },
     }));
-  
+
+    const dispatch = useDispatch();
+
     useEffect(() => {
         scrollToTop();
     }, []);
+
+    useEffect(() => {
+        dispatch(getFaculties());
+    }, [dispatch]);
 
     useEffect(() => showFooter(true), [showFooter]);
 

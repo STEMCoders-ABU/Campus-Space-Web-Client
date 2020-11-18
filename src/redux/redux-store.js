@@ -4,7 +4,7 @@ const { getDefaultMiddleware, configureStore } = require("@reduxjs/toolkit");
 
 const middleware = [
     ...getDefaultMiddleware(),
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
 ];
 
 const reduxStore = configureStore({
