@@ -282,7 +282,7 @@ const RawHome = ({ showFooter }) => {
         },
       },
       subPaperInner: {
-        backgroundColor: '#212121',
+        //backgroundColor: '#212121',
         padding: '3rem',
         borderRadius: '1rem',
         [theme.breakpoints.down('sm')]: {
@@ -291,7 +291,6 @@ const RawHome = ({ showFooter }) => {
         
         '& .header': {
             marginBottom: '5rem',
-            color: 'white',
             [theme.breakpoints.down('sm')]: {
                 fontSize: '1rem',
                 paddingTop: '.4rem',
@@ -299,8 +298,6 @@ const RawHome = ({ showFooter }) => {
             },
         },
         '& .selector': {
-            backgroundColor: theme.palette.primary.dark,
-            color: theme.palette.text.primary,
             textAlign: 'left',
             borderRadius: '.5rem',
             opacity: 0.9,
