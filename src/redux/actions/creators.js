@@ -14,6 +14,28 @@ export const app = {
                 .catch(() => {});
         };
     },
+
+    getDepartments: () => {
+        return (dispatch) => {
+            return axios.get('departments')
+                .then(response => {
+                    if (response.status === 200)
+                        dispatch({ type: constants.app.GET_DEPARTMENTS_SUCCESS, payload: response.data });
+                })
+                .catch(() => {});
+        };
+    },
+
+    getLevels: () => {
+        return (dispatch) => {
+            return axios.get('levels')
+                .then(response => {
+                    if (response.status === 200)
+                        dispatch({ type: constants.app.GET_LEVELS_SUCCESS, payload: response.data });
+                })
+                .catch(() => {});
+        };
+    },
 };
 
 export const user = {
