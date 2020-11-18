@@ -9,7 +9,7 @@ if (IS_DEVELOPMENT_MODE) {
     storeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 }
 
-export default () => {
+const configure = () => {
     if (store)
         return store;
 
@@ -19,3 +19,5 @@ export default () => {
         storeEnhancers(applyMiddleware(thunk))
     );
 };
+
+export default configure;
