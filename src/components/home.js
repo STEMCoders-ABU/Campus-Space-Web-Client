@@ -417,7 +417,7 @@ const RawHome = ({ showFooter }) => {
   
           <Paper elevation={0} square className={classes.questionsPaper}>
             <ScrollAnimation animateOnce animateIn="animate__slideInLeft">
-                <Grid container>
+                <Grid container id="about">
                     <Grid item xs={12} md={6}>
                         <Questions/>
                     </Grid>

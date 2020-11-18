@@ -18,6 +18,7 @@ import Resources from "./components/resources";
 import Resource from "./components/resource";
 import Moderation from "./components/moderation";
 import Admin from "./components/admin";
+import Contact from "./components/contact";
 
 const NavBar = ({ themeName, changeTheme, ...props }) => {
   const useStyles = makeStyles(theme => ({
@@ -59,7 +60,7 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
       fontSize: '1.2rem',
       fontWeight: 'bold',
       textDecoration: 'none !important',
-      marginRight: theme.spacing(5),
+      marginRight: theme.spacing(4),
       transition: '.1s ease',
       [theme.breakpoints.only('md')]: {
         fontSize: '1.1rem',
@@ -173,8 +174,7 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
             <Link className={classes.navlink} to="/">Home</Link>
             <Link className={classes.navlink} to="/resources-filter">Resources</Link>
             <Link className={classes.navlink} to="/moderation">Moderation</Link>
-            <Link className={classes.navlink}>Contact</Link>
-            <Link className={classes.navlink}>About</Link>
+            <Link className={classes.navlink} to="/contact">Contact</Link>
           </div>
         </Hidden>
 
@@ -195,12 +195,11 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
             onClose={handleMenuClose}
             className={classes.menu}
           >
-            <MenuItem onClick={e => handleMenuClose()}>Home</MenuItem>
-            <MenuItem onClick={e => handleMenuClose()}>Resources</MenuItem>
-            <MenuItem onClick={e => handleMenuClose()}>Moderation</MenuItem>
-            <MenuItem onClick={e => handleMenuClose()}>Contact</MenuItem>
-            <MenuItem onClick={e => handleMenuClose()}>About</MenuItem>
-            <MenuItem onClick={e => handleMenuClose()}><Button className={classes.loginButton} variant="contained" color="secondary" size="large">Login</Button></MenuItem>
+            <MenuItem onClick={() => handleMenuClose()}>Home</MenuItem>
+            <MenuItem onClick={() => handleMenuClose()}>Resources</MenuItem>
+            <MenuItem onClick={() => handleMenuClose()}>Moderation</MenuItem>
+            <MenuItem onClick={() => handleMenuClose()}>Contact</MenuItem>
+            <MenuItem onClick={() => handleMenuClose()}>Login</MenuItem>
           </Menu>
         </Hidden>
       </Toolbar>
@@ -378,6 +377,7 @@ const App = (props) => {
             <Route path="/resources-filter"><ResourcesFilter showFooter={setShowFooter}/></Route>
             <Route path="/moderation"><Moderation showFooter={setShowFooter}/></Route>
             <Route path="/admin"><Admin showFooter={setShowFooter}/></Route>
+            <Route path="/contact"><Contact showFooter={setShowFooter}/></Route>
             <Route path="/"><Home showFooter={setShowFooter}/></Route>
           </Router>
         </div>
