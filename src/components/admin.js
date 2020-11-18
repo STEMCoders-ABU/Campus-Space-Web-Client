@@ -1,8 +1,8 @@
-import { AppBar, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, makeStyles, MenuItem, Paper, Select, Slide, Toolbar, Typography } from "@material-ui/core";
-import { AccountCircleRounded, AddRounded, CloudUploadRounded, DeleteRounded, EditRounded, KeyboardArrowLeftRounded } from "@material-ui/icons";
+import { Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, makeStyles, MenuItem, Paper, Select, Slide, Typography } from "@material-ui/core";
+import { AccountCircleRounded, AddRounded, DeleteRounded, EditRounded } from "@material-ui/icons";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
-import { Redirect, Route, Switch, useHistory } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
 import { scrollToTop } from "./utils";
