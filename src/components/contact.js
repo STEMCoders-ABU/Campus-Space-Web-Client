@@ -54,7 +54,7 @@ const Contact = ({ showFooter }) => {
                 <Button component="a" href="https://stemcoders.com.ng/index#contact" target="_blank" variant="contained" size="medium" color="secondary" startIcon={<MailRounded/>}>Contact Us!</Button>
             </Paper>
 
-            <Paper elevation={4} className={classes.getRepPaper}>
+            <Paper elevation={6} className={classes.getRepPaper}>
                 <Typography variant="h4" className="text">Contact a Rep</Typography>
                 <Typography variant="h5" color="textSecondary" className="text2">Get the ccontact details of a registered departmental rep easily!</Typography>
 
