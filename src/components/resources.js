@@ -77,7 +77,7 @@ const ResourceCard = ({ resource, showDownloads = false }) => {
     );
 };
 
-const Home = ({ courses, setCourse, categories, setCategory }) => {
+const Home = ({ course, courses, setCourse, category, categories, setCategory }) => {
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: '3rem',
@@ -119,12 +119,21 @@ const Home = ({ courses, setCourse, categories, setCategory }) => {
         },
     }));
 
-    const [currentCourse, setCurrentCourse] = useState(courses[0]);
-    const [currentcategory, setCurrentcategory] = useState(categories[0]);
+    const [currentCourse, setCurrentCourse] = useState(course || courses[0]);
+    const [currentcategory, setCurrentcategory] = useState(category || categories[0]);
 
     useEffect(() => {
         scrollToTop();
     }, []);
+
+    const courseChanged = evt => {
+        const id = evt.target.value;
+        const target = courses.filter((item, index) => {
+            return (item.id === id);
+        })[0];
+
+        setCourse(target);
+    };
 
     const classes = useStyles();
 
@@ -142,6 +151,7 @@ const Home = ({ courses, setCourse, categories, setCategory }) => {
                             color="secondary"
                             variant="outlined"
                             defaultValue={currentCourse.id}
+                            onChange={courseChanged}
                         >
                             {courses.map((item, index) => (
                                 <MenuItem key={index} value={item.id}>{item.course_code}</MenuItem>
@@ -453,7 +463,13 @@ const Resources = ({ showFooter, categories }) => {
             <Switch>
                 <Route path="/resources/comments"><Comments/></Route>
                 <Route path="/resources/popular"><Popular/></Route>
-                <Route path="/"><Home categories={categories} setCategory={setCategory} courses={courses} setCourse={setCourse}/></Route>
+                <Route path="/"><Home 
+                                    category={category}
+                                    categories={categories} 
+                                    setCategory={setCategory} 
+                                    courses={courses} 
+                                    setCourse={setCourse}
+                                    course={course}/></Route>
             </Switch>
 
             <SpeedDial
