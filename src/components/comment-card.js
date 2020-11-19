@@ -2,7 +2,7 @@ import { Card, CardContent, CardMedia, Grid, makeStyles, Typography } from "@mat
 import { Skeleton } from "@material-ui/lab";
 import ManImage from '../images/man.svg';
 
-const CommentCard = () => {
+const CommentCard = ({ comment }) => {
     
     const useStyles = makeStyles(theme => ({
         root: {
@@ -53,9 +53,9 @@ const CommentCard = () => {
                 </Grid>
                 <Grid item xs={9} md={10} lg={11}>
                     <CardContent className={classes.commentContainer}>
-                        <Typography variant="h6">Commenter</Typography>
-                        <Typography variant="subtitle1" color="textSecondary">on 2020-01-12</Typography>
-                        <Typography className={classes.comment} variant="body1">This is my comment!</Typography>
+                        <Typography variant="h6">{comment.author}</Typography>
+                        <Typography variant="subtitle1" color="textSecondary">on {comment.date_added}</Typography>
+                        <Typography className={classes.comment} variant="body1">{comment.comment}</Typography>
                     </CardContent>
                 </Grid>
             </Grid>

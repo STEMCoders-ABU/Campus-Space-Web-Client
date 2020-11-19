@@ -166,6 +166,7 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory, c
         notFoundTxt: {
             textAlign: 'center',
             marginTop: '4rem',
+            fontFamily: theme.fontFamily,
         }
     }));
 
@@ -314,6 +315,12 @@ const Popular = ({ course, category, combination }) => {
                 padding: '0 .1rem 0 .1rem',
             },
         },
+
+        notFoundTxt: {
+            textAlign: 'center',
+            marginTop: '4rem',
+            fontFamily: theme.fontFamily,
+        }
     }));
 
     const [resources, setResources] = useState(constants.flags.INITIAL_VALUE);
@@ -408,6 +415,12 @@ const Comments = ({ course, category, combination }) => {
             padding: '1rem',
             marginBottom: '4rem',
         },
+
+        notFoundTxt: {
+            textAlign: 'center',
+            marginTop: '4rem',
+            fontFamily: theme.fontFamily,
+        }
     }));
 
     const [comments, setComments] = useState(constants.flags.INITIAL_VALUE);
@@ -468,7 +481,7 @@ const Comments = ({ course, category, combination }) => {
                         </Formik>
                 </Paper>
 
-                {comments === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No Resources uploaded for this combination at this time. Please try other combinations.</Typography>}
+                {comments === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No category comments for this combination at this time. Be the first to comment!</Typography>}
                 
                 {comments && comments !== constants.flags.NOT_FOUND && comments !== constants.flags.INITIAL_VALUE ? 
                 comments.map((item, index) => (
