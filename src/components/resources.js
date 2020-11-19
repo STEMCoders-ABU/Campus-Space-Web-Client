@@ -606,8 +606,8 @@ const Resources = ({ showFooter, categories }) => {
     const [showSearchDialog, setShowSearchDialog] = useState(false);
     const [showFiltersDialog, setShowFiltersDialog] = useState(false);
     const [courses, setCourses] = useState(constants.flags.INITIAL_VALUE);
-    const [course, setCourse] = useState(null);
-    const [category, setCategory] = useState(null);
+    const [course, setCourse] = useState(constants.flags.INITIAL_VALUE);
+    const [category, setCategory] = useState(constants.flags.INITIAL_VALUE);
 
     const dispatch = useDispatch();
 
@@ -731,7 +731,7 @@ const Resources = ({ showFooter, categories }) => {
 
     const classes = useStyles();
 
-    if (categories === constants.flags.INITIAL_VALUE || courses === constants.flags.INITIAL_VALUE) {
+    if (category === constants.flags.INITIAL_VALUE || course === constants.flags.INITIAL_VALUE) {
         return null;
     }
 
