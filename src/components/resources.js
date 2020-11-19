@@ -363,7 +363,7 @@ const Popular = ({ course, category, combination }) => {
 
     return (
         <div className={classes.root}>
-            <Typography variant="h5" className={classes.header}>Popular  <span>{course.course_code}  {category.category}s</span></Typography>
+            <Typography variant="h5" className={classes.header}>Popular in  <span>{course.course_code}  {category.category}s</span></Typography>
             
             {resources === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No Resources uploaded for this combination at this time. Please try other combinations.</Typography>}
                 
