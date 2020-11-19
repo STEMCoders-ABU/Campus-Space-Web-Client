@@ -1,14 +1,10 @@
-import { Button, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
+import { Button, makeStyles, Paper, Typography } from "@material-ui/core";
 import { Form, Formik } from "formik";
 import { useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
-import FormikSelect from "./formik-select";
-import { scrollToTop } from "./utils";
-import * as creators from '../redux/actions/creators';
-import * as constants from '../redux/actions/constants';
-import { Skeleton } from "@material-ui/lab";
 import CombinationSelection from "./combination-selection";
+import { scrollToTop } from "./utils";
 
 const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
     const useStyles = makeStyles(theme => ({

@@ -9,7 +9,7 @@ import SettingsRoundedIcon from '@material-ui/icons/SettingsRounded';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
-import { Link, Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
+import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import DocumentImage from '../images/folder.svg';
 import PDFImage from '../images/pdf.svg';
 import VideoImage from '../images/youtube.svg';
