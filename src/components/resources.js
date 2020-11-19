@@ -320,7 +320,7 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory, c
     );
 };
 
-const Popular = ({ course, category, combination }) => {
+const Popular = ({ course, category, combination, search, setSearch }) => {
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: '3rem',
@@ -394,6 +394,42 @@ const Popular = ({ course, category, combination }) => {
 
         fetchResources();
     }, [category.id, combination.department_id, combination.faculty_id, combination.level_id, course.id]);
+
+    useEffect(() => {
+        if (search === constants.flags.INITIAL_VALUE)
+            return;
+
+        const fetchResources = () => {
+            setResources(constants.flags.INITIAL_VALUE);
+
+            const faculty_id = combination.faculty_id;
+            const department_id = combination.department_id;
+            const level_id = combination.level_id;
+            const course_id = course.id;
+            const category_id = category.id;
+    
+            axios.post(`resources/search?faculty_id=${faculty_id}&department_id=${department_id}&level_id=${level_id}&course_id=${course_id}&category_id=${category_id}&join=true&order_by_downloads=true`,
+                { search: search })
+            .then(response => {
+                setSearch(constants.flags.INITIAL_VALUE);
+
+                if (response.status === 200)
+                    setResources(response.data);
+                else if (response.status === 404) {
+                    setResources(constants.flags.NOT_FOUND);
+                    showInfo('Not Found', 'No resources found for the selected combination!')
+                }
+                else
+                    showNetworkError();
+            })
+            .catch(() => {
+                showNetworkError();
+                setSearch(constants.flags.INITIAL_VALUE);
+            });
+        };
+
+        fetchResources();
+    }, [category.id, combination.department_id, combination.faculty_id, combination.level_id, course.id, search, setSearch]);
 
     const classes = useStyles();
 
@@ -794,6 +830,8 @@ const Resources = ({ showFooter, categories }) => {
                         category={category}
                         course={course}
                         combination={combination}
+                        search={search}
+                        setSearch={setSearch}
                     /> : ''}
                 </Route>
                 <Route path="/">
@@ -844,7 +882,7 @@ const Resources = ({ showFooter, categories }) => {
                 <DialogTitle id="search-dialog-title">Search {course.course_code}  {category.category}s</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Enter keywords to search. Resources matching the provided keyword in their title or description will be displayed.
+                        Enter keywords to search. Resources having the provided keywords in their title or description will be displayed.
                     </DialogContentText>
                         <Formik
                             initialValues={{
