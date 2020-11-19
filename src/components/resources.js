@@ -40,6 +40,11 @@ const ResourceCard = ({ resource, showDownloads = false }) => {
         imgContainer: {
             padding: '3rem',
             background: theme.resourceCard.background,
+
+            '& img': {
+                width: '100%',
+                height: 'auto',
+            }
         },
     }));
     
@@ -64,13 +69,53 @@ const ResourceCard = ({ resource, showDownloads = false }) => {
                     />
                 </div>
                 <CardContent>
-                    <Typography variant="h6" className={classes.title}>Excellent Video Resource</Typography>
-                    <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
-                    {showDownloads && <Typography variant="subtitle1" color="textSecondary">1 Downloads</Typography>}
+                    <Typography variant="h6" className={classes.title}>{resource.title}</Typography>
+                    <Typography variant="subtitle1" color="textSecondary">{resource.date_added}</Typography>
+                    {showDownloads && <Typography variant="subtitle1" color="textSecondary">{resource.downloads} Download{resource.downloads > 1 ? 's' : ''}</Typography>}
                 </CardContent>
                 <CardActions>
                     <Button variant="outlined" color="primary.dark" component={Link} to={`../resource/${resource.id}`}>View</Button>
                     <Button variant="contained" color="secondary" startIcon={<GetAppRoundedIcon/>}>Download</Button>
+                </CardActions>
+            </Card>
+        </Grid>
+    );
+};
+
+const ResourceCardLoading = () => {
+    const useResourceCardStyles = makeStyles(theme => ({
+        root: {
+            padding: '1rem 1rem 0 1rem',
+            [theme.breakpoints.down('xs')]: {
+                padding: '1rem .2rem 0 .2rem',
+            },
+        },
+    
+        title: {
+            [theme.breakpoints.down('xs')]: {
+                fontSize: '1rem',
+            },
+        },
+    
+        imgContainer: {
+            padding: '3rem',
+            background: theme.resourceCard.background,
+        },
+    }));
+    
+    const classes = useResourceCardStyles();
+    
+    return (
+        <Grid item xs={12} md={4} className={classes.root}>
+            <Card>
+                <Skeleton variant="rect" height={150} animation="wave"/>
+                <CardContent>
+                    <Typography variant="h6" component="div"><Skeleton/></Typography>
+                    <Typography variant="subtitle1" component="div"><Skeleton/></Typography>
+                </CardContent>
+                <CardActions>
+                    <Skeleton variant="rect" width={100} height={40} animation="wave"/>
+                    <Skeleton variant="rect" width={100} height={40} animation="wave"/>
                 </CardActions>
             </Card>
         </Grid>
@@ -247,7 +292,7 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory, c
                     <ResourceCard key={index} resource={item} />
                 )) : ''}
 
-                {resources === constants.flags.INITIAL_VALUE && <Skeleton varaint="rect"><ResourceCard resource={{ category: 'Video'}}/></Skeleton>}
+                {resources === constants.flags.INITIAL_VALUE && <><ResourceCardLoading/><ResourceCardLoading/><ResourceCardLoading/></>}
             </Grid>
         </div>
     );
