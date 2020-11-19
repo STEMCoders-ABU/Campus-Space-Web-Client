@@ -133,6 +133,17 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory })
         })[0];
 
         setCourse(target);
+        setCurrentCourse(target);
+    };
+
+    const categoryChanged = evt => {
+        const id = evt.target.value;
+        const target = categories.filter((item, index) => {
+            return (item.id === id);
+        })[0];
+
+        setCategory(target);
+        setCurrentcategory(target);
     };
 
     const classes = useStyles();
@@ -167,6 +178,7 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory })
                             color="secondary"
                             variant="outlined"
                             defaultValue={currentcategory.id}
+                            onChange={categoryChanged}
                         >
                             {categories.map((item, index) => (
                                 <MenuItem key={index} value={item.id}>{item.category}</MenuItem>
