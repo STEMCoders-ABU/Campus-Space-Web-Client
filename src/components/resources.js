@@ -6,7 +6,7 @@ import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import SettingsRoundedIcon from '@material-ui/icons/SettingsRounded';
-import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
+import { Skeleton, SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
 import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
@@ -16,7 +16,7 @@ import videoImage from '../images/youtube.svg';
 import CommentCard from "./comment-card";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { scrollToTop, showLoading, ReactSwal, showNetworkError } from "./utils";
+import { scrollToTop, showLoading, ReactSwal, showNetworkError, showInfo } from "./utils";
 import * as constants from '../redux/actions/constants';
 import * as creators from '../redux/actions/creators';
 import { axios } from "../init";
@@ -77,7 +77,7 @@ const ResourceCard = ({ resource, showDownloads = false }) => {
     );
 };
 
-const Home = ({ course, courses, setCourse, category, categories, setCategory }) => {
+const Home = ({ course, courses, setCourse, category, categories, setCategory, combination }) => {
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: '3rem',
@@ -121,6 +121,7 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory })
 
     const [currentCourse, setCurrentCourse] = useState(course || courses[0]);
     const [currentcategory, setCurrentcategory] = useState(category || categories[0]);
+    const [resources, setResources] = useState(constants.flags.INITIAL_VALUE);
 
     useEffect(() => {
         scrollToTop();
@@ -145,6 +146,56 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory })
         setCategory(target);
         setCurrentcategory(target);
     };
+
+    const fetchResources = () => {
+        setResources(constants.flags.INITIAL_VALUE);
+
+        const faculty_id = combination.faculty_id;
+        const department_id = combination.department_id;
+        const level_id = combination.level_id;
+        const course_id = currentCourse.id;
+        const category_id = currentcategory.id;
+
+        axios.get(`resources?faculty_id=${faculty_id}&department_id=${department_id}&level_id=${level_id}&course_id=${course_id}&category_id=${category_id}&join=true`)
+        .then(response => {
+            if (response.status === 200)
+                setResources(response.data);
+            else if (response.status === 404)
+                setResources(constants.flags.NOT_FOUND);
+            else
+                showNetworkError();
+        })
+        .catch(() => {
+            showNetworkError();
+        });
+    };
+
+    useEffect(() => {
+        const fetchResources = () => {
+            setResources(constants.flags.INITIAL_VALUE);
+
+            const faculty_id = combination.faculty_id;
+            const department_id = combination.department_id;
+            const level_id = combination.level_id;
+            const course_id = currentCourse.id;
+            const category_id = currentcategory.id;
+    
+            axios.get(`resources?faculty_id=${faculty_id}&department_id=${department_id}&level_id=${level_id}&course_id=${course_id}&category_id=${category_id}&join=true`)
+            .then(response => {
+                if (response.status === 200)
+                    setResources(response.data);
+                else if (response.status === 404)
+                    setResources(constants.flags.NOT_FOUND);
+                else
+                    showNetworkError();
+            })
+            .catch(() => {
+                showNetworkError();
+            });
+        };
+
+        fetchResources();
+    }, [combination.department_id, combination.faculty_id, combination.level_id, currentCourse.id, currentcategory.id]);
 
     const classes = useStyles();
 
@@ -187,9 +238,16 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory })
                     </FormControl>
                 </Paper>
             </div>
-
+            
             <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
-                <ResourceCard resource={{category: 'Video'}}/>
+                {resources === constants.flags.NOT_FOUND && <Typography variant="h4">No Resources ploaded for this combination at this time. Please try other combinations.</Typography>}
+                
+                {resources && resources !== constants.flags.NOT_FOUND && resources !== constants.flags.INITIAL_VALUE ? 
+                resources.map((item, index) => (
+                    <ResourceCard key={index} resource={item} />
+                )) : ''}
+
+                {resources === constants.flags.INITIAL_VALUE && <Skeleton varaint="rect"><ResourceCard resource={{ category: 'Video'}}/></Skeleton>}
             </Grid>
         </div>
     );
@@ -328,6 +386,11 @@ const Resources = ({ showFooter, categories }) => {
     const faculty = queries.get('faculty');
     const department = queries.get('department');
     const level = queries.get('level');
+    const combination = {
+        faculty_id: faculty,
+        department_id: department,
+        level_id: level,
+    };
 
     const linkSuffix = `?faculty=${faculty}&department=${department}&level=${level}`;
     const links = ['/resources' + linkSuffix, '/resources/popular' + linkSuffix, '/resources/comments' + linkSuffix];
@@ -475,13 +538,17 @@ const Resources = ({ showFooter, categories }) => {
             <Switch>
                 <Route path="/resources/comments"><Comments/></Route>
                 <Route path="/resources/popular"><Popular/></Route>
-                <Route path="/"><Home 
-                                    category={category}
-                                    categories={categories} 
-                                    setCategory={setCategory} 
-                                    courses={courses} 
-                                    setCourse={setCourse}
-                                    course={course}/></Route>
+                <Route path="/">
+                    <Home 
+                        category={category}
+                        categories={categories} 
+                        setCategory={setCategory} 
+                        courses={courses} 
+                        setCourse={setCourse}
+                        course={course}
+                        combination={combination}
+                    />
+                </Route>
             </Switch>
 
             <SpeedDial
