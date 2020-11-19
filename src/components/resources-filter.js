@@ -8,6 +8,7 @@ import { scrollToTop } from "./utils";
 import * as creators from '../redux/actions/creators';
 import * as constants from '../redux/actions/constants';
 import { Skeleton } from "@material-ui/lab";
+import CombinationSelection from "./combination-selection";
 
 const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
     const useStyles = makeStyles(theme => ({
@@ -51,52 +52,22 @@ const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
         },
     }));
 
-    const [data] = useState({
-        faculty_id: -1,
-        department_id: -1,
-        level_id: -1,
+    const [combinationData, setCombinationData] = useState({
+        faculty_id: 0,
+        level_id: 0,
+        department_id: 0,
     });
-
-    const dispatch = useDispatch();
 
     useEffect(() => {
         scrollToTop();
     }, []);
 
-    useEffect(() => {
-        if (faculties === constants.flags.INITIAL_VALUE)
-            dispatch(creators.app.getFaculties());
-        else {
-            dispatch(creators.app.getDepartments(faculties[0].id));
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, faculties]);
-
-    useEffect(() => {
-        if (levels === constants.flags.INITIAL_VALUE)
-            dispatch(creators.app.getLevels());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, levels]);
-
     useEffect(() => showFooter(true), [showFooter]);
 
-    const facultyChanged = evt => {
-        data.faculty_id = evt.target.value;
-        dispatch(creators.app.getDepartments(data.faculty_id));
-    };
-
-    const departmentChanged = evt => {
-        data.department_id = evt.target.value;
-    };
-
-    const levelChanged = evt => {
-        data.department_id = evt.target.value;
-    };
-
     const onSubmit = (values) => {
-        const faculty_id = data.faculty_id;
-        const department_id = data.department_id;
-        const level_id = data.level_id;
+        const faculty_id = combinationData.faculty_id;
+        const department_id = combinationData.department_id;
+        const level_id = combinationData.level_id;
 
         history.push(`/resources?faculty=${faculty_id}&department=${department_id}&level=${level_id}`);
     };
@@ -116,41 +87,7 @@ const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
                         onSubmit={(values) => onSubmit(values)}
                     >
                         <Form>
-                            {faculties !== constants.flags.INITIAL_VALUE ? 
-                            <FormikSelect 
-                                name="faculty_id" 
-                                label="Choose a Faculty" 
-                                className="selector" 
-                                onChange={facultyChanged}
-                                defaultValue={faculties[0].id}>
-                                {faculties.map((item, index) => (
-                                    <MenuItem key={index} value={item.id}>{item.faculty}</MenuItem>
-                                ))}
-                            </FormikSelect> : <Skeleton variant="rect" height={40} style={{marginBottom: '1.5rem'}} />}
-
-                            {departments !== constants.flags.INITIAL_VALUE ? 
-                            <FormikSelect 
-                                name="department_id" 
-                                label="Choose a Department" 
-                                className="selector" 
-                                onChange={departmentChanged}
-                                defaultValue={departments[0].id}>
-                                {departments.map((item, index) => (
-                                    <MenuItem key={index} value={item.id}>{item.department}</MenuItem>
-                                ))}
-                            </FormikSelect> : <Skeleton variant="rect" height={40} style={{marginBottom: '1.5rem'}} />}
-
-                            {levels !== constants.flags.INITIAL_VALUE ? 
-                            <FormikSelect 
-                                name="level_id" 
-                                label="Choose a Level" 
-                                className="selector" 
-                                onChange={levelChanged}
-                                defaultValue={levels[0].id}>
-                                {levels.map((item, index) => (
-                                    <MenuItem key={index} value={item.id}>{item.level}</MenuItem>
-                                ))}
-                            </FormikSelect> : <Skeleton variant="rect" height={40} style={{marginBottom: '1.5rem'}} />}
+                            <CombinationSelection dataChanged={setCombinationData} />
 
                             <Button type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>Find Resources</Button>
                         </Form>
