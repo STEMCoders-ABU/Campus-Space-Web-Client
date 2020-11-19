@@ -134,27 +134,33 @@ const Home = ({ courses, setCourse, categories, setCategory }) => {
                 <Paper variant="outlined" square elevation={10} className={classes.optionsPaper}>
                     <Typography variant="h5" className="header">{currentCourse.course_code}  {currentcategory.category}s</Typography>
 
-                    <FormControl variant="filled" style={{width: '100%', marginBottom: '1rem' }} className="w-100 my-3">
-                        <InputLabel></InputLabel>
+                    <FormControl color="secondary" variant="outlined" style={{width: '100%', marginBottom: '1rem' }}>
+                        <InputLabel>Choose Course</InputLabel>
                         <Select
                             name="course"
-                            defaultValue="test"
+                            label="Choose Course"
+                            color="secondary"
+                            variant="outlined"
+                            defaultValue={currentCourse.id}
                         >
-                        <MenuItem value="test">COSC201</MenuItem>
-                        <MenuItem value="test2">COSC203</MenuItem>
-                        <MenuItem value="test3">COSC211</MenuItem>
+                            {courses.map((item, index) => (
+                                <MenuItem key={index} value={item.id}>{item.course_code}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
 
-                    <FormControl variant="filled" style={{width: '100%'}} className="w-100 my-3">
-                        <InputLabel></InputLabel>
+                    <FormControl color="secondary" variant="outlined" style={{width: '100%', marginBottom: '1rem' }}>
+                        <InputLabel>Choose Category</InputLabel>
                         <Select
                             name="category"
-                            defaultValue="test"
+                            label="Choose Category"
+                            color="secondary"
+                            variant="outlined"
+                            defaultValue={currentcategory.id}
                         >
-                        <MenuItem value="test">Materials</MenuItem>
-                        <MenuItem value="test2">Videos</MenuItem>
-                        <MenuItem value="test3">Ebooks</MenuItem>
+                            {categories.map((item, index) => (
+                                <MenuItem key={index} value={item.id}>{item.category}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                 </Paper>
@@ -301,7 +307,8 @@ const Resources = ({ showFooter, categories }) => {
     const department = queries.get('department');
     const level = queries.get('level');
 
-    const links = ['/resources/home', '/resources/popular', '/resources/comments'];
+    const linkSuffix = `?faculty=${faculty}&department=${department}&level=${level}`;
+    const links = ['/resources' + linkSuffix, '/resources/popular' + linkSuffix, '/resources/comments' + linkSuffix];
     const history = useHistory();
     const location = useLocation();
 
