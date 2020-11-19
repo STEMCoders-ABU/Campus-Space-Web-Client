@@ -9,19 +9,19 @@ import SettingsRoundedIcon from '@material-ui/icons/SettingsRounded';
 import { Skeleton, SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
+import { connect, useDispatch } from "react-redux";
 import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
+import * as Yup from 'yup';
 import documentImage from '../images/folder.svg';
 import pdfImage from '../images/pdf.svg';
 import videoImage from '../images/youtube.svg';
+import { axios } from "../init";
+import * as constants from '../redux/actions/constants';
+import * as creators from '../redux/actions/creators';
 import CommentCard, { CommentCardLoading } from "./comment-card";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { scrollToTop, showLoading, ReactSwal, showNetworkError, showInfo, showSuccess, showError, getErrorsMarkup } from "./utils";
-import * as constants from '../redux/actions/constants';
-import * as creators from '../redux/actions/creators';
-import { axios } from "../init";
-import { connect, useDispatch } from "react-redux";
-import * as Yup from 'yup';
+import { getErrorsMarkup, ReactSwal, scrollToTop, showError, showInfo, showLoading, showNetworkError } from "./utils";
 
 const ResourceCard = ({ resource, showDownloads = false }) => {
     const useResourceCardStyles = makeStyles(theme => ({
