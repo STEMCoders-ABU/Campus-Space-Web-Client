@@ -18,9 +18,9 @@ import videoImage from '../images/youtube.svg';
 import { axios } from "../init";
 import * as constants from '../redux/actions/constants';
 import * as creators from '../redux/actions/creators';
+import CombinationSelection from "./combination-selection";
 import CommentCard, { CommentCardLoading } from "./comment-card";
 import FormikField from "./formik-field";
-import FormikSelect from "./formik-select";
 import { getErrorsMarkup, ReactSwal, scrollToTop, showError, showInfo, showLoading, showNetworkError } from "./utils";
 
 const ResourceCard = ({ resource, showDownloads = false }) => {
@@ -660,18 +660,20 @@ const Resources = ({ showFooter, categories }) => {
     const faculty = queries.get('faculty');
     const department = queries.get('department');
     const level = queries.get('level');
-    const combination = {
-        faculty_id: faculty,
-        department_id: department,
-        level_id: level,
-    };
-
+    
     const linkSuffix = `?faculty=${faculty}&department=${department}&level=${level}`;
     const links = ['/resources' + linkSuffix, '/resources/popular' + linkSuffix, '/resources/comments' + linkSuffix];
     const history = useHistory();
     const location = useLocation();
 
     const currentNavigationIndex = links.indexOf(location.pathname + linkSuffix);
+    
+    const [combination, setCombination] = useState({
+        faculty_id: faculty,
+        department_id: department,
+        level_id: level,
+    });
+    const [tempCombination, setTempCombination] = useState(combination);
     
     const [navigationIndex, setNavigationIndex] = useState(currentNavigationIndex === -1 ? 0 : currentNavigationIndex);
     const [speedDialOpen, setSpeedDialOpen] = useState(false);
@@ -930,44 +932,12 @@ const Resources = ({ showFooter, categories }) => {
                         Choose a faculty, department and level.
                     </DialogContentText>
                         <Formik
-                            initialValues={{
-                                
-                            }}
+                            initialValues={{}}
                             
-                            
-                            onSubmit={(values) => {}}
+                            onSubmit={() => { handleCloseFiltersDialog(); setCombination(tempCombination); }}
                         >
-                            <Form>
-                                <FormikSelect 
-                                    margin="dense" 
-                                    name="faculty" 
-                                    defaultValue="test" 
-                                    label="Faculty" 
-                                    className="selector"
-                                    fullWidth
-                                >
-                                    <MenuItem value="test">Test Faculty</MenuItem>
-                                </FormikSelect>
-                                <FormikSelect 
-                                    margin="dense" 
-                                    name="department" 
-                                    defaultValue="test" 
-                                    label="Department" 
-                                    className="selector"
-                                    fullWidth
-                                >
-                                    <MenuItem value="test">Test Department</MenuItem>
-                                </FormikSelect>
-                                <FormikSelect 
-                                    margin="dense" 
-                                    name="level" 
-                                    defaultValue="test" 
-                                    label="Level" 
-                                    className="selector"
-                                    fullWidth
-                                >
-                                    <MenuItem value="test">200</MenuItem>
-                                </FormikSelect>
+                            <Form id="filters-form">
+                                <CombinationSelection dataChanged={setTempCombination} />
                             </Form>
                         </Formik>
                 </DialogContent>
@@ -975,7 +945,7 @@ const Resources = ({ showFooter, categories }) => {
                     <Button onClick={handleCloseFiltersDialog} variant="contained" color="primary">
                         Cancel
                     </Button>
-                    <Button type="submit" variant="contained" color="secondary" endIcon={<KeyboardArrowRightRounded/>}>
+                    <Button form="filters-form" type="submit" variant="contained" color="secondary" endIcon={<KeyboardArrowRightRounded/>}>
                         Find Resources
                     </Button>
                 </DialogActions>
