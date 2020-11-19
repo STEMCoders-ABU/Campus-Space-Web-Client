@@ -1,6 +1,6 @@
 import { Button, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
 import { Form, Formik } from "formik";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import FormikSelect from "./formik-select";
@@ -51,6 +51,12 @@ const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
         },
     }));
 
+    const [data] = useState({
+        faculty_id: -1,
+        department_id: -1,
+        level_id: -1,
+    });
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -60,23 +66,39 @@ const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
     useEffect(() => {
         if (faculties === constants.flags.INITIAL_VALUE)
             dispatch(creators.app.getFaculties());
-        else 
+        else {
             dispatch(creators.app.getDepartments(faculties[0].id));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, faculties]);
 
     useEffect(() => {
         if (levels === constants.flags.INITIAL_VALUE)
             dispatch(creators.app.getLevels());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, levels]);
 
     useEffect(() => showFooter(true), [showFooter]);
 
     const facultyChanged = evt => {
-        dispatch(creators.app.getDepartments(evt.target.value));
+        data.faculty_id = evt.target.value;
+        dispatch(creators.app.getDepartments(data.faculty_id));
     };
 
-    const onSubmit = () => {
-        history.push('/resources');
+    const departmentChanged = evt => {
+        data.department_id = evt.target.value;
+    };
+
+    const levelChanged = evt => {
+        data.department_id = evt.target.value;
+    };
+
+    const onSubmit = (values) => {
+        const faculty_id = data.faculty_id;
+        const department_id = data.department_id;
+        const level_id = data.level_id;
+
+        history.push(`/resources?faculty=${faculty_id}&department=${department_id}&level=${level_id}`);
     };
 
     const history = useHistory();
@@ -89,34 +111,46 @@ const ResourcesFilter = ({ showFooter, faculties, departments, levels }) => {
                     <Typography variant="h4" className="header">Filter Resources</Typography>
 
                     <Formik
-                        initialValues={{
-                            
-                        }}
-                        
-                        
-                        onSubmit={(values) => onSubmit()}
+                        initialValues={{}}
+                        isInitialValid={false}
+                        onSubmit={(values) => onSubmit(values)}
                     >
                         <Form>
                             {faculties !== constants.flags.INITIAL_VALUE ? 
-                            <FormikSelect name="faculty_id" defaultValue={faculties[0].id} label="Choose a Faculty" className="selector" onChange={facultyChanged}>
+                            <FormikSelect 
+                                name="faculty_id" 
+                                label="Choose a Faculty" 
+                                className="selector" 
+                                onChange={facultyChanged}
+                                defaultValue={faculties[0].id}>
                                 {faculties.map((item, index) => (
                                     <MenuItem key={index} value={item.id}>{item.faculty}</MenuItem>
                                 ))}
-                            </FormikSelect> : <Skeleton variant="rect" height={40} />}
+                            </FormikSelect> : <Skeleton variant="rect" height={40} style={{marginBottom: '1.5rem'}} />}
 
                             {departments !== constants.flags.INITIAL_VALUE ? 
-                            <FormikSelect name="department_id" defaultValue={departments[0].id} label="Choose a Department" className="selector">
+                            <FormikSelect 
+                                name="department_id" 
+                                label="Choose a Department" 
+                                className="selector" 
+                                onChange={departmentChanged}
+                                defaultValue={departments[0].id}>
                                 {departments.map((item, index) => (
                                     <MenuItem key={index} value={item.id}>{item.department}</MenuItem>
                                 ))}
-                            </FormikSelect> : <Skeleton variant="rect" height={40} />}
+                            </FormikSelect> : <Skeleton variant="rect" height={40} style={{marginBottom: '1.5rem'}} />}
 
                             {levels !== constants.flags.INITIAL_VALUE ? 
-                            <FormikSelect name="level_id" defaultValue={levels[0].id} label="Choose a Level" className="selector">
+                            <FormikSelect 
+                                name="level_id" 
+                                label="Choose a Level" 
+                                className="selector" 
+                                onChange={levelChanged}
+                                defaultValue={levels[0].id}>
                                 {levels.map((item, index) => (
                                     <MenuItem key={index} value={item.id}>{item.level}</MenuItem>
                                 ))}
-                            </FormikSelect> : <Skeleton variant="rect" height={40} />}
+                            </FormikSelect> : <Skeleton variant="rect" height={40} style={{marginBottom: '1.5rem'}} />}
 
                             <Button type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>Find Resources</Button>
                         </Form>

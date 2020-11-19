@@ -424,8 +424,7 @@ const Resources = ({ showFooter }) => {
             <Switch>
                 <Route path="/resources/comments"><Comments/></Route>
                 <Route path="/resources/popular"><Popular/></Route>
-                <Route path="/resources/home"><Home/></Route>
-                <Route path="/"><Redirect to="/resources/home"></Redirect></Route>
+                <Route path="/"><Home/></Route>
             </Switch>
 
             <SpeedDial
