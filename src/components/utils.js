@@ -60,3 +60,12 @@ export const showNetworkError = () => {
         confirmButtonText: 'Okay'
     });
 };
+
+export const getErrorsMarkup = (error_messages) => {
+    error_messages = error_messages.split('\\n');
+    error_messages.pop();
+    let error_html = error_messages.map((message) => `<li>${message}</li>`);
+    error_html = '<ul style="text-align: left">' + error_html + '</ul>';
+
+    return error_html;
+};

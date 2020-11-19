@@ -1,4 +1,4 @@
-import { BottomNavigation, BottomNavigationAction, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, Slide, Typography } from "@material-ui/core";
+import { BottomNavigation, BottomNavigationAction, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, Slide, Typography } from "@material-ui/core";
 import { KeyboardArrowRightRounded } from "@material-ui/icons";
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
@@ -16,11 +16,12 @@ import videoImage from '../images/youtube.svg';
 import CommentCard, { CommentCardLoading } from "./comment-card";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { scrollToTop, showLoading, ReactSwal, showNetworkError, showInfo } from "./utils";
+import { scrollToTop, showLoading, ReactSwal, showNetworkError, showInfo, showSuccess, showError, getErrorsMarkup } from "./utils";
 import * as constants from '../redux/actions/constants';
 import * as creators from '../redux/actions/creators';
 import { axios } from "../init";
 import { connect, useDispatch } from "react-redux";
+import * as Yup from 'yup';
 
 const ResourceCard = ({ resource, showDownloads = false }) => {
     const useResourceCardStyles = makeStyles(theme => ({
@@ -424,6 +425,7 @@ const Comments = ({ course, category, combination }) => {
     }));
 
     const [comments, setComments] = useState(constants.flags.INITIAL_VALUE);
+    const [processing, setProcessing] = useState(false);
 
     useEffect(() => {
         scrollToTop();
@@ -457,6 +459,75 @@ const Comments = ({ course, category, combination }) => {
         fetchComments();
     }, [category.id, combination.department_id, combination.faculty_id, combination.level_id, course.id]);
 
+    const fetchComments = () => {
+        setComments(constants.flags.INITIAL_VALUE);
+
+        const faculty_id = combination.faculty_id;
+        const department_id = combination.department_id;
+        const level_id = combination.level_id;
+        const course_id = course.id;
+        const category_id = category.id;
+
+        axios.get(`comments/category?faculty_id=${faculty_id}&department_id=${department_id}&level_id=${level_id}&course_id=${course_id}&category_id=${category_id}&join=true&order_by_downloads=true`)
+        .then(response => {
+            if (response.status === 200)
+                setComments(response.data);
+            else if (response.status === 404) {
+                setComments(constants.flags.NOT_FOUND);
+            }
+            else
+                showNetworkError();
+        })
+        .catch(() => {
+            showNetworkError();
+        });
+    };
+
+    const addComment = (values) => {
+        setProcessing(true);
+
+        const faculty_id = combination.faculty_id;
+        const department_id = combination.department_id;
+        const level_id = combination.level_id;
+        const course_id = course.id;
+        const category_id = category.id;
+        const data = {
+            course_id: course_id, 
+            category_id: category_id,
+            faculty_id: faculty_id,
+            department_id: department_id,
+            level_id: level_id,
+            author: values.author,
+            comment: values.comment,
+        };
+
+        axios.post('comments/category', data)
+        .then(response => {
+            setProcessing(false);
+
+            if (response.status === 200) {
+                ReactSwal.fire({
+                    title: 'Success',
+                    html: 'Comment added successfully!',
+                    icon: 'success',
+                    timer: 3000,
+                    didClose: () => fetchComments(),
+                });
+            }
+            else if (response.status === 400) {
+                // Validation error
+                showError('Validation Error!', getErrorsMarkup(response.data.messages.error));
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => {
+            showNetworkError();
+            setProcessing(false);
+        })
+    };
+
     const classes = useStyles();
 
     return (
@@ -467,16 +538,30 @@ const Comments = ({ course, category, combination }) => {
                 <Paper className={classes.addCommentContainer}>
                     <Formik
                             initialValues={{
-                                
+                                author: '',
+                                comment: '',
                             }}
                             
-                            
-                            onSubmit={(values) => {}}
+                            validationSchema={Yup.object({
+                                author: Yup.string()
+                                    .required('Enter a display name')
+                                    .max(20, 'Display name must be atmost 20 characters'),
+                                comment: Yup.string()
+                                    .required('Enter comment')
+                                    .max(500, 'Comment must be atmost 500 characters'),
+                            })}
+                            onSubmit={addComment}
                         >
                             <Form>
-                                <FormikField name="display_name" label="Display Name" variant="standard" color="secondary"/>
+                                <FormikField name="author" label="Display Name" variant="standard" color="secondary"/>
                                 <FormikField multiline rows={5} name="comment" label="Your comment" variant="outlined" color="secondary"/>
-                                <Button startIcon={<CommentRoundedIcon/>} type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>Comment</Button>
+                                {processing ? 
+                                <Button startIcon={<CommentRoundedIcon/>} disabled type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>
+                                    Please wait... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                                </Button> : 
+                                <Button startIcon={<CommentRoundedIcon/>} type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>
+                                    Comment
+                                </Button>}
                             </Form>
                         </Formik>
                 </Paper>
