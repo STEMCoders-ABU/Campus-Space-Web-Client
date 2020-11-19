@@ -661,19 +661,19 @@ const Resources = ({ showFooter, categories }) => {
     const department = queries.get('department');
     const level = queries.get('level');
     
-    const linkSuffix = `?faculty=${faculty}&department=${department}&level=${level}`;
-    const links = ['/resources' + linkSuffix, '/resources/popular' + linkSuffix, '/resources/comments' + linkSuffix];
     const history = useHistory();
     const location = useLocation();
 
-    const currentNavigationIndex = links.indexOf(location.pathname + linkSuffix);
-    
     const [combination, setCombination] = useState({
         faculty_id: faculty,
         department_id: department,
         level_id: level,
     });
     const [tempCombination, setTempCombination] = useState(combination);
+    const [linkSuffix, setLinksSuffix] = useState(`?faculty=${combination.faculty_id}&department=${combination.department_id}&level=${combination.level_id}`);
+    const [links, setLinks] = useState(['/resources' + linkSuffix, '/resources/popular' + linkSuffix, '/resources/comments' + linkSuffix]);
+    
+    const currentNavigationIndex = links.indexOf(location.pathname + linkSuffix);
     
     const [navigationIndex, setNavigationIndex] = useState(currentNavigationIndex === -1 ? 0 : currentNavigationIndex);
     const [speedDialOpen, setSpeedDialOpen] = useState(false);
@@ -732,6 +732,19 @@ const Resources = ({ showFooter, categories }) => {
             });
         }
     }, [courses, department, history, level]);
+
+    useEffect(() => {
+        const suffix = `?faculty=${combination.faculty_id}&department=${combination.department_id}&level=${combination.level_id}`;
+        setLinksSuffix(suffix);
+    }, [combination]);
+
+    useEffect(() => {
+        setLinks(['/resources' + linkSuffix, '/resources/popular' + linkSuffix, '/resources/comments' + linkSuffix]);
+    }, [linkSuffix]);
+
+    useEffect(() => {
+        setNavigationIndex(links.indexOf(location.pathname + linkSuffix));
+    }, [linkSuffix, links, location.pathname]);
 
     const handleCloseSearchDialog = () => {
       setShowSearchDialog(false);
