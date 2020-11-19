@@ -123,7 +123,7 @@ const ResourceCardLoading = () => {
     );
 };
 
-const Home = ({ course, courses, setCourse, category, categories, setCategory, combination }) => {
+const Home = ({ course, courses, setCourse, category, categories, setCategory, combination, search, setSearch }) => {
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: '3rem',
@@ -228,6 +228,42 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory, c
         fetchResources();
     }, [combination.department_id, combination.faculty_id, combination.level_id, currentCourse.id, currentcategory.id]);
 
+    useEffect(() => {
+        if (search === constants.flags.INITIAL_VALUE)
+            return;
+
+        const fetchResources = () => {
+            setResources(constants.flags.INITIAL_VALUE);
+
+            const faculty_id = combination.faculty_id;
+            const department_id = combination.department_id;
+            const level_id = combination.level_id;
+            const course_id = currentCourse.id;
+            const category_id = currentcategory.id;
+    
+            axios.post(`resources/search?faculty_id=${faculty_id}&department_id=${department_id}&level_id=${level_id}&course_id=${course_id}&category_id=${category_id}&join=true`,
+                { search: search })
+            .then(response => {
+                setSearch(constants.flags.INITIAL_VALUE);
+
+                if (response.status === 200)
+                    setResources(response.data);
+                else if (response.status === 404) {
+                    setResources(constants.flags.NOT_FOUND);
+                    showInfo('Not Found', 'No resources found for the selected combination!')
+                }
+                else
+                    showNetworkError();
+            })
+            .catch(() => {
+                showNetworkError();
+                setSearch(constants.flags.INITIAL_VALUE);
+            });
+        };
+
+        fetchResources();
+    }, [combination.department_id, combination.faculty_id, combination.level_id, currentCourse.id, currentcategory.id, search, setSearch]);
+
     const classes = useStyles();
 
     return (
@@ -270,7 +306,7 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory, c
                 </Paper>
             </div>
             
-            {resources === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No Resources uploaded for this combination at this time. Please try other combinations.</Typography>}
+            {resources === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No resource matched your queries. Please try other combinations.</Typography>}
                 
             <Grid container justify="start" alignItems="stretch" className={classes.resourcesContainer}>
                 {resources && resources !== constants.flags.NOT_FOUND && resources !== constants.flags.INITIAL_VALUE ? 
@@ -365,7 +401,7 @@ const Popular = ({ course, category, combination }) => {
         <div className={classes.root}>
             <Typography variant="h5" className={classes.header}>Popular in  <span>{course.course_code}  {category.category}s</span></Typography>
             
-            {resources === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No Resources uploaded for this combination at this time. Please try other combinations.</Typography>}
+            {resources === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No resource matched your queries. Please try other combinations.</Typography>}
                 
             <Grid container justify="start" alignItems="stretch" className={classes.resourcesContainer}>
                 {resources && resources !== constants.flags.NOT_FOUND && resources !== constants.flags.INITIAL_VALUE ? 
@@ -608,6 +644,7 @@ const Resources = ({ showFooter, categories }) => {
     const [courses, setCourses] = useState(constants.flags.INITIAL_VALUE);
     const [course, setCourse] = useState(constants.flags.INITIAL_VALUE);
     const [category, setCategory] = useState(constants.flags.INITIAL_VALUE);
+    const [search, setSearch] = useState(constants.flags.INITIAL_VALUE);
 
     const dispatch = useDispatch();
 
@@ -729,6 +766,11 @@ const Resources = ({ showFooter, categories }) => {
         setShowFiltersDialog(true);
     };
 
+    const searchResources = (values) => {
+        setSearch(values.search);
+        handleCloseSearchDialog();
+    };
+
     const classes = useStyles();
 
     if (category === constants.flags.INITIAL_VALUE || course === constants.flags.INITIAL_VALUE) {
@@ -763,6 +805,8 @@ const Resources = ({ showFooter, categories }) => {
                         setCourse={setCourse}
                         course={course}
                         combination={combination}
+                        search={search}
+                        setSearch={setSearch}
                     />
                 </Route>
             </Switch>
@@ -797,26 +841,29 @@ const Resources = ({ showFooter, categories }) => {
                 aria-labelledby="search-dialog-title" 
                 TransitionComponent={Transition}
             >
-                <DialogTitle id="search-dialog-title">Search COS201 Materials</DialogTitle>
+                <DialogTitle id="search-dialog-title">Search {course.course_code}  {category.category}s</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Enter a keyword to search. Resources matching the provided keyword in their title or description will be displayed.
+                        Enter keywords to search. Resources matching the provided keyword in their title or description will be displayed.
                     </DialogContentText>
                         <Formik
                             initialValues={{
-                                
+                                search: ''
                             }}
                             
-                            
-                            onSubmit={(values) => {}}
+                            validationSchema={Yup.object({
+                                search: Yup.string()
+                                    .required('Enter the search keywords!'),
+                            })}
+                            onSubmit={searchResources}
                         >
-                            <Form>
+                            <Form id="search-form">
                                 <FormikField  
                                     color="secondary"
                                     autoFocus
                                     margin="dense"
-                                    name="keyword"
-                                    label="Search Keyword"
+                                    name="search"
+                                    label="Search Keywords"
                                     fullWidth
                                 />
                             </Form>
@@ -826,7 +873,7 @@ const Resources = ({ showFooter, categories }) => {
                     <Button onClick={handleCloseSearchDialog} variant="contained" color="primary">
                         Cancel
                     </Button>
-                    <Button type="submit" variant="contained" color="secondary" endIcon={<SearchRoundedIcon/>}>
+                    <Button form="search-form" type="submit" variant="contained" color="secondary" endIcon={<SearchRoundedIcon/>}>
                         Search
                     </Button>
                 </DialogActions>
