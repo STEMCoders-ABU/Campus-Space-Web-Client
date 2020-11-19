@@ -327,6 +327,7 @@ const RawHome = ({ showFooter }) => {
     useEffect(() => {
         dispatch(creators.app.getFaculties());
         dispatch(creators.app.getLevels());
+        dispatch(creators.app.getCategories());
     }, [dispatch]);
 
     useEffect(() => showFooter(true), [showFooter]);

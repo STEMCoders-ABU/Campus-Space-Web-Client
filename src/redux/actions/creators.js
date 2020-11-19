@@ -38,6 +38,17 @@ export const app = {
                 .catch(() => {});
         };
     },
+
+    getCategories: () => {
+        return (dispatch) => {
+            return axios.get('categories')
+                .then(response => {
+                    if (response.status === 200)
+                        dispatch({ type: constants.app.GET_CATEGORIES_SUCCESS, payload: response.data });
+                })
+                .catch(() => {});
+        };
+    },
 };
 
 export const user = {

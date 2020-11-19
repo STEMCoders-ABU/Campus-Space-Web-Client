@@ -5,7 +5,7 @@ const initialState = {
     faculties: constants.flags.INITIAL_VALUE,
     departments: constants.flags.INITIAL_VALUE,
     levels: constants.flags.INITIAL_VALUE,
-    resources: constants.flags.INITIAL_VALUE,
+    categories: constants.flags.INITIAL_VALUE,
 };
 
 export const appReducer = (state = initialState, action) => {
@@ -30,9 +30,9 @@ export const appReducer = (state = initialState, action) => {
         return newState;
     }
 
-    else if (action.type === constants.app.GET_RESOURCES) {
+    else if (action.type === constants.app.GET_CATEGORIES_SUCCESS) {
         const newState = {...state};
-        newState.resources = action.payload;
+        newState.categories = action.payload;
 
         return newState;
     }

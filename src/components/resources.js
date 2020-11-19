@@ -16,7 +16,11 @@ import videoImage from '../images/youtube.svg';
 import CommentCard from "./comment-card";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { scrollToTop } from "./utils";
+import { scrollToTop, showLoading, ReactSwal, showNetworkError } from "./utils";
+import * as constants from '../redux/actions/constants';
+import * as creators from '../redux/actions/creators';
+import { axios } from "../init";
+import { connect, useDispatch } from "react-redux";
 
 const ResourceCard = ({ resource, showDownloads = false }) => {
     const useResourceCardStyles = makeStyles(theme => ({
@@ -288,7 +292,12 @@ const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const Resources = ({ showFooter }) => {
+const Resources = ({ showFooter, categories }) => {
+    const queries = new URLSearchParams(useLocation().search);
+    const faculty = queries.get('faculty');
+    const department = queries.get('department');
+    const level = queries.get('level');
+
     const links = ['/resources/home', '/resources/popular', '/resources/comments'];
     const history = useHistory();
     const location = useLocation();
@@ -299,7 +308,55 @@ const Resources = ({ showFooter }) => {
     const [speedDialOpen, setSpeedDialOpen] = useState(false);
     const [showSearchDialog, setShowSearchDialog] = useState(false);
     const [showFiltersDialog, setShowFiltersDialog] = useState(false);
-    
+    const [courses, setCourses] = useState(constants.flags.INITIAL_VALUE);
+    const [course, setCourse] = useState(null);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        showLoading();
+    }, []);
+
+    useEffect(() => {
+        if (!faculty || !department || !level) {
+            history.push('/resources-filter');
+        }
+    }, [department, faculty, history, level]);
+
+    useEffect(() => {
+        if (categories === constants.flags.INITIAL_VALUE) {
+            dispatch(creators.app.getCategories());
+        }
+    }, [categories, dispatch]);
+
+    useEffect(() => {
+        if (courses === constants.flags.INITIAL_VALUE) {
+            axios.get(`courses?department_id=${department}&level_id=${level}`)
+            .then(response => {
+                if (response.status === 200) {
+                    setCourses(response.data);
+                    setCourse(response.data[0]);
+                    ReactSwal.close();
+                }
+                else if (response.status === 404) {
+                    ReactSwal.fire({
+                        title: 'Oops!',
+                        html: 'There are no courses for the selected combination yet. Please choose another combination!',
+                        icon: 'error',
+                        confirmButtonText: 'Retry',
+                        didClose: () => history.push('/resources-filter'),
+                    });
+                }
+                else {
+                    showNetworkError();
+                }
+            })
+            .catch(() => {
+                showNetworkError();
+            });
+        }
+    }, [courses, department, history, level]);
+
     const handleCloseSearchDialog = () => {
       setShowSearchDialog(false);
     };
@@ -372,6 +429,10 @@ const Resources = ({ showFooter }) => {
     };
 
     const classes = useStyles();
+
+    if (categories === constants.flags.INITIAL_VALUE || courses === constants.flags.INITIAL_VALUE) {
+        return null;
+    }
 
     return (
         <div className={classes.root}>
@@ -524,4 +585,6 @@ const Resources = ({ showFooter }) => {
     );
 };
 
-export default Resources;
+export default connect(state => ({
+    categories: state.appReducer.categories,
+}))(Resources);
