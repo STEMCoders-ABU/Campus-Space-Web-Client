@@ -13,7 +13,7 @@ import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import documentImage from '../images/folder.svg';
 import pdfImage from '../images/pdf.svg';
 import videoImage from '../images/youtube.svg';
-import CommentCard from "./comment-card";
+import CommentCard, { CommentCardLoading } from "./comment-card";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
 import { scrollToTop, showLoading, ReactSwal, showNetworkError, showInfo } from "./utils";
@@ -371,7 +371,7 @@ const Popular = ({ course, category, combination }) => {
     );
 };
 
-const Comments = () => {
+const Comments = ({ course, category, combination }) => {
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: '3rem',
@@ -410,15 +410,45 @@ const Comments = () => {
         },
     }));
 
+    const [comments, setComments] = useState(constants.flags.INITIAL_VALUE);
+
     useEffect(() => {
         scrollToTop();
     }, []);
+
+    useEffect(() => {
+        const fetchComments = () => {
+            setComments(constants.flags.INITIAL_VALUE);
+
+            const faculty_id = combination.faculty_id;
+            const department_id = combination.department_id;
+            const level_id = combination.level_id;
+            const course_id = course.id;
+            const category_id = category.id;
+    
+            axios.get(`comments/category?faculty_id=${faculty_id}&department_id=${department_id}&level_id=${level_id}&course_id=${course_id}&category_id=${category_id}&join=true&order_by_downloads=true`)
+            .then(response => {
+                if (response.status === 200)
+                    setComments(response.data);
+                else if (response.status === 404) {
+                    setComments(constants.flags.NOT_FOUND);
+                }
+                else
+                    showNetworkError();
+            })
+            .catch(() => {
+                showNetworkError();
+            });
+        };
+
+        fetchComments();
+    }, [category.id, combination.department_id, combination.faculty_id, combination.level_id, course.id]);
 
     const classes = useStyles();
 
     return (
         <div className={classes.root}>
-            <Typography variant="h5" className={classes.header}>Comments for  <span>COSC201 Materials</span></Typography>
+            <Typography variant="h5" className={classes.header}>Comments for  <span>{course.course_code}  {category.category}s</span></Typography>
             
             <div className={classes.commentsContainer}>
                 <Paper className={classes.addCommentContainer}>
@@ -438,7 +468,14 @@ const Comments = () => {
                         </Formik>
                 </Paper>
 
-                <CommentCard/> <CommentCard/>
+                {comments === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No Resources uploaded for this combination at this time. Please try other combinations.</Typography>}
+                
+                {comments && comments !== constants.flags.NOT_FOUND && comments !== constants.flags.INITIAL_VALUE ? 
+                comments.map((item, index) => (
+                    <CommentCard key={index} comment={item}/>
+                )) : ''}
+
+                {comments === constants.flags.INITIAL_VALUE && <><CommentCardLoading/><CommentCardLoading/><CommentCardLoading/></>}
             </div>
         </div>
     );
@@ -603,7 +640,14 @@ const Resources = ({ showFooter, categories }) => {
     return (
         <div className={classes.root}>
             <Switch>
-                <Route path="/resources/comments"><Comments/></Route>
+                <Route path="/resources/comments">
+                    {course && category ? 
+                    <Comments
+                        category={category}
+                        course={course}
+                        combination={combination}
+                    /> : ''}
+                </Route>
                 <Route path="/resources/popular">
                     {course && category ? 
                     <Popular
