@@ -77,7 +77,7 @@ const ResourceCard = ({ resource, showDownloads = false }) => {
     );
 };
 
-const Home = () => {
+const Home = ({ courses, setCourse, categories, setCategory }) => {
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: '3rem',
@@ -119,6 +119,9 @@ const Home = () => {
         },
     }));
 
+    const [currentCourse, setCurrentCourse] = useState(courses[0]);
+    const [currentcategory, setCurrentcategory] = useState(categories[0]);
+
     useEffect(() => {
         scrollToTop();
     }, []);
@@ -129,7 +132,7 @@ const Home = () => {
         <div className={classes.root}>
             <div className={classes.optionsPaperContainer}>
                 <Paper variant="outlined" square elevation={10} className={classes.optionsPaper}>
-                    <Typography variant="h5" className="header">COSC201 Materials</Typography>
+                    <Typography variant="h5" className="header">{currentCourse.course_code}  {currentcategory.category}s</Typography>
 
                     <FormControl variant="filled" style={{width: '100%', marginBottom: '1rem' }} className="w-100 my-3">
                         <InputLabel></InputLabel>
@@ -310,6 +313,7 @@ const Resources = ({ showFooter, categories }) => {
     const [showFiltersDialog, setShowFiltersDialog] = useState(false);
     const [courses, setCourses] = useState(constants.flags.INITIAL_VALUE);
     const [course, setCourse] = useState(null);
+    const [category, setCategory] = useState(null);
 
     const dispatch = useDispatch();
 
@@ -326,6 +330,9 @@ const Resources = ({ showFooter, categories }) => {
     useEffect(() => {
         if (categories === constants.flags.INITIAL_VALUE) {
             dispatch(creators.app.getCategories());
+        }
+        else {
+            setCategory(categories[0]);
         }
     }, [categories, dispatch]);
 
@@ -439,7 +446,7 @@ const Resources = ({ showFooter, categories }) => {
             <Switch>
                 <Route path="/resources/comments"><Comments/></Route>
                 <Route path="/resources/popular"><Popular/></Route>
-                <Route path="/"><Home/></Route>
+                <Route path="/"><Home categories={categories} setCategory={setCategory} courses={courses} setCourse={setCourse}/></Route>
             </Switch>
 
             <SpeedDial
