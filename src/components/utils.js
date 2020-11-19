@@ -43,7 +43,7 @@ export const showSuccess = (title, body = '', timeout = 2000) => {
     });
 };
 
-export const showInfo = (title, body = '', timeout = 2000) => {
+export const showInfo = (title, body = '', timeout = 5000) => {
     ReactSwal.fire({
         title: title,
         html: body,
@@ -54,7 +54,7 @@ export const showInfo = (title, body = '', timeout = 2000) => {
 
 export const showNetworkError = () => {
     ReactSwal.fire({
-        title: 'Network Error!',
+        title: 'Oops!',
         text: 'A network error occured, please try again.',
         icon: 'error',
         confirmButtonText: 'Okay'

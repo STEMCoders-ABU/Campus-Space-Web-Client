@@ -162,6 +162,11 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory, c
                 padding: '0 .1rem 0 .1rem',
             },
         },
+
+        notFoundTxt: {
+            textAlign: 'center',
+            marginTop: '4rem',
+        }
     }));
 
     const [currentCourse, setCurrentCourse] = useState(course || courses[0]);
@@ -192,29 +197,6 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory, c
         setCurrentcategory(target);
     };
 
-    const fetchResources = () => {
-        setResources(constants.flags.INITIAL_VALUE);
-
-        const faculty_id = combination.faculty_id;
-        const department_id = combination.department_id;
-        const level_id = combination.level_id;
-        const course_id = currentCourse.id;
-        const category_id = currentcategory.id;
-
-        axios.get(`resources?faculty_id=${faculty_id}&department_id=${department_id}&level_id=${level_id}&course_id=${course_id}&category_id=${category_id}&join=true`)
-        .then(response => {
-            if (response.status === 200)
-                setResources(response.data);
-            else if (response.status === 404)
-                setResources(constants.flags.NOT_FOUND);
-            else
-                showNetworkError();
-        })
-        .catch(() => {
-            showNetworkError();
-        });
-    };
-
     useEffect(() => {
         const fetchResources = () => {
             setResources(constants.flags.INITIAL_VALUE);
@@ -229,8 +211,10 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory, c
             .then(response => {
                 if (response.status === 200)
                     setResources(response.data);
-                else if (response.status === 404)
+                else if (response.status === 404) {
                     setResources(constants.flags.NOT_FOUND);
+                    showInfo('Not Found', 'No resources found for the selected combination!')
+                }
                 else
                     showNetworkError();
             })
@@ -284,9 +268,9 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory, c
                 </Paper>
             </div>
             
-            <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
-                {resources === constants.flags.NOT_FOUND && <Typography variant="h4">No Resources ploaded for this combination at this time. Please try other combinations.</Typography>}
+            {resources === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No Resources uploaded for this combination at this time. Please try other combinations.</Typography>}
                 
+            <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
                 {resources && resources !== constants.flags.NOT_FOUND && resources !== constants.flags.INITIAL_VALUE ? 
                 resources.map((item, index) => (
                     <ResourceCard key={index} resource={item} />
