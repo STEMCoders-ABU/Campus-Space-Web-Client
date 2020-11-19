@@ -270,7 +270,7 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory, c
             
             {resources === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No Resources uploaded for this combination at this time. Please try other combinations.</Typography>}
                 
-            <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
+            <Grid container justify="start" alignItems="stretch" className={classes.resourcesContainer}>
                 {resources && resources !== constants.flags.NOT_FOUND && resources !== constants.flags.INITIAL_VALUE ? 
                 resources.map((item, index) => (
                     <ResourceCard key={index} resource={item} />
@@ -282,7 +282,7 @@ const Home = ({ course, courses, setCourse, category, categories, setCategory, c
     );
 };
 
-const Popular = () => {
+const Popular = ({ course, category, combination }) => {
     const useStyles = makeStyles(theme => ({
         root: {
             marginTop: '3rem',
@@ -316,18 +316,56 @@ const Popular = () => {
         },
     }));
 
+    const [resources, setResources] = useState(constants.flags.INITIAL_VALUE);
+
     useEffect(() => {
         scrollToTop();
     }, []);
+
+    useEffect(() => {
+        const fetchResources = () => {
+            setResources(constants.flags.INITIAL_VALUE);
+
+            const faculty_id = combination.faculty_id;
+            const department_id = combination.department_id;
+            const level_id = combination.level_id;
+            const course_id = course.id;
+            const category_id = category.id;
+    
+            axios.get(`resources?faculty_id=${faculty_id}&department_id=${department_id}&level_id=${level_id}&course_id=${course_id}&category_id=${category_id}&join=true&order_by_downloads=true`)
+            .then(response => {
+                if (response.status === 200)
+                    setResources(response.data);
+                else if (response.status === 404) {
+                    setResources(constants.flags.NOT_FOUND);
+                    showInfo('Not Found', 'No resources found for the selected combination!')
+                }
+                else
+                    showNetworkError();
+            })
+            .catch(() => {
+                showNetworkError();
+            });
+        };
+
+        fetchResources();
+    }, [category.id, combination.department_id, combination.faculty_id, combination.level_id, course.id]);
 
     const classes = useStyles();
 
     return (
         <div className={classes.root}>
-            <Typography variant="h5" className={classes.header}>Popular  <span>COSC201 Materials</span></Typography>
+            <Typography variant="h5" className={classes.header}>Popular  <span>{course.course_code}  {category.category}s</span></Typography>
             
-            <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
-                <ResourceCard resource={{category: 'Material'}}/>
+            {resources === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No Resources uploaded for this combination at this time. Please try other combinations.</Typography>}
+                
+            <Grid container justify="start" alignItems="stretch" className={classes.resourcesContainer}>
+                {resources && resources !== constants.flags.NOT_FOUND && resources !== constants.flags.INITIAL_VALUE ? 
+                resources.map((item, index) => (
+                    <ResourceCard key={index} resource={item} showDownloads={true} />
+                )) : ''}
+
+                {resources === constants.flags.INITIAL_VALUE && <><ResourceCardLoading/><ResourceCardLoading/><ResourceCardLoading/></>}
             </Grid>
         </div>
     );
@@ -426,8 +464,8 @@ const Resources = ({ showFooter, categories }) => {
     const history = useHistory();
     const location = useLocation();
 
-    const currentNavigationIndex = links.indexOf(location.pathname);
-
+    const currentNavigationIndex = links.indexOf(location.pathname + linkSuffix);
+    
     const [navigationIndex, setNavigationIndex] = useState(currentNavigationIndex === -1 ? 0 : currentNavigationIndex);
     const [speedDialOpen, setSpeedDialOpen] = useState(false);
     const [showSearchDialog, setShowSearchDialog] = useState(false);
@@ -566,7 +604,14 @@ const Resources = ({ showFooter, categories }) => {
         <div className={classes.root}>
             <Switch>
                 <Route path="/resources/comments"><Comments/></Route>
-                <Route path="/resources/popular"><Popular/></Route>
+                <Route path="/resources/popular">
+                    {course && category ? 
+                    <Popular
+                        category={category}
+                        course={course}
+                        combination={combination}
+                    /> : ''}
+                </Route>
                 <Route path="/">
                     <Home 
                         category={category}
