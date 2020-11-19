@@ -10,37 +10,45 @@ import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
 import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
-import DocumentImage from '../images/folder.svg';
-import PDFImage from '../images/pdf.svg';
-import VideoImage from '../images/youtube.svg';
+import documentImage from '../images/folder.svg';
+import pdfImage from '../images/pdf.svg';
+import videoImage from '../images/youtube.svg';
 import CommentCard from "./comment-card";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
 import { scrollToTop } from "./utils";
 
-const useResourceCardStyles = makeStyles(theme => ({
-    root: {
-        padding: '1rem 1rem 0 1rem',
-        [theme.breakpoints.down('xs')]: {
-            padding: '1rem .2rem 0 .2rem',
+const ResourceCard = ({ resource, showDownloads = false }) => {
+    const useResourceCardStyles = makeStyles(theme => ({
+        root: {
+            padding: '1rem 1rem 0 1rem',
+            [theme.breakpoints.down('xs')]: {
+                padding: '1rem .2rem 0 .2rem',
+            },
         },
-    },
-
-    title: {
-        [theme.breakpoints.down('xs')]: {
-            fontSize: '1rem',
+    
+        title: {
+            [theme.breakpoints.down('xs')]: {
+                fontSize: '1rem',
+            },
         },
-    },
-
-    imgContainer: {
-        padding: '3rem',
-        background: theme.resourceCard.background,
-    },
-}));
-
-const VideoCard = ({ downloads = null, resource = {id: 1} }) => {
+    
+        imgContainer: {
+            padding: '3rem',
+            background: theme.resourceCard.background,
+        },
+    }));
     
     const classes = useResourceCardStyles();
+    let image = null;
+    if (resource.category === 'Video')
+        image = videoImage;
+    else if (resource.category === 'Material')
+        image = pdfImage;
+    else if (resource.category === 'Textbook')
+        image = pdfImage;
+    else if (resource.category === 'Document')
+        image = documentImage;
 
     return (
         <Grid item xs={12} md={4} className={classes.root}>
@@ -48,71 +56,17 @@ const VideoCard = ({ downloads = null, resource = {id: 1} }) => {
                 <div className={classes.imgContainer}>
                     <CardMedia
                         component="img"
-                        image={VideoImage}
+                        image={image}
                     />
                 </div>
                 <CardContent>
                     <Typography variant="h6" className={classes.title}>Excellent Video Resource</Typography>
                     <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
-                    {downloads && <Typography variant="subtitle1" color="textSecondary">1 Downloads</Typography>}
+                    {showDownloads && <Typography variant="subtitle1" color="textSecondary">1 Downloads</Typography>}
                 </CardContent>
                 <CardActions>
                     <Button variant="outlined" color="primary.dark" component={Link} to={`../resource/${resource.id}`}>View</Button>
-                    <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
-                </CardActions>
-            </Card>
-        </Grid>
-    );
-};
-
-const DocumentCard = ({ downloads = null, resource = {id: 1}  }) => {
-    
-    const classes = useResourceCardStyles();
-
-    return (
-        <Grid item xs={12} md={4} className={classes.root}>
-            <Card>
-                <div className={classes.imgContainer}>
-                    <CardMedia
-                        component="img"
-                        image={DocumentImage}
-                    />
-                </div>
-                <CardContent>
-                    <Typography variant="h6" className={classes.title}>Excellent Video Resource</Typography>
-                    <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
-                    {downloads && <Typography variant="subtitle1" color="textSecondary">1 Downloads</Typography>}
-                </CardContent>
-                <CardActions>
-                    <Button variant="outlined" color="primary.dark" component={Link} to={`../resource/${resource.id}`}>View</Button>
-                    <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
-                </CardActions>
-            </Card>
-        </Grid>
-    );
-};
-
-const PDFCard = ({ downloads = null, resource = {id: 1}  }) => {
-    
-    const classes = useResourceCardStyles();
-
-    return (
-        <Grid item xs={12} md={4} className={classes.root}>
-            <Card>
-                <div className={classes.imgContainer}>
-                    <CardMedia
-                        component="img"
-                        image={PDFImage}
-                    />
-                </div>
-                <CardContent>
-                    <Typography variant="h6" className={classes.title}>Excellent Video Resource</Typography>
-                    <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
-                    {downloads && <Typography variant="subtitle1" color="textSecondary">1 Downloads</Typography>}
-                </CardContent>
-                <CardActions>
-                    <Button variant="outlined" color="primary.dark" component={Link} to={`../resource/${resource.id}`}>View</Button>
-                    <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download</Button>
+                    <Button variant="contained" color="secondary" startIcon={<GetAppRoundedIcon/>}>Download</Button>
                 </CardActions>
             </Card>
         </Grid>
@@ -200,7 +154,7 @@ const Home = () => {
             </div>
 
             <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
-                <VideoCard/> <VideoCard/> <DocumentCard/> <PDFCard/>
+                <ResourceCard resource={{category: 'Video'}}/>
             </Grid>
         </div>
     );
@@ -251,7 +205,7 @@ const Popular = () => {
             <Typography variant="h5" className={classes.header}>Popular  <span>COSC201 Materials</span></Typography>
             
             <Grid container justify="start" alignI="stretch" className={classes.resourcesContainer}>
-                <VideoCard downloads/> <VideoCard/> <DocumentCard downloads/> <PDFCard downloads/>
+                <ResourceCard resource={{category: 'Material'}}/>
             </Grid>
         </div>
     );
