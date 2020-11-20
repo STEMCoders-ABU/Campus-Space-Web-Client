@@ -8,10 +8,12 @@ import testPdf from '../test_assets/test.pdf';
 import CommentCard from './comment-card';
 import FormikField from "./formik-field";
 import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
-import DocumentImage from '../images/folder.svg';
+import documentImage from '../images/folder.svg';
+import * as constants from '../redux/actions/constants';
+import { Skeleton } from '@material-ui/lab';
 
 const { makeStyles, Paper, Card, CardContent, Typography, CardActions, Button, CardMedia, useTheme } = require("@material-ui/core");
-const { useEffect } = require("react");
+const { useEffect, useState } = require("react");
 const { scrollToTop } = require("./utils");
 
 const VideoViewer = () => {
@@ -63,7 +65,7 @@ const DocumentViewer = () => {
         <div className={classes.root}>
             <CardMedia
                 component="img"
-                image={DocumentImage}
+                image={documentImage}
             />
         </div>
     );
@@ -125,6 +127,9 @@ const Resource = ({ showFooter }) => {
         },
     }));
 
+    const [resource, setResource] = useState(constants.flags.INITIAL_VALUE);
+    const [viewer, setViewier] = useState(null);
+
     useEffect(() => {
         scrollToTop();
     }, []);
@@ -139,17 +144,19 @@ const Resource = ({ showFooter }) => {
         <div className={classes.root}>
             <div className={classes.viewerContainer}>
                 <Card>
-                    <PDFViewer />
+                    {viewer ? viewer : <Skeleton animation="wave" variant="rect" height={400} />}
                     <CardContent>
-                        <Typography variant="h6">The Excellent Resource Title</Typography>
+                        <Typography variant="h6">{resource !== constants.flags.INITIAL_VALUE ? resource.title : <Skeleton animation="wave"/>}</Typography>
                         <div className="info">
-                            <Typography variant="body1" color="textSecondary">Department of Computer Science, 100 Level</Typography>
-                            <Typography variant="body1" color="textSecondary">For COSC101</Typography>
-                            <Typography variant="body1" color="textSecondary">Downloaded 50 times</Typography>
+                            <Typography variant="body1" color="textSecondary">{resource !== constants.flags.INITIAL_VALUE ? resource.department : <Skeleton animation="wave"/>}</Typography>
+                            <Typography variant="body1" color="textSecondary">{resource !== constants.flags.INITIAL_VALUE ? resource.course_code + ', ' + resource.level + 'Level' : <Skeleton animation="wave"/>}</Typography>
+                            <Typography variant="body1" color="textSecondary">{resource !== constants.flags.INITIAL_VALUE ? resource.downloads + ' Downloads' : <Skeleton animation="wave"/>}</Typography>
                         </div>
                     </CardContent>
                     <CardActions>
-                        <Button fullWidth variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download Now</Button>
+                        {resource !== constants.flags.INITIAL_VALUE ? 
+                        <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download Now</Button> : 
+                        <Skeleton animation="wave" variant="rect" width={150} height={40}/>}
                     </CardActions>
                 </Card>
             </div>
@@ -185,7 +192,7 @@ const Resource = ({ showFooter }) => {
                                 </Formik>
                         </Paper>
 
-                        <CommentCard/> <CommentCard/>
+                        {/*<CommentCard/> <CommentCard/>*/}
                     </div>
                 </Paper>
             </div>
