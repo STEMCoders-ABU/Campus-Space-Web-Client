@@ -19,8 +19,9 @@ import Resource from "./components/resource";
 import Moderation from "./components/moderation";
 import Admin from "./components/admin";
 import Contact from "./components/contact";
+import { connect } from "react-redux";
 
-const NavBar = ({ themeName, changeTheme, ...props }) => {
+const RawNavBar = ({ themeName, changeTheme, ...props }) => {
   const useStyles = makeStyles(theme => ({
     appBar: {
       backgroundColor: theme.palette.primary.main,
@@ -206,6 +207,10 @@ const NavBar = ({ themeName, changeTheme, ...props }) => {
     </AppBar>
   );
 };
+
+const NavBar = connect(state => ({
+
+}))(RawNavBar);
 
 const Footer = () => {
   const useStyles = makeStyles(theme => ({
