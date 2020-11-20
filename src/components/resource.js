@@ -165,8 +165,8 @@ const Resource = ({ showFooter }) => {
                 <Paper className={classes.content}>
                     <Typography variant="h5" className="header">About this Resource</Typography>
                     <div className="content">
-                        <Typography variant="body1" color="textSecondary">Added on 2020-10-01</Typography>
-                        <Typography variant="body1" className="description">This is where the somewhat long descriptions shows up!</Typography>
+                        <Typography variant="body1" color="textSecondary">{resource !== constants.flags.INITIAL_VALUE ? 'Added on ' + resource.date_added : <Skeleton animation="wave"/>}</Typography>
+                        <Typography variant="body1" className="description">{resource !== constants.flags.INITIAL_VALUE ? resource.description : <Skeleton animation="wave" height={200}/>}</Typography>
                     </div>
                 </Paper>
             </div>
