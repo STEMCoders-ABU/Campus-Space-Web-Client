@@ -5,7 +5,7 @@ import ReactPlayer from "react-player";
 import { useParams } from "react-router-dom";
 import testVideo from '../test_assets/video.mp4';
 import testPdf from '../test_assets/test.pdf';
-import CommentCard from './comment-card';
+import CommentCard, { CommentCardLoading } from './comment-card';
 import FormikField from "./formik-field";
 import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
 import documentImage from '../images/folder.svg';
@@ -128,6 +128,7 @@ const Resource = ({ showFooter }) => {
     }));
 
     const [resource, setResource] = useState(constants.flags.INITIAL_VALUE);
+    const [comments, setComments] = useState(constants.flags.INITIAL_VALUE);
     const [viewer, setViewier] = useState(null);
 
     useEffect(() => {
@@ -192,7 +193,11 @@ const Resource = ({ showFooter }) => {
                                 </Formik>
                         </Paper>
 
-                        {/*<CommentCard/> <CommentCard/>*/}
+                        {comments !== constants.flags.INITIAL_VALUE ?
+                        comments.map((item, index) => (
+                            <CommentCard comment={item}/>
+                        )) :
+                        <><CommentCardLoading/><CommentCardLoading/><CommentCardLoading/></>}
                     </div>
                 </Paper>
             </div>
