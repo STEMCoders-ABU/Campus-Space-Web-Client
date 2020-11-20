@@ -638,7 +638,7 @@ const Comments = ({ course, category, combination }) => {
                         </Formik>
                 </Paper>
 
-                {comments === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No category comments for this combination at this time. Be the first to comment!</Typography>}
+                {comments === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No category comments for this combination yet. Be the first to comment!</Typography>}
                 
                 {comments && comments !== constants.flags.NOT_FOUND && comments !== constants.flags.INITIAL_VALUE ? 
                 comments.map((item, index) => (

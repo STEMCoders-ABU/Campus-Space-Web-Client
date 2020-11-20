@@ -1,29 +1,29 @@
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
+import { Skeleton } from '@material-ui/lab';
 import { Form, Formik } from "formik";
+import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
 import ReactPlayer from "react-player";
 import { useParams } from "react-router-dom";
-import testVideo from '../test_assets/video.mp4';
-import testPdf from '../test_assets/test.pdf';
+import documentImage from '../images/folder.svg';
+import { axios } from '../init';
+import * as constants from '../redux/actions/constants';
 import CommentCard, { CommentCardLoading } from './comment-card';
 import FormikField from "./formik-field";
-import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
-import documentImage from '../images/folder.svg';
-import * as constants from '../redux/actions/constants';
-import { Skeleton } from '@material-ui/lab';
+import * as Yup from 'yup';
 
-const { makeStyles, Paper, Card, CardContent, Typography, CardActions, Button, CardMedia, useTheme } = require("@material-ui/core");
+const { makeStyles, Paper, Card, CardContent, Typography, CardActions, Button, CardMedia, useTheme, CircularProgress } = require("@material-ui/core");
 const { useEffect, useState } = require("react");
-const { scrollToTop } = require("./utils");
+const { scrollToTop, showNetworkError, showError, ReactSwal, getErrorsMarkup } = require("./utils");
 
-const VideoViewer = () => {
+const VideoViewer = ({ resource }) => {
     return (
         <div style={{
             position: 'relative',
             paddingTop: '56.25%',
         }}>
             <ReactPlayer
-                url={testVideo}
+                url={resource.file_url}
                 playing={false}
                 
                 width='100%'
@@ -39,13 +39,13 @@ const VideoViewer = () => {
     );
 };
 
-const PDFViewer = () => {
+const PDFViewer = ({ resource }) => {
     const theme = useTheme();
 
     return (
         <DocViewer
             key={theme.palette.primary.main}
-            documents={[{ uri: testPdf }]}
+            documents={[{ uri: resource.file_url }]}
             pluginRenderers={DocViewerRenderers}
         />
     );
@@ -54,8 +54,13 @@ const PDFViewer = () => {
 const DocumentViewer = () => {
     const useStyles = makeStyles(theme => ({
         root: {
-            padding: '10rem',
+            padding: '20rem',
             background: theme.resourceCard.background,
+
+            '& img': {
+                width: '100%',
+                height: 'auto',
+            }
         }
     }));
 
@@ -63,10 +68,7 @@ const DocumentViewer = () => {
 
     return (
         <div className={classes.root}>
-            <CardMedia
-                component="img"
-                image={documentImage}
-            />
+           <img src={documentImage} alt="Document"/>
         </div>
     );
 };
@@ -125,11 +127,18 @@ const Resource = ({ showFooter }) => {
             padding: '1rem',
             marginBottom: '4rem',
         },
+
+        notFoundTxt: {
+            textAlign: 'center',
+            marginTop: '4rem',
+            fontFamily: theme.fontFamily,
+        },
     }));
 
     const [resource, setResource] = useState(constants.flags.INITIAL_VALUE);
     const [comments, setComments] = useState(constants.flags.INITIAL_VALUE);
     const [viewer, setViewier] = useState(null);
+    const [processing, setProcessing] = useState(false);
 
     useEffect(() => {
         scrollToTop();
@@ -139,6 +148,98 @@ const Resource = ({ showFooter }) => {
 
     const { id } = useParams();
 
+    useEffect(() => {
+        axios.get('resources/resource?join=true&resource_id=' + id)
+        .then(response => {
+            if (response.status === 200) {
+                const targetResource = response.data;
+
+                setResource(targetResource);
+                const category = targetResource.category;
+
+                if (category === 'Material' || category === 'Textbook')
+                    setViewier(<PDFViewer resource={targetResource}/>);
+                else if (category === 'Video')
+                    setViewier(<VideoViewer resource={targetResource}/>);
+                else if (category === 'Document')
+                    setViewier(<DocumentViewer/>);
+            }
+            else if (response.status === 404) {
+                showError('Oops!', 'The requested resource does not exist!');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError());
+
+        const fetchComments = () => {
+            axios.get('comments?join=true&resource_id=' + id)
+            .then(response => {
+                if (response.status === 200) {
+                    setComments(response.data);
+                }
+                else if (response.status === 404) {
+                    setComments(constants.flags.INITIAL_VALUE);
+                }
+            })
+            .catch(() => {});
+        };
+
+        fetchComments();
+    }, [id]);
+
+    const fetchComments = () => {
+        setComments(constants.flags.INITIAL_VALUE);
+        
+        axios.get('comments?join=true&resource_id=' + id)
+        .then(response => {
+            if (response.status === 200) {
+                setComments(response.data);
+            }
+            else if (response.status === 404) {
+                setComments(constants.flags.INITIAL_VALUE);
+            }
+        })
+        .catch(() => {});
+    };
+
+    const addComment = (values) => {
+        setProcessing(true);
+
+        const data = {
+            author: values.author,
+            comment: values.comment,
+            resource_id: id,
+        };
+
+        axios.post('comments', data)
+        .then(response => {
+            setProcessing(false);
+
+            if (response.status === 200) {
+                ReactSwal.fire({
+                    title: 'Success',
+                    html: 'Comment added successfully!',
+                    icon: 'success',
+                    timer: 3000,
+                    didClose: () => fetchComments(),
+                });
+            }
+            else if (response.status === 400) {
+                // Validation error
+                showError('Validation Error!', getErrorsMarkup(response.data.messages.error));
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => {
+            showNetworkError();
+            setProcessing(false);
+        })
+    };
+    
     const classes = useStyles();
 
     return (
@@ -150,7 +251,7 @@ const Resource = ({ showFooter }) => {
                         <Typography variant="h6">{resource !== constants.flags.INITIAL_VALUE ? resource.title : <Skeleton animation="wave"/>}</Typography>
                         <div className="info">
                             <Typography variant="body1" color="textSecondary">{resource !== constants.flags.INITIAL_VALUE ? resource.department : <Skeleton animation="wave"/>}</Typography>
-                            <Typography variant="body1" color="textSecondary">{resource !== constants.flags.INITIAL_VALUE ? resource.course_code + ', ' + resource.level + 'Level' : <Skeleton animation="wave"/>}</Typography>
+                            <Typography variant="body1" color="textSecondary">{resource !== constants.flags.INITIAL_VALUE ? 'For ' + resource.course_code + ', ' + resource.level + ' Level' : <Skeleton animation="wave"/>}</Typography>
                             <Typography variant="body1" color="textSecondary">{resource !== constants.flags.INITIAL_VALUE ? resource.downloads + ' Downloads' : <Skeleton animation="wave"/>}</Typography>
                         </div>
                     </CardContent>
@@ -178,26 +279,43 @@ const Resource = ({ showFooter }) => {
                     <div className="content">
                         <Paper className={classes.addCommentContainer} elevation={3}>
                             <Formik
-                                    initialValues={{
-                                        
-                                    }}
-                                    
-                                    
-                                    onSubmit={(values) => {}}
-                                >
+                                initialValues={{
+                                    author: '',
+                                    comment: '',
+                                }}
+                                
+                                validationSchema={Yup.object({
+                                    author: Yup.string()
+                                        .required('Enter a display name')
+                                        .max(20, 'Display name must be atmost 20 characters'),
+                                    comment: Yup.string()
+                                        .required('Enter comment')
+                                        .max(500, 'Comment must be atmost 500 characters'),
+                                })}
+                                onSubmit={addComment}
+                            >
                                     <Form>
-                                        <FormikField name="display_name" label="Display Name" variant="standard" color="secondary"/>
+                                        <FormikField name="author" label="Display Name" variant="standard" color="secondary"/>
                                         <FormikField multiline rows={5} name="comment" label="Your comment" variant="outlined" color="secondary"/>
-                                        <Button startIcon={<CommentRoundedIcon/>} type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>Comment</Button>
+                                        {processing ? 
+                                        <Button startIcon={<CommentRoundedIcon/>} disabled type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>
+                                            Please wait... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                                        </Button> : 
+                                        <Button startIcon={<CommentRoundedIcon/>} type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>
+                                            Comment
+                                        </Button>}
                                     </Form>
                                 </Formik>
                         </Paper>
 
-                        {comments !== constants.flags.INITIAL_VALUE ?
+                        {comments !== constants.flags.INITIAL_VALUE && comments !== constants.flags.NOT_FOUND &&
                         comments.map((item, index) => (
                             <CommentCard comment={item}/>
-                        )) :
-                        <><CommentCardLoading/><CommentCardLoading/><CommentCardLoading/></>}
+                        ))}
+
+                        {comments === constants.flags.INITIAL_VALUE && <><CommentCardLoading/><CommentCardLoading/><CommentCardLoading/></>}
+
+                        {comments === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No comments for this resource yet. Be the first to comment!</Typography>}
                     </div>
                 </Paper>
             </div>
