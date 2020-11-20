@@ -21,7 +21,7 @@ import * as creators from '../redux/actions/creators';
 import CombinationSelection from "./combination-selection";
 import CommentCard, { CommentCardLoading } from "./comment-card";
 import FormikField from "./formik-field";
-import { getErrorsMarkup, ReactSwal, scrollToTop, showError, showInfo, showLoading, showNetworkError } from "./utils";
+import { downloadResource, getErrorsMarkup, ReactSwal, scrollToTop, showError, showInfo, showLoading, showNetworkError } from "./utils";
 
 const ResourceCard = ({ resource, showDownloads = false }) => {
     const useResourceCardStyles = makeStyles(theme => ({
@@ -76,7 +76,7 @@ const ResourceCard = ({ resource, showDownloads = false }) => {
                 </CardContent>
                 <CardActions>
                     <Button variant="outlined" color="primary.dark" component={Link} to={`../resource/${resource.id}`}>View</Button>
-                    <Button variant="contained" color="secondary" startIcon={<GetAppRoundedIcon/>}>Download</Button>
+                    <Button variant="contained" color="secondary" startIcon={<GetAppRoundedIcon/>} onClick={() => downloadResource(resource)}>Download</Button>
                 </CardActions>
             </Card>
         </Grid>

@@ -1,6 +1,7 @@
 import * as ReactScroll from 'react-scroll';
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import { axios } from '../init';
 
 export const animateScroll = ReactScroll.animateScroll;
 export const ReactSwal = withReactContent(Swal);
@@ -68,4 +69,27 @@ export const getErrorsMarkup = (error_messages) => {
     error_html = '<ul style="text-align: left">' + error_html + '</ul>';
 
     return error_html;
+};
+
+export const downloadResource = (resource) => {
+    showLoading('Getting Resource...');
+
+    axios.get('resources/download?resource_id=' + resource.id, { responseType: 'blob'})
+    .then(response => {
+        if (response.status === 200) {
+            const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.setAttribute('download', resource.file); //any other extension
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            showSuccess('Success!', 'Downloading resource');
+        }
+        else if (response.status === 404) {
+            showError('Oops!', 'The requested resource does not exist!');
+        }
+    })
+    .catch(() => showNetworkError());
 };
