@@ -1,4 +1,4 @@
-import { AppBar, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, makeStyles, MenuItem, Paper, Slide, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, makeStyles, MenuItem, Paper, Slide, Toolbar, Typography } from "@material-ui/core";
 import { AccountCircleRounded, CloudUploadRounded, DeleteRounded, EditRounded, KeyboardArrowLeftRounded, SearchRounded } from "@material-ui/icons";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
@@ -8,11 +8,14 @@ import editProfileImage from '../images/edit.svg';
 import manageResourceImage from '../images/settings.svg';
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { scrollToTop } from "./utils";
+import { scrollToTop, showError, showNetworkError } from "./utils";
 import documentImage from '../images/folder.svg';
 import pdfImage from '../images/pdf.svg';
 import videoImage from '../images/youtube.svg';
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
+import * as creators from '../redux/actions/creators';
+import * as Yup from 'yup';
+import { axios } from "../init";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -60,25 +63,62 @@ const Login = () => {
         },
     }));
 
+    const [processing, setProcessing] = useState(false);
+
+    const dispatch = useDispatch();
+    const history = useHistory();
+
     const classes = useStyles();
 
     useEffect(() => {
         scrollToTop();
     }, []);
 
+    const login = (values) => {
+        setProcessing(true);
+
+        axios.post('moderator/session', {}, {
+            auth: {
+                username: values.username,
+                password: values.password,
+            }
+        })
+        .then(res => {
+            setProcessing(false);
+
+            if (res.status === 204) {
+                dispatch(creators.app.authenticate(true, '/moderation/logout'));
+                history.push('/moderation/home');
+            }
+            else if (res.status === 401) {
+                showError('Oops!', 'Invalid username or password');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => { setProcessing(false); showNetworkError(); });
+    };
+
     return (
         <div className={classes.root}>
             <div className={classes.paperContainer}>
                 <Paper elevation={5} className={classes.paper}>
-                    <Typography variant="h4" className="header">Sign In</Typography>
+                    <Typography variant="h4" className="header">Moderator Sign In</Typography>
 
                     <Formik
                         initialValues={{
-                            
+                            username: '',
+                            password: '',
                         }}
                         
-                        
-                        onSubmit={(values) => {}}
+                        validationSchema={Yup.object({
+                            username: Yup.string()
+                                .required('Enter your username')
+                                .max(12, 'Username must be atmost 12 characters'),
+                            password: Yup.string().required('Enter your password'),
+                        })}
+                        onSubmit={login}
                     >
                         <Form>
                             <FormikField  
@@ -97,7 +137,12 @@ const Login = () => {
                                 fullWidth
                             />
                             <div className={classes.btn}>
-                                <Button type="submit" variant="contained" color="secondary" size="large" startIcon={<AccountCircleRounded/>}>Submit</Button>
+                                {processing ? 
+                                <Button type="submit" variant="contained" disabled color="secondary" size="large" startIcon={<AccountCircleRounded/>}>
+                                    Please wait... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                                </Button>
+                                 : 
+                                 <Button type="submit" variant="contained" color="secondary" size="large" startIcon={<AccountCircleRounded/>}>Submit</Button>}
                             </div>
                         </Form>
                     </Formik>
@@ -105,6 +150,19 @@ const Login = () => {
             </div>
         </div>
     );
+};
+
+const Logout = () => {
+    const dispatch = useDispatch();
+    const history = useHistory();
+
+    useEffect(() => {
+        axios.delete('moderator/session');
+        dispatch(creators.app.authenticate(false, ''));
+        history.push('/');
+    }, [dispatch, history]);
+
+    return  null;
 };
 
 const Home = connect(state => ({
@@ -812,6 +870,7 @@ const Moderation = ({ showFooter }) => {
             <Switch>
                 <Route path="/moderation/manage"><Manage/></Route>
                 <Route path="/moderation/login"><Login/></Route>
+                <Route path="/moderation/logout"><Logout/></Route>
                 <Route path="/moderation/home"><Home/></Route>
                 <Route path="/"><Redirect to="/moderation/home"/></Route>
             </Switch>
