@@ -8,7 +8,7 @@ import editProfileImage from '../images/edit.svg';
 import manageResourceImage from '../images/settings.svg';
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { getErrorsMarkup, scrollToTop, showError, showNetworkError, showSuccess } from "./utils";
+import { getErrorsMarkup, ReactSwal, scrollToTop, showError, showLoading, showNetworkError, showSuccess } from "./utils";
 import documentImage from '../images/folder.svg';
 import pdfImage from '../images/pdf.svg';
 import videoImage from '../images/youtube.svg';
@@ -16,6 +16,7 @@ import { connect, useDispatch } from "react-redux";
 import * as creators from '../redux/actions/creators';
 import * as Yup from 'yup';
 import { axios } from "../init";
+import * as constants from '../redux/actions/constants';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -171,8 +172,9 @@ const Home = connect(state => ({
 
     const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
     const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
+    const [moderatorData, setModeratorData] = useState(null);
     const [processingAddCourse, setProcessingAddCourse] = useState(false);
-    const [processingEditProfile, setProcessingEditProfile] = useState(true);
+    const [processingEditProfile, setProcessingEditProfile] = useState(false);
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -329,6 +331,31 @@ const Home = connect(state => ({
             history.push('/moderation/login');
     }, [auth, history]);
 
+    useEffect(() => {
+        if (auth.authenticated) {
+            showLoading();
+
+            axios.get('moderator')
+            .then(res => {
+                ReactSwal.close();
+
+                if (res.status === 200) {
+                    setModeratorData(res.data);
+                }
+                else if (res.status === 401) {
+                    // Unauthorized
+                    axios.delete('moderator/session');
+                    dispatch(creators.app.authenticate(false, ''));
+                    history.push('/');
+                }
+                else {
+                    showNetworkError();
+                }
+            })
+            .catch(() => showNetworkError());
+        }
+    }, [auth.authenticated, dispatch, history]);
+
     const addCourse = (values) => {
         setProcessingAddCourse(true);
 
@@ -359,7 +386,7 @@ const Home = connect(state => ({
         setProcessingEditProfile(true);
     };
 
-    if (!auth.authenticated)
+    if (!auth.authenticated || !moderatorData)
         return null;
 
     return (
@@ -464,7 +491,7 @@ const Home = connect(state => ({
                 </AppBar>
                 <DialogContent>
                     <DialogContentText className={classes.dialogContent}>
-                        Enter new values for fields that you want to update. Fields marked with asteriks are required.
+                        Enter new values for fields that you want to update. All Fields are required.
                     </DialogContentText>
                         <Formik
                             initialValues={{
@@ -481,7 +508,6 @@ const Home = connect(state => ({
                                     label="Email"
                                     type="email"
                                     variant="outlined"
-                                    required
                                     fullWidth
                                 />
                                 <FormikField
@@ -490,7 +516,6 @@ const Home = connect(state => ({
                                     label="Full Name"
                                     type="text"
                                     variant="outlined"
-                                    required
                                     fullWidth
                                 />
                                 <FormikSelect 
@@ -498,7 +523,6 @@ const Home = connect(state => ({
                                     defaultValue="male" 
                                     label="Gender"
                                     variant="outlined"
-                                    required
                                     fullWidth
                                 >
                                     <MenuItem value="male">Male</MenuItem>
@@ -510,7 +534,6 @@ const Home = connect(state => ({
                                     label="Phone"
                                     type="tel"
                                     variant="outlined"
-                                    required
                                     fullWidth
                                 />
                                 <FormikField
