@@ -49,6 +49,16 @@ export const app = {
                 .catch(() => {});
         };
     },
+
+    authenticate: (authenticated, logout) => {
+        return {
+            type: constants.app.AUTHENTICATE, 
+            payload: {
+                authenticated: authenticated,
+                logout: logout,
+            }
+        }
+    },
 };
 
 export const user = {

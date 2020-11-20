@@ -6,7 +6,16 @@ const initialState = {
     departments: constants.flags.INITIAL_VALUE,
     levels: constants.flags.INITIAL_VALUE,
     categories: constants.flags.INITIAL_VALUE,
+    auth: {
+        authenticated: false,
+        logout: '',
+    },
 };
+
+// Check for any session data
+if (sessionStorage.getItem('auth')) {
+    initialState.auth = JSON.parse(sessionStorage.getItem('auth'));
+}
 
 export const appReducer = (state = initialState, action) => {
     if (action.type === constants.app.GET_FACULTIES_SUCESS) {
@@ -34,6 +43,15 @@ export const appReducer = (state = initialState, action) => {
         const newState = {...state};
         newState.categories = action.payload;
 
+        return newState;
+    }
+    
+    else if (action.type === constants.app.AUTHENTICATE) {
+        const newState = {...state};
+        newState.auth = {...action.payload};
+
+        // store the data in session (this caches the data in case the user refreshes the window)
+        sessionStorage.setItem('auth', JSON.stringify(newState.auth));
         return newState;
     }
     
