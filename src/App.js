@@ -21,7 +21,7 @@ import Admin from "./components/admin";
 import Contact from "./components/contact";
 import { connect } from "react-redux";
 
-const RawNavBar = ({ themeName, changeTheme, ...props }) => {
+const RawNavBar = ({ themeName, changeTheme, auth, ...props }) => {
   const useStyles = makeStyles(theme => ({
     appBar: {
       backgroundColor: theme.palette.primary.main,
@@ -182,7 +182,9 @@ const RawNavBar = ({ themeName, changeTheme, ...props }) => {
         <ThemeSwitch />
 
         <Hidden smDown>
-          <Button className={classes.loginButton} variant="contained" color="secondary" size="large">Login</Button>
+          {auth.authenticated ? 
+          <Button className={classes.loginButton} component={Link} to={auth.logout} variant="contained" color="secondary" size="large">Logout</Button> : 
+          <Button className={classes.loginButton} variant="contained" color="secondary" size="large">Login</Button>}
         </Hidden>
 
         <Hidden mdUp>
@@ -200,7 +202,9 @@ const RawNavBar = ({ themeName, changeTheme, ...props }) => {
             <MenuItem onClick={() => handleMenuClose()}>Resources</MenuItem>
             <MenuItem onClick={() => handleMenuClose()}>Moderation</MenuItem>
             <MenuItem onClick={() => handleMenuClose()}>Contact</MenuItem>
-            <MenuItem onClick={() => handleMenuClose()}>Login</MenuItem>
+            {auth.authenticated ? 
+            <MenuItem onClick={() => handleMenuClose(auth.logout)}>Logout</MenuItem> : 
+            <MenuItem onClick={() => handleMenuClose()}>Login</MenuItem>}
           </Menu>
         </Hidden>
       </Toolbar>
@@ -209,7 +213,7 @@ const RawNavBar = ({ themeName, changeTheme, ...props }) => {
 };
 
 const NavBar = connect(state => ({
-
+  auth: {...state.appReducer.auth}
 }))(RawNavBar);
 
 const Footer = () => {
