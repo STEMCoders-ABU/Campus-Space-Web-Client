@@ -8,7 +8,7 @@ import editProfileImage from '../images/edit.svg';
 import manageResourceImage from '../images/settings.svg';
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { scrollToTop, showError, showNetworkError } from "./utils";
+import { getErrorsMarkup, scrollToTop, showError, showNetworkError, showSuccess } from "./utils";
 import documentImage from '../images/folder.svg';
 import pdfImage from '../images/pdf.svg';
 import videoImage from '../images/youtube.svg';
@@ -171,7 +171,9 @@ const Home = connect(state => ({
 
     const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
     const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
+    const [processing, setProcessing] = useState(false);
 
+    const dispatch = useDispatch();
     const history = useHistory();
     
     const handleCloseEditProfileDialog = () => {
@@ -326,9 +328,35 @@ const Home = connect(state => ({
             history.push('/moderation/login');
     }, [auth, history]);
 
+    const addCourse = (values) => {
+        setProcessing(true);
+
+        axios.post('moderator/courses', values)
+        .then(res => {
+            setProcessing(false);
+
+            if (res.status === 200) {
+                showSuccess('Success!', `${values.course_code} added successfully!`);
+            }
+            else if (res.status === 400) {
+                showError('Oops', getErrorsMarkup(res.data.messages.error));
+            }
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('moderator/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => { setProcessing(false); showNetworkError(); })
+    };
+
     if (!auth.authenticated)
         return null;
-        
+
     return (
         <div className={classes.root}>
             <div className={classes.coursePaperContainer}>
@@ -337,16 +365,24 @@ const Home = connect(state => ({
 
                     <Formik
                         initialValues={{
-                            
+                            course_title: '',
+                            course_code: '',
                         }}
                         
+                        validationSchema={Yup.object({
+                            course_title: Yup.string()
+                                .required('Enter the course title')
+                                .max(60, 'Course title must be atmost 60 characters long!'),
+                            course_code: Yup.string()
+                                .required('Enter the course code')
+                                .max(12, 'Course code must be atmost 12 characters long')
+                        })}
                         
-                        onSubmit={(values) => {}}
+                        onSubmit={addCourse}
                     >
                         <Form>
                             <FormikField  
                                 color="secondary"
-                                margin="dense"
                                 name="course_title"
                                 label="Course Title"
                                 variant="outlined"
@@ -354,13 +390,16 @@ const Home = connect(state => ({
                             />
                             <FormikField  
                                 color="secondary"
-                                margin="dense"
                                 name="course_code"
                                 label="Course Code"
                                 variant="outlined"
                                 fullWidth
                             />
-                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.addCourseBtn}>Add Course</Button>
+                            {processing ? 
+                            <Button type="submit" disabled variant="contained" color="secondary" size="large" className={classes.addCourseBtn}>
+                                Please wait... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                            </Button> :
+                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.addCourseBtn}>Add Course</Button>}
                         </Form>
                     </Formik>
                 </Paper>
