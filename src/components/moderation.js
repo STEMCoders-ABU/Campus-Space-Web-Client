@@ -384,6 +384,45 @@ const Home = connect(state => ({
 
     const updateProfile = (values) => {
         setProcessingEditProfile(true);
+
+        const data = {
+            email: values.email,
+            full_name: values.full_name,
+            gender: values.gender,
+            phone: values.phone,
+        }
+
+        if (values.password !== '') {
+            if (values.password === values.confirm_password) 
+                data.password = values.password;
+            else {
+                showError('Oops!', 'Passwords do not match!');
+                return;
+            }
+        }
+
+        axios.put('moderator', data)
+        .then(res => {
+            setProcessingEditProfile(false);
+
+            if (res.status === 200) {
+                showSuccess('Success!', 'Profile updated successfully!');
+                setModeratorData(res.data);
+            }
+            else if (res.status === 400) {
+                showError('Oops', getErrorsMarkup(res.data.messages.error));
+            }
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('moderator/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => { setProcessingEditProfile(false); showNetworkError(); })
     };
 
     if (!auth.authenticated || !moderatorData)
@@ -491,15 +530,36 @@ const Home = connect(state => ({
                 </AppBar>
                 <DialogContent>
                     <DialogContentText className={classes.dialogContent}>
-                        Enter new values for fields that you want to update. All Fields are required.
+                        Enter new values for fields that you want to update.<br/>
+                        <sttong>Leave the password fiels empty if you do not want to change it!</sttong>
                     </DialogContentText>
                         <Formik
                             initialValues={{
-                                
+                                email: moderatorData.email,
+                                full_name: moderatorData.full_name,
+                                gender: moderatorData.gender,
+                                phone: moderatorData.phone,
+                                password: '',
+                                confirm_password: '',
                             }}
                             
+                            validationSchema={Yup.object({
+                                email: Yup.string()
+                                    .required('Enter your email address')
+                                    .email('Enter a valid email address')
+                                    .max(50, 'The email must be atmost 50 characters long'),
+                                full_name: Yup.string()
+                                    .required('Enter your full name')
+                                    .max(50, 'Your full name must be atmost 50 characters long'),
+                                gender: Yup.string()
+                                    .required('Choose a gender')
+                                    .oneOf(['Male', 'Female']),
+                                phone: Yup.string()
+                                    .required('Enter your phone number')
+                                    .max(15, 'Your phone number must be atmost 15 characters long'),
+                            })}
                             
-                            onSubmit={(values) => { alert('hello'); }}
+                            onSubmit={updateProfile}
                         >
                             <Form id="edit-profile-form">
                                 <FormikField
@@ -525,8 +585,8 @@ const Home = connect(state => ({
                                     variant="outlined"
                                     fullWidth
                                 >
-                                    <MenuItem value="male">Male</MenuItem>
-                                    <MenuItem value="female">Female</MenuItem>
+                                    <MenuItem value="Male">Male</MenuItem>
+                                    <MenuItem value="Female">Female</MenuItem>
                                 </FormikSelect>
                                 <FormikField
                                     color="secondary"
@@ -539,7 +599,15 @@ const Home = connect(state => ({
                                 <FormikField
                                     color="secondary"
                                     name="password"
-                                    label="Password"
+                                    label="New Password"
+                                    type="password"
+                                    variant="outlined"
+                                    fullWidth
+                                />
+                                <FormikField
+                                    color="secondary"
+                                    name="confirm_password"
+                                    label="Confirm Password"
                                     type="password"
                                     variant="outlined"
                                     fullWidth
