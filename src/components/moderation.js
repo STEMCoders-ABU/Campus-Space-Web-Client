@@ -168,6 +168,7 @@ const Logout = () => {
 const Home = connect(state => ({
     auth: {...state.appReducer.auth}
   }))(({ auth }) => {
+
     const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
     const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
 
@@ -325,6 +326,9 @@ const Home = connect(state => ({
             history.push('/moderation/login');
     }, [auth, history]);
 
+    if (!auth.authenticated)
+        return null;
+        
     return (
         <div className={classes.root}>
             <div className={classes.coursePaperContainer}>
