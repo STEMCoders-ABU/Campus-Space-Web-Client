@@ -180,7 +180,7 @@ const Resource = ({ showFooter }) => {
                     setComments(response.data);
                 }
                 else if (response.status === 404) {
-                    setComments(constants.flags.INITIAL_VALUE);
+                    setComments(constants.flags.NOT_FOUND);
                 }
             })
             .catch(() => {});
@@ -198,7 +198,7 @@ const Resource = ({ showFooter }) => {
                 setComments(response.data);
             }
             else if (response.status === 404) {
-                setComments(constants.flags.INITIAL_VALUE);
+                setComments(constants.flags.NOT_FOUND);
             }
         })
         .catch(() => {});
