@@ -12,6 +12,7 @@ import { scrollToTop } from "./utils";
 import documentImage from '../images/folder.svg';
 import pdfImage from '../images/pdf.svg';
 import videoImage from '../images/youtube.svg';
+import { connect } from "react-redux";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -106,7 +107,9 @@ const Login = () => {
     );
 };
 
-const Home = () => {
+const Home = connect(state => ({
+    auth: {...state.appReducer.auth}
+  }))(({ auth }) => {
     const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
     const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
 
@@ -254,10 +257,15 @@ const Home = () => {
     }));
 
     const classes = useStyles();
-
+    
     useEffect(() => {
         scrollToTop();
     }, []);
+
+    useEffect(() => {
+        if (!auth.authenticated)
+            history.push('/moderation/login');
+    }, [auth, history]);
 
     return (
         <div className={classes.root}>
@@ -505,7 +513,7 @@ const Home = () => {
             </Dialog>
         </div>
     );
-};
+});
 
 const ResourceCard = ({ resource = {category: 'Video'}, editResource, removeResource }) => {
     const useStyles = makeStyles(theme => ({

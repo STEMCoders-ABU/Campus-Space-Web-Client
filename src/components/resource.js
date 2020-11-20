@@ -5,14 +5,14 @@ import { Form, Formik } from "formik";
 import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
 import ReactPlayer from "react-player";
 import { useParams } from "react-router-dom";
+import * as Yup from 'yup';
 import documentImage from '../images/folder.svg';
 import { axios } from '../init';
 import * as constants from '../redux/actions/constants';
 import CommentCard, { CommentCardLoading } from './comment-card';
 import FormikField from "./formik-field";
-import * as Yup from 'yup';
 
-const { makeStyles, Paper, Card, CardContent, Typography, CardActions, Button, CardMedia, useTheme, CircularProgress } = require("@material-ui/core");
+const { makeStyles, Paper, Card, CardContent, Typography, CardActions, Button, useTheme, CircularProgress } = require("@material-ui/core");
 const { useEffect, useState } = require("react");
 const { scrollToTop, showNetworkError, showError, ReactSwal, getErrorsMarkup, downloadResource } = require("./utils");
 
