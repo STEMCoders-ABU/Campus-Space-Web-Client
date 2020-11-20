@@ -14,7 +14,7 @@ import * as Yup from 'yup';
 
 const { makeStyles, Paper, Card, CardContent, Typography, CardActions, Button, CardMedia, useTheme, CircularProgress } = require("@material-ui/core");
 const { useEffect, useState } = require("react");
-const { scrollToTop, showNetworkError, showError, ReactSwal, getErrorsMarkup } = require("./utils");
+const { scrollToTop, showNetworkError, showError, ReactSwal, getErrorsMarkup, downloadResource } = require("./utils");
 
 const VideoViewer = ({ resource }) => {
     return (
@@ -257,7 +257,7 @@ const Resource = ({ showFooter }) => {
                     </CardContent>
                     <CardActions>
                         {resource !== constants.flags.INITIAL_VALUE ? 
-                        <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>}>Download Now</Button> : 
+                        <Button variant="contained" color="secondary" endIcon={<GetAppRoundedIcon/>} onClick={() => downloadResource(resource)}>Download Now</Button> : 
                         <Skeleton animation="wave" variant="rect" width={150} height={40}/>}
                     </CardActions>
                 </Card>
