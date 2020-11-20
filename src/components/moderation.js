@@ -171,7 +171,8 @@ const Home = connect(state => ({
 
     const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
     const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
-    const [processing, setProcessing] = useState(false);
+    const [processingAddCourse, setProcessingAddCourse] = useState(false);
+    const [processingEditProfile, setProcessingEditProfile] = useState(true);
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -329,11 +330,11 @@ const Home = connect(state => ({
     }, [auth, history]);
 
     const addCourse = (values) => {
-        setProcessing(true);
+        setProcessingAddCourse(true);
 
         axios.post('moderator/courses', values)
         .then(res => {
-            setProcessing(false);
+            setProcessingAddCourse(false);
 
             if (res.status === 200) {
                 showSuccess('Success!', `${values.course_code} added successfully!`);
@@ -351,7 +352,11 @@ const Home = connect(state => ({
                 showNetworkError();
             }
         })
-        .catch(() => { setProcessing(false); showNetworkError(); })
+        .catch(() => { setProcessingAddCourse(false); showNetworkError(); })
+    };
+
+    const updateProfile = (values) => {
+        setProcessingEditProfile(true);
     };
 
     if (!auth.authenticated)
@@ -395,7 +400,7 @@ const Home = connect(state => ({
                                 variant="outlined"
                                 fullWidth
                             />
-                            {processing ? 
+                            {processingAddCourse ? 
                             <Button type="submit" disabled variant="contained" color="secondary" size="large" className={classes.addCourseBtn}>
                                 Please wait... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
                             </Button> :
@@ -438,15 +443,23 @@ const Home = connect(state => ({
             >
                 <AppBar className={classes.dialogAppBar} color="primary">
                     <Toolbar>
+                        {processingEditProfile ? 
+                        <IconButton disabled edge="start" color="inherit" aria-label="close">
+                            <KeyboardArrowLeftRounded/>
+                        </IconButton> : 
                         <IconButton edge="start" color="inherit" onClick={handleCloseEditProfileDialog} aria-label="close">
                             <KeyboardArrowLeftRounded/>
-                        </IconButton>
+                        </IconButton>}
                         <Typography variant="h6" className={classes.dialogTitle}>
                             Edit Profile
                         </Typography>
+                        {processingEditProfile ? 
+                        <Button disbaled color="inherit" variant="outlined" form="edit-profile-form">
+                            Updating... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                        </Button> :
                         <Button color="inherit" variant="outlined" type="submit" form="edit-profile-form" startIcon={<EditRounded/>}>
                             Update
-                        </Button>
+                        </Button>}
                     </Toolbar>
                 </AppBar>
                 <DialogContent>
