@@ -6,7 +6,8 @@ import * as constants from '../redux/actions/constants';
 import * as creators from '../redux/actions/creators';
 import FormikSelect from "./formik-select";
 
-const CombinationSelection = ({ faculties, departments, levels, dataChanged, excludeLevel = false, excludeDepartment = false, setFaculeites: setFaculties = null }) => {
+const CombinationSelection = ({ faculties, departments, levels, dataChanged, excludeLevel = false, excludeDepartment = false, 
+    setFaculties = null, setDepartments = null }) => {
     const [data] = useState({
         faculty_id: 0,
         department_id: 0,
@@ -43,9 +44,12 @@ const CombinationSelection = ({ faculties, departments, levels, dataChanged, exc
         if (departments !== constants.flags.INITIAL_VALUE) {
             data.department_id = departments[0].id;
             dataChanged(data);
+
+            if (setDepartments !== null)
+                setDepartments(departments);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [departments]);
+    }, [departments, setDepartments]);
 
     useEffect(() => {
         if (levels !== constants.flags.INITIAL_VALUE) {

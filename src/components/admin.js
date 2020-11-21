@@ -11,6 +11,7 @@ import CombinationSelection from "./combination-selection";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
 import { scrollToTop, showError, showNetworkError } from "./utils";
+import * as constants from '../redux/actions/constants';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -186,11 +187,19 @@ const Home = connect(state => ({
         department_id: 0,
     });
 
+    const [faculties, setFaculties] = useState(constants.flags.INITIAL_VALUE);
+    const [departments, setDepartments] = useState(constants.flags.INITIAL_VALUE);
+
     const handleCloseEditFacultyDialog = () => {
         setShowEditFacultyDialog(false);
     };
 
     const handleShowEditFacultyDialog = () => {
+        if (faculties === constants.flags.INITIAL_VALUE) {
+            showError('Oops!', 'A network error occured! Please reload the page.');
+            return;
+        }
+
         setShowEditFacultyDialog(true);
     };
 
@@ -199,6 +208,11 @@ const Home = connect(state => ({
     };
 
     const handleShowEditDepartmentDialog = () => {
+        if (departments === constants.flags.INITIAL_VALUE) {
+            showError('Oops!', 'A network error occured! Please reload the page.');
+            return;
+        }
+
         setShowEditDepartmentDialog(true);
     };
 
@@ -316,7 +330,7 @@ const Home = connect(state => ({
                                 onSubmit={(values) => {}}
                             >
                                 <Form>
-                                    <CombinationSelection excludeDepartment={true} excludeLevel={true} dataChanged={setManageFactData} />
+                                    <CombinationSelection setFaculties={setFaculties} excludeDepartment={true} excludeLevel={true} dataChanged={setManageFactData} />
                                 </Form>
                             </Formik>
                         </CardContent>
@@ -338,7 +352,7 @@ const Home = connect(state => ({
                                 onSubmit={(values) => {}}
                             >
                                 <Form>
-                                    <CombinationSelection excludeLevel={true} dataChanged={setManageDeptData} />
+                                    <CombinationSelection setDepartments={setDepartments} excludeLevel={true} dataChanged={setManageDeptData} />
                                 </Form>
                             </Formik>
                         </CardContent>
