@@ -21,13 +21,11 @@ const CombinationSelection = ({ faculties, departments, levels, dataChanged, exc
         else {
             dispatch(creators.app.getDepartments(faculties[0].id));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, faculties]);
 
     useEffect(() => {
         if (levels === constants.flags.INITIAL_VALUE)
             dispatch(creators.app.getLevels());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, levels]);
 
     useEffect(() => {

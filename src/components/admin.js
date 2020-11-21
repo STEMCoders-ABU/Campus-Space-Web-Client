@@ -10,7 +10,7 @@ import * as creators from '../redux/actions/creators';
 import CombinationSelection from "./combination-selection";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { scrollToTop, showError, showLoading, showNetworkError } from "./utils";
+import { scrollToTop, showError, showNetworkError } from "./utils";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
