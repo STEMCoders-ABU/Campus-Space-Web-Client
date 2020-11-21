@@ -175,6 +175,7 @@ const Home = connect(state => ({
     const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
     const [moderatorData, setModeratorData] = useState(null);
     const [courses, setCourses] = useState(null);
+    const [acceptFileTypes, setFileTypes] = useState('*/*');
 
     const [processingAddCourse, setProcessingAddCourse] = useState(false);
     const [processingEditProfile, setProcessingEditProfile] = useState(false);
@@ -348,8 +349,26 @@ const Home = connect(state => ({
     }, [auth, history]);
 
     useEffect(() => {
+        const resolveFileTypes = (category_id) => {
+            const category = categories.filter((item) => {
+                return (item.id === category_id);
+            })[0].category;
+    
+            let types = '*/*';
+            if (category === 'Document')
+                types = '.dot,.doc,.docx,.dotx,.docm,.xls,.xlsx,.ppt,.pptx';
+            else if (category === 'Material' || category === 'Textbook')
+                types = '.pdf';
+            else if (category === 'Video')
+                types = '.3gpp,.mp4,.webm,.mkv';
+
+            setFileTypes(types);
+        };
+
         if (categories === constants.flags.INITIAL_VALUE)
             dispatch(creators.app.getCategories());
+        else
+            resolveFileTypes(categories[0].id);
 
         if (courses === null)
             getCourses();
@@ -391,6 +410,26 @@ const Home = connect(state => ({
         .catch(() => {});
     };
     
+    const resolveFileTypes = (category_id) => {
+        const category = categories.filter((item) => {
+            return (item.id === category_id);
+        })[0].category;
+        
+        let types = '*/*';
+        if (category === 'Document')
+            types = '.dot,.doc,.docx,.dotx,.docm,.xls,.xlsx,.ppt,.pptx';
+        else if (category === 'Material' || category === 'Textbook')
+            types = '.pdf';
+        else if (category === 'Video')
+            types = '.3gpp,.mp4,.webm,.mkv';
+
+        setFileTypes(types);
+    };
+
+    const categoryChanged = index => {
+        resolveFileTypes(categories[index].id);
+    };
+
     const addCourse = (values) => {
         setProcessingAddCourse(true);
 
@@ -672,10 +711,10 @@ const Home = connect(state => ({
                             Upload Resource
                         </Typography>
                         {processingAddResource ? 
-                        <Button disabled color="inherit" variant="outlined" form="edit-profile-form">
+                        <Button disabled color="inherit" variant="outlined" form="add-resource-form">
                             Uploading... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
                         </Button> :
-                        <Button color="inherit" variant="outlined" type="submit" form="edit-profile-form" startIcon={<CloudUploadRounded/>}>
+                        <Button color="inherit" variant="outlined" type="submit" form="add-resource-form" startIcon={<CloudUploadRounded/>}>
                             Upload
                         </Button>}
                     </Toolbar>
@@ -700,61 +739,72 @@ const Home = connect(state => ({
                     </DialogContentText>
                         <Formik
                             initialValues={{
-                                
+                                course_id: courses ? courses[0].id : 0,
+                                title: '',
+                                category_id: categories !== constants.flags.INITIAL_VALUE ? categories[0].id : 0,
+                                description: '',
+                                file: '',
                             }}
                             
+                            validationSchema={Yup.object({
+                                title: Yup.string()
+                                    .required('Enter the resource title')
+                                    .max(50, 'Resource must be atmost 50 characters long'),
+                                description: Yup.string()
+                                    .required('Describe this resource')
+                                    .max(2000, 'Resource description must be atmost 2000 characters long'),
+                            })}
                             
                             onSubmit={(values) => {}}
                         >
                             <Form id="add-resource-form">
                                 <FormikSelect 
-                                    name="course_code" 
+                                    name="course_id" 
                                     label="Course Code"
                                     variant="outlined"
-                                    required
                                     fullWidth
                                 >
-                                    <MenuItem value="test1">COSC101</MenuItem>
-                                    <MenuItem value="test2">COSC102</MenuItem>
+                                    {courses && courses.map((item, index) => (
+                                        <MenuItem key={index} value={item.id}>{item.course_code}</MenuItem>
+                                    ))}
                                 </FormikSelect>
                                 <FormikField
                                     color="secondary"
-                                    name="resource_name"
+                                    name="title"
                                     label="Resource Title"
                                     type="text"
                                     variant="outlined"
-                                    required
                                     fullWidth
                                 />
                                 <FormikSelect 
-                                    name="resource_category" 
+                                    name="category_id" 
                                     label="Resource Category"
                                     variant="outlined"
-                                    required
                                     fullWidth
                                 >
-                                    <MenuItem value="test1">Material</MenuItem>
-                                    <MenuItem value="test2">Document</MenuItem>
+                                    {categories !== constants.flags.INITIAL_VALUE && categories.map((item, index) => (
+                                        <MenuItem onClick={() => categoryChanged(index)} key={index} value={item.id}>{item.category}</MenuItem>
+                                    ))}
                                 </FormikSelect>
                                 <FormikField
                                     color="secondary"
-                                    name="resource_description"
+                                    name="description"
                                     label="Resource Description"
                                     type="text"
                                     variant="outlined"
-                                    required
                                     fullWidth
                                     multiline
                                     rows={6}
                                 />
                                 <FormikField
                                     color="secondary"
-                                    name="resource_file"
+                                    name="file"
                                     label=""
                                     type="file"
-                                    variant="outlined"
                                     required
+                                    variant="outlined"
                                     fullWidth
+                                    inputProps={{accept: acceptFileTypes}}
                                 />
                             </Form>
                         </Formik>
