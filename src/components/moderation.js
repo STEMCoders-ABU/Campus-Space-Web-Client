@@ -995,7 +995,7 @@ const Manage = connect(state => ({
     const [course, setCourse] = useState(0);
     const [resources, setResources] = useState(constants.flags.INITIAL_VALUE);
     const [currentResource, setCurrentResource] = useState(null);
-    const [processingEditProfile, setProcessingEditProfile] = useState(false);
+    const [processingEditResource, setProcessingEditResource] = useState(false);
 
     const handleCloseEditResourceDialog = () => {
         setShowEditResourceDialog(false);
@@ -1130,6 +1130,28 @@ const Manage = connect(state => ({
         fetchResources();
     }, [category, course, dispatch, history]);
 
+    const fetchResources = () => {
+        setResources(constants.flags.INITIAL_VALUE);
+
+        axios.get(`moderator/resources?join=true&category_id=${category}&course_id=${course}`)
+        .then(res => {
+            if (res.status === 200)
+                setResources(res.data);
+            else if (res.status === 404)
+                setResources(constants.flags.NOT_FOUND);
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('moderator/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/moderation/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError());
+    };
+
     const getCourses = () => {
         setCourses(null);
 
@@ -1147,6 +1169,62 @@ const Manage = connect(state => ({
 
     const courseChanged = index => {
         setCourse(index === -1 ? 0 : courses[index].id);
+    };
+
+    const updateResource = (values) => {
+        setProcessingEditResource(true);
+
+        axios.put('moderator/resource?resource_id=' + currentResource.id, values)
+        .then(res => {
+            setProcessingEditResource(false);
+
+            if (res.status === 200) {
+                showSuccess('Success!', 'Resource updated successfully');
+                fetchResources();
+                handleCloseEditResourceDialog();
+            }
+            else if (res.status === 400) { //Validation Error
+                showError('Oops!', getErrorsMarkup(res.data.messages.error));
+            }
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('moderator/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/moderation/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => { setProcessingEditResource(false); showNetworkError(); })
+    };
+
+    const deleteResource = () => {
+        showLoading();
+
+        axios.delete('moderator/resource?resource_id=' + currentResource.id)
+        .then(res => {
+            setProcessingEditResource(false);
+
+            if (res.status === 200) {
+                showSuccess('Success!', 'Resource deleted successfully');
+                fetchResources();
+                handleCloseDeleteResourceDialog();
+            }
+            else if (res.status === 400) { //Validation Error
+                showError('Oops!', getErrorsMarkup(res.data.messages.error));
+            }
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('moderator/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/moderation/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError())
     };
 
     return (
@@ -1210,7 +1288,7 @@ const Manage = connect(state => ({
             >
                 <AppBar className={classes.dialogAppBar} color="primary">
                     <Toolbar>
-                        {processingEditProfile ? 
+                        {processingEditResource ? 
                         <IconButton disabled edge="start" color="inherit" aria-label="close">
                             <KeyboardArrowLeftRounded/>
                         </IconButton> : 
@@ -1220,11 +1298,11 @@ const Manage = connect(state => ({
                         <Typography variant="h6" className={classes.dialogTitle}>
                             Edit Resource
                         </Typography>
-                        {processingEditProfile ? 
+                        {processingEditResource ? 
                         <Button disabled color="inherit" variant="outlined" form="edit-resource-form">
                             Updating... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
                         </Button> :
-                        <Button color="inherit" variant="outlined" type="submit" form="edit-profile-form" startIcon={<EditRounded/>}>
+                        <Button color="inherit" variant="outlined" type="submit" form="edit-resource-form" startIcon={<EditRounded/>}>
                             Update
                         </Button>}
                     </Toolbar>
@@ -1251,7 +1329,7 @@ const Manage = connect(state => ({
                                     .max(2000, 'Resource description must be atmost 2000 characters long'),
                             })}
 
-                            onSubmit={(values) => { alert('hello'); }}
+                            onSubmit={updateResource}
                         >
                             <Form id="edit-resource-form">
                             <FormikSelect 
@@ -1301,15 +1379,16 @@ const Manage = connect(state => ({
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText className={classes.dialogContent}>
-                        Are you sure you want to permanently remove this resource?<br/>
-                        <strong>Please note that you cannot reverse this process.</strong>
+                        Are you sure you want to permanently remove "<strong>{currentResource ? currentResource.title : 'this resource'}</strong>"?<br/>
+                        <br/><br/>
+                        <strong>Please note that you cannot reverse this action!</strong>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDeleteResourceDialog} variant="contained" color="primary">
                         Cancel
                     </Button>
-                    <Button type="submit" variant="contained" color="secondary" startIcon={<DeleteRounded/>}>
+                    <Button variant="contained" color="secondary" startIcon={<DeleteRounded/>} onClick={deleteResource}>
                         Delete
                     </Button>
                 </DialogActions>
