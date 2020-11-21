@@ -883,15 +883,15 @@ const Home = connect(state => ({
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText className={classes.dialogContent}>
-                        Are you sure you want to permanently remove this department?<br/>
-                        <strong>Please note that you cannot reverse this process.</strong>
+                        Are you sure you want to permanently remove "<strong>{targetDept && targetDept.department}</strong>"?<br/><br/>
+                        <strong>Please note that you cannot reverse this action.</strong>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDeleteDepartmentDialog} variant="contained" color="primary">
                         Cancel
                     </Button>
-                    <Button type="submit" variant="contained" color="secondary" startIcon={<DeleteRounded/>}>
+                    <Button type="submit" variant="contained" color="secondary" startIcon={<DeleteRounded/>} onClick={removeDepartment}>
                         Delete
                     </Button>
                 </DialogActions>
