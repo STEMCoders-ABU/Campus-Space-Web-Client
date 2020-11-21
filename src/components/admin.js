@@ -176,6 +176,16 @@ const Home = connect(state => ({
         level_id: 0,
         department_id: 0,
     });
+    const [defaultRepData, setDefaultRepData] = useState({
+        username: '',
+        email: '',
+        full_name: '',
+        gender: 'Male',
+        phone: '',
+        password: '',
+        confirm_password: '',
+    });
+
     const [manageDeptData, setManageDeptData] = useState({
         faculty_id: 0,
         level_id: 0,
@@ -601,8 +611,28 @@ const Home = connect(state => ({
                         <Typography variant="h4" className="header">Add Class Rep</Typography>
                         <CardContent>
                             <Formik
-                                initialValues={{}}
-                                isInitialValid={false}
+                                initialValues={defaultRepData}
+
+                                validationSchema={Yup.object({
+                                    email: Yup.string()
+                                        .required('Enter the email address')
+                                        .email('Enter a valid email address')
+                                        .max(50, 'The email must be atmost 50 characters long'),
+                                    full_name: Yup.string()
+                                        .required('Enter the full name')
+                                        .max(50, 'The full name must be atmost 50 characters long'),
+                                    gender: Yup.string()
+                                        .required('Choose a gender')
+                                        .oneOf(['Male', 'Female']),
+                                    phone: Yup.string()
+                                        .required('Enter the phone number')
+                                        .max(15, 'The phone number must be atmost 15 characters long'),
+                                    password: Yup.string().required('Enter password'),
+                                    confirm_password: Yup.string()
+                                        .required('Confirm password')
+                                        .oneOf([Yup.ref('password'), null], 'Passwords do not match!'),
+                                })}
+
                                 onSubmit={(values) => {}}
                             >
                                 <Form>
@@ -631,14 +661,14 @@ const Home = connect(state => ({
                                     />
                                     <FormikSelect 
                                         name="gender" 
-                                        defaultValue="male" 
+                                        defaultValue="Male" 
                                         label="Gender"
                                         variant="outlined"
                                         required
                                         fullWidth
                                     >
-                                        <MenuItem value="male">Male</MenuItem>
-                                        <MenuItem value="female">Female</MenuItem>
+                                        <MenuItem value="Male">Male</MenuItem>
+                                        <MenuItem value="Female">Female</MenuItem>
                                     </FormikSelect>
                                     <FormikField
                                         color="secondary"
@@ -653,6 +683,14 @@ const Home = connect(state => ({
                                         color="secondary"
                                         name="password"
                                         label="Password"
+                                        variant="outlined"
+                                        type="password"
+                                        fullWidth
+                                    />
+                                    <FormikField  
+                                        color="secondary"
+                                        name="confirm_password"
+                                        label="Confirm Password"
                                         variant="outlined"
                                         type="password"
                                         fullWidth
