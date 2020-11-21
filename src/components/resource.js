@@ -14,7 +14,7 @@ import FormikField from "./formik-field";
 
 const { makeStyles, Paper, Card, CardContent, Typography, CardActions, Button, useTheme, CircularProgress } = require("@material-ui/core");
 const { useEffect, useState } = require("react");
-const { scrollToTop, showNetworkError, showError, ReactSwal, getErrorsMarkup, downloadResource, ReactSwalFire } = require("./utils");
+const { scrollToTop, showNetworkError, showError, getErrorsMarkup, downloadResource, ReactSwalFire } = require("./utils");
 
 const VideoViewer = ({ resource }) => {
     return (
@@ -41,7 +41,7 @@ const VideoViewer = ({ resource }) => {
 
 const PDFViewer = ({ resource }) => {
     const theme = useTheme();
-
+    
     return (
         <DocViewer
             key={theme.palette.primary.main}
