@@ -1,8 +1,10 @@
-import { Button, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
+import { Button, makeStyles, Paper, Typography } from "@material-ui/core";
 import { MailRounded } from "@material-ui/icons";
 import { Form, Formik } from "formik";
-import { useEffect } from "react";
-import FormikSelect from "./formik-select";
+import { useEffect, useState } from "react";
+import { axios } from "../init";
+import CombinationSelection from "./combination-selection";
+import { showInfo, showLoading, showNetworkError, showSuccess } from "./utils";
 
 const Contact = ({ showFooter }) => {
     const useStyles = makeStyles(theme => ({
@@ -68,9 +70,37 @@ const Contact = ({ showFooter }) => {
         },
     }));
 
+    const [combinationData, setCombinationData] = useState({
+        faculty_id: 0,
+        level_id: 0,
+        department_id: 0,
+    });
+
     const classes = useStyles();
 
     useEffect(() => showFooter(true), [showFooter]);
+
+    const onShowContact = (values) => {
+        showLoading();
+
+        const faculty_id = combinationData.faculty_id;
+        const department_id = combinationData.department_id;
+        const level_id = combinationData.level_id;
+
+        axios.get(`moderator/public?faculty_id=${faculty_id}&department_id=${department_id}&level_id=${level_id}`)
+        .then(res => {
+            if (res.status === 200) {
+                showSuccess('Yeah');
+            }
+            else if (res.status === 404) {
+                showInfo('Ouch!', 'Sorry, the class rep for this combination is not registered yet!');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError());
+    };
 
     return (
         <div className={classes.root}>
@@ -85,27 +115,16 @@ const Contact = ({ showFooter }) => {
                 <Typography variant="h5" color="textSecondary" className="text2">Get the contact details of a registered departmental rep easily!</Typography>
 
                 <Formik
-                        initialValues={{
-                            
-                        }}
-                        
-                        
-                        onSubmit={(values) => {}}
-                    >
-                        <Form>
-                            <FormikSelect name="faculty" defaultValue="test" label="Choose a Faculty" className="selector">
-                                <MenuItem value="test">Test Faculty</MenuItem>
-                            </FormikSelect>
-                            <FormikSelect name="department" defaultValue="test" label="Choose a Department" className="selector">
-                                <MenuItem value="test">Test Department</MenuItem>
-                            </FormikSelect>
-                            <FormikSelect name="department" defaultValue="test" label="Choose a Level" className="selector">
-                                <MenuItem value="test">100</MenuItem>
-                            </FormikSelect>
+                    initialValues={{}}
+                    isInitialValid={false}
+                    onSubmit={(values) => onShowContact(values)}
+                >
+                    <Form>
+                        <CombinationSelection dataChanged={setCombinationData} />
 
-                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>Show Contact</Button>
-                        </Form>
-                    </Formik>
+                        <Button type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>Show Contact</Button>
+                    </Form>
+                </Formik>
             </Paper>
         </div>
     );
