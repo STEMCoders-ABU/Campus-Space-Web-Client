@@ -6,6 +6,7 @@ const initialState = {
     departments: constants.flags.INITIAL_VALUE,
     levels: constants.flags.INITIAL_VALUE,
     categories: constants.flags.INITIAL_VALUE,
+    fetchDepartmentsSignal: 0,
     auth: {
         authenticated: false,
         logout: '',
@@ -52,6 +53,13 @@ export const appReducer = (state = initialState, action) => {
 
         // store the data in session (this caches the data in case the user refreshes the window)
         sessionStorage.setItem('auth', JSON.stringify(newState.auth));
+        return newState;
+    }
+
+    else if (action.type === constants.app.SIGNAL_FETCH_DEPARTMENTS) {
+        const newState = {...state};
+        newState.fetchDepartmentsSignal = Math.random() * new Date().getSeconds();
+
         return newState;
     }
     

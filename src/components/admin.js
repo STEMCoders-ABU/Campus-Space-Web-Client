@@ -454,6 +454,101 @@ const Home = connect(state => ({
         .catch(() => showNetworkError())
     };
 
+    const updateDepartment = (values) => {
+        showLoading();
+
+        axios.put('admin/department/' + manageDeptData.department_id, values)
+        .then(res => {
+            if (res.status === 204) {
+                ReactSwalFire({
+                    title: 'Success',
+                    html: 'Department updated',
+                    icon: 'success',
+                    timer: 3000,
+                    didClose: () => dispatch(creators.app.signalFetchDepartments()),
+                });
+                handleCloseEditDepartmentDialog();
+            }
+            else if (res.status === 400) {
+               showError('Oops!', getErrorsMarkup(res.data.messages.error));
+            }
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('admin/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/admin/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError())
+    };
+
+    const removeDepartment = () => {
+        showLoading();
+
+        axios.delete('admin/department/' + manageDeptData.department_id)
+        .then(res => {
+            if (res.status === 204) {
+                ReactSwalFire({
+                    title: 'Success',
+                    html: 'Department removed',
+                    icon: 'success',
+                    timer: 3000,
+                    didClose: () => dispatch(creators.app.signalFetchDepartments()),
+                });
+
+                handleCloseDeleteDepartmentDialog();
+            }
+            else if (res.status === 400) {
+               showError('Oops!', getErrorsMarkup(res.data.messages.error));
+            }
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('admin/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/admin/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError())
+    };
+
+    const addDepartment = (values) => {
+        showLoading();
+
+        axios.post('admin/department', values)
+        .then(res => {
+            if (res.status === 204) {
+                ReactSwalFire({
+                    title: 'Success',
+                    html: 'Department added',
+                    icon: 'success',
+                    timer: 3000,
+                    didClose: () => dispatch(creators.app.signalFetchDepartments()),
+                });
+
+                handleCloseAddDepartmentDialog();
+            }
+            else if (res.status === 400) {
+               showError('Oops!', getErrorsMarkup(res.data.messages.error));
+            }
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('admin/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/admin/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError())
+    };
+
     return (
         <div className={classes.root}>
             <Grid container justify="center" alignItems="stretch">
@@ -672,15 +767,31 @@ const Home = connect(state => ({
                 <DialogContent>
                     <Formik
                         initialValues={{
-                            
-                        }}
+                            department: targetDept ? targetDept.department : '', 
+                            faculty_id: targetDept ? targetDept.id : 0,
+                         }}
+ 
+                         validationSchema={Yup.object({
+                            department: Yup.string()
+                                 .required('Enter the department name')
+                                 .max(60, 'Department name must be atmost 60 characters long!'),
+                         })}
                         
-                        onSubmit={(values) => {}}
+                        onSubmit={updateDepartment}
                     >
-                        <Form id="edit-faculty">
+                        <Form id="edit-dept">
+                            <FormikSelect 
+                                name="faculty_id" 
+                                label="Choose the Faculty" 
+                                className="selector" 
+                            >
+                                {faculties !== constants.flags.INITIAL_VALUE && faculties.map((item, index) => (
+                                    <MenuItem key={index} value={item.id}>{item.faculty}</MenuItem>
+                                ))}
+                            </FormikSelect>
                             <FormikField  
                                 color="secondary"
-                                name="department_name"
+                                name="department"
                                 label="Department Name"
                                 variant="outlined"
                                 fullWidth
@@ -689,10 +800,10 @@ const Home = connect(state => ({
                     </Formik>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseEditFacultyDialog} variant="contained" color="primary">
+                    <Button onClick={handleCloseEditDepartmentDialog} variant="contained" color="primary">
                         Cancel
                     </Button>
-                    <Button type="submit" variant="contained" form="edit-faculty" color="secondary" startIcon={<EditRounded/>}>
+                    <Button type="submit" variant="contained" form="edit-dept" color="secondary" startIcon={<EditRounded/>}>
                         Update
                     </Button>
                 </DialogActions>

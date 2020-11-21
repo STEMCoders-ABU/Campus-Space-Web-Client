@@ -61,6 +61,8 @@ export const app = {
             }
         }
     },
+
+    signalFetchDepartments: () => ({ type: constants.app.SIGNAL_FETCH_DEPARTMENTS }),
 };
 
 export const user = {

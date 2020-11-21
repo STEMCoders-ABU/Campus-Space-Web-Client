@@ -7,7 +7,7 @@ import * as constants from '../redux/actions/constants';
 import * as creators from '../redux/actions/creators';
 import FormikSelect from "./formik-select";
 
-const CombinationSelection = ({ faculties, levels, dataChanged, excludeLevel = false, excludeDepartment = false, 
+const CombinationSelection = ({ faculties, levels, dataChanged, fetchDepartmentsSignal, excludeLevel = false, excludeDepartment = false, 
     setFaculties = null, setDepartments = null, }) => {
     const [data] = useState({
         faculty_id: 0,
@@ -31,7 +31,7 @@ const CombinationSelection = ({ faculties, levels, dataChanged, excludeLevel = f
                 })
                 .catch(() => {});
         }
-    }, [dispatch, faculties]);
+    }, [dispatch, faculties, fetchDepartmentsSignal]);
 
     useEffect(() => {
         if (levels === constants.flags.INITIAL_VALUE)
@@ -70,7 +70,7 @@ const CombinationSelection = ({ faculties, levels, dataChanged, excludeLevel = f
 
     const facultyChanged = evt => {
         setCurrentDepartments(constants.flags.INITIAL_VALUE);
-        
+
         data.faculty_id = evt.target.value;
         axios.get('departments?faculty_id=' + evt.target.value)
         .then(response => {
@@ -136,4 +136,5 @@ const CombinationSelection = ({ faculties, levels, dataChanged, excludeLevel = f
 export default connect(state => ({
     faculties: state.appReducer.faculties,
     levels: state.appReducer.levels,
+    fetchDepartmentsSignal: state.appReducer.fetchDepartmentsSignal,
 }))(CombinationSelection);
