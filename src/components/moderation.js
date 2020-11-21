@@ -346,7 +346,7 @@ const Home = connect(state => ({
                     // Unauthorized
                     axios.delete('moderator/session');
                     dispatch(creators.app.authenticate(false, ''));
-                    history.push('/');
+                    history.push('/moderation/login');
                 }
                 else {
                     showNetworkError();
@@ -373,7 +373,7 @@ const Home = connect(state => ({
                 // Unauthorized
                 axios.delete('moderator/session');
                 dispatch(creators.app.authenticate(false, ''));
-                history.push('/');
+                history.push('/moderation/login');
             }
             else {
                 showNetworkError();
@@ -383,8 +383,6 @@ const Home = connect(state => ({
     };
 
     const updateProfile = (values) => {
-        setProcessingEditProfile(true);
-
         const data = {
             email: values.email,
             full_name: values.full_name,
@@ -401,6 +399,8 @@ const Home = connect(state => ({
             }
         }
 
+        setProcessingEditProfile(true);
+
         axios.put('moderator', data)
         .then(res => {
             setProcessingEditProfile(false);
@@ -408,6 +408,7 @@ const Home = connect(state => ({
             if (res.status === 200) {
                 showSuccess('Success!', 'Profile updated successfully!');
                 setModeratorData(res.data);
+                handleCloseEditProfileDialog();
             }
             else if (res.status === 400) {
                 showError('Oops', getErrorsMarkup(res.data.messages.error));
@@ -416,7 +417,7 @@ const Home = connect(state => ({
                 // Unauthorized
                 axios.delete('moderator/session');
                 dispatch(creators.app.authenticate(false, ''));
-                history.push('/');
+                history.push('/moderation/login');
             }
             else {
                 showNetworkError();
@@ -520,7 +521,7 @@ const Home = connect(state => ({
                             Edit Profile
                         </Typography>
                         {processingEditProfile ? 
-                        <Button disbaled color="inherit" variant="outlined" form="edit-profile-form">
+                        <Button disabled color="inherit" variant="outlined" form="edit-profile-form">
                             Updating... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
                         </Button> :
                         <Button color="inherit" variant="outlined" type="submit" form="edit-profile-form" startIcon={<EditRounded/>}>

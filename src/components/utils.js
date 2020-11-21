@@ -1,10 +1,20 @@
 import * as ReactScroll from 'react-scroll';
-import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import { axios } from '../init';
 
 export const animateScroll = ReactScroll.animateScroll;
 export const ReactSwal = withReactContent(Swal);
+
+export const ReactSwalFire = (configs, customClass = {}) => {
+    return ReactSwal.fire({
+        customClass: {
+            container: 'swal-modal-container',
+            ...customClass,
+        },
+        ...configs,
+    })
+};
 
 export const scrollToTop = () => {
     animateScroll.scrollToTop({
@@ -15,7 +25,7 @@ export const scrollToTop = () => {
 };
 
 export const showLoading = (title = 'Please wait...') => {
-    ReactSwal.fire({
+    ReactSwalFire({
         title: title,
         allowOutsideClick: false,
         allowEnterKey: false,
@@ -27,7 +37,7 @@ export const showLoading = (title = 'Please wait...') => {
 };
 
 export const showError = (title, body) => {
-    ReactSwal.fire({
+    ReactSwalFire({
         title: title,
         html: body,
         icon: 'error',
@@ -36,7 +46,7 @@ export const showError = (title, body) => {
 };
 
 export const showSuccess = (title, body = '', timeout = 2000) => {
-    ReactSwal.fire({
+    ReactSwalFire({
         title: title,
         html: body,
         icon: 'success',
@@ -45,7 +55,7 @@ export const showSuccess = (title, body = '', timeout = 2000) => {
 };
 
 export const showInfo = (title, body = '', timeout = 5000) => {
-    ReactSwal.fire({
+    ReactSwalFire({
         title: title,
         html: body,
         icon: 'info',
@@ -54,7 +64,7 @@ export const showInfo = (title, body = '', timeout = 5000) => {
 };
 
 export const showNetworkError = () => {
-    ReactSwal.fire({
+    ReactSwalFire({
         title: 'Oops!',
         text: 'A network error occured, please try again.',
         icon: 'error',

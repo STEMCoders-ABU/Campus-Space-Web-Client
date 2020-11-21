@@ -20,6 +20,7 @@ import Moderation from "./components/moderation";
 import Admin from "./components/admin";
 import Contact from "./components/contact";
 import { connect } from "react-redux";
+import './App.css';
 
 const RawNavBar = ({ themeName, changeTheme, auth, ...props }) => {
   const useStyles = makeStyles(theme => ({
