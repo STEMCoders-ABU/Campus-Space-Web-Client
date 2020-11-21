@@ -1,4 +1,4 @@
-import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, makeStyles, MenuItem, Paper, Slide, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, LinearProgress, makeStyles, MenuItem, Paper, Slide, Toolbar, Typography, withStyles } from "@material-ui/core";
 import { AccountCircleRounded, CloudUploadRounded, DeleteRounded, EditRounded, KeyboardArrowLeftRounded, SearchRounded } from "@material-ui/icons";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
@@ -166,11 +166,26 @@ const Logout = () => {
     return  null;
 };
 
+const BorderLinearProgress = withStyles((theme) => ({
+    root: {
+      height: 10,
+      borderRadius: 1,
+      width: '100%',
+    },
+    colorPrimary: {
+      backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
+    },
+    bar: {
+      borderRadius: 1,
+      backgroundColor: theme.palette.secondary.main,
+    },
+}))(LinearProgress);
+
 const Home = connect(state => ({
     auth: {...state.appReducer.auth},
     categories: state.appReducer.categories,
   }))(({ auth, categories }) => {
-
+      
     const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
     const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
     const [moderatorData, setModeratorData] = useState(null);
@@ -180,6 +195,8 @@ const Home = connect(state => ({
     const [processingAddCourse, setProcessingAddCourse] = useState(false);
     const [processingEditProfile, setProcessingEditProfile] = useState(false);
     const [processingAddResource, setProcessingAddResource] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [resourceFile, setResourceFile] = useState(null);
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -426,6 +443,10 @@ const Home = connect(state => ({
         setFileTypes(types);
     };
 
+    const handleFileChanged = e => {
+        setResourceFile(e.target.files[0]);
+    };
+
     const categoryChanged = index => {
         resolveFileTypes(categories[index].id);
     };
@@ -498,6 +519,52 @@ const Home = connect(state => ({
             }
         })
         .catch(() => { setProcessingEditProfile(false); showNetworkError(); })
+    };
+
+    const uploadResource = (values) => {
+        setUploadProgress(0);
+        setProcessingAddResource(true);
+
+        const formData = new FormData();
+
+        formData.append('file', resourceFile);
+        formData.append('title', values.title);
+        formData.append('description', values.description);
+        formData.append('category_id', values.category_id);
+        formData.append('course_id', values.course_id);
+
+        axios.post('moderator/resource', formData, {
+            headers: {
+                'content-type': 'multipart/form-data'
+            },
+            onUploadProgress: (ev) => {
+                const progress = ev.loaded / ev.total * 100;
+                setUploadProgress(Math.round(progress));
+            },
+        })
+        .then((response) => {
+            setProcessingAddResource(false);
+
+            if (response.status === 200) {
+                showSuccess('Success',  <div><strong>"{values.title}"</strong> was uploaded successfully!</div>);
+            }
+            else if (response.status === 400) { //Validation Error
+                showError('Oops!', getErrorsMarkup(response.data.messages.error));
+            }
+            else if (response.status === 401) {
+                // Unauthorized
+                axios.delete('moderator/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/moderation/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => {
+            setProcessingAddResource(false);
+            showNetworkError();
+        });
     };
 
     if (!auth.authenticated || !moderatorData)
@@ -718,6 +785,8 @@ const Home = connect(state => ({
                             Upload
                         </Button>}
                     </Toolbar>
+                    
+                    {processingAddResource && <BorderLinearProgress variant="determinate" value={uploadProgress}/>}
                 </AppBar>
                 <DialogContent>
                     <DialogContentText className={classes.dialogContent}>
@@ -743,7 +812,6 @@ const Home = connect(state => ({
                                 title: '',
                                 category_id: categories !== constants.flags.INITIAL_VALUE ? categories[0].id : 0,
                                 description: '',
-                                file: '',
                             }}
                             
                             validationSchema={Yup.object({
@@ -755,7 +823,7 @@ const Home = connect(state => ({
                                     .max(2000, 'Resource description must be atmost 2000 characters long'),
                             })}
                             
-                            onSubmit={(values) => {}}
+                            onSubmit={uploadResource}
                         >
                             <Form id="add-resource-form">
                                 <FormikSelect 
@@ -805,6 +873,7 @@ const Home = connect(state => ({
                                     variant="outlined"
                                     fullWidth
                                     inputProps={{accept: acceptFileTypes}}
+                                    onChange={handleFileChanged}
                                 />
                             </Form>
                         </Formik>
