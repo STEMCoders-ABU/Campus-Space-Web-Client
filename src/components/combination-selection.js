@@ -23,7 +23,6 @@ const CombinationSelection = ({ faculties, levels, dataChanged, fetchDepartments
         if (faculties === constants.flags.INITIAL_VALUE)
             dispatch(creators.app.getFaculties());
         else {
-            dispatch(creators.app.getDepartments());
             axios.get('departments?faculty_id=' + faculties[0].id)
                 .then(response => {
                     if (response.status === 200)
@@ -31,7 +30,16 @@ const CombinationSelection = ({ faculties, levels, dataChanged, fetchDepartments
                 })
                 .catch(() => {});
         }
-    }, [dispatch, faculties, fetchDepartmentsSignal]);
+    }, [dispatch, faculties]);
+
+    useEffect(() => {
+        axios.get('departments?faculty_id=' + data.faculty_id)
+        .then(response => {
+            if (response.status === 200)
+                setCurrentDepartments(response.data);
+        })
+        .catch(() => {});
+    }, [data.faculty_id, fetchDepartmentsSignal]);
 
     useEffect(() => {
         if (levels === constants.flags.INITIAL_VALUE)
