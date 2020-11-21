@@ -1445,6 +1445,9 @@ const ResetPassword = () => {
             '& .header': {
                 marginBottom: '3rem',
                 textAlign: 'center',
+                [theme.breakpoints.down('xs')]: {
+                    fontSize: '1.5rem',
+                },
             },
             '& .selector': {
                 textAlign: 'left',
@@ -1474,23 +1477,23 @@ const ResetPassword = () => {
     
     const resendCode = () => {
         if (email === '') {
-            showError('Please enter a valid registered email');
+            showError('Oops!', 'Please enter a valid registered email');
             return;
         }
 
         setProcessingResend(true);
         
-        axios.get('moderator/password_reset', {
+        axios.post('moderator/password_reset/resend', {
             email: email,
         })
         .then((response) => {
             setProcessingResend(false);
 
             if (response.status === 204) {
-                showSuccess('Verification code resent!');
+                showSuccess('Success', 'Verification code resent!');
             }
-            else if (response.status === 400) { //Validation Error
-                showError('Validation Error', 'There is no password reset request associated with this email!');
+            else if (response.status === 404) { //Validation Error
+                showError('Oops!', 'There is no password reset request associated with this email!');
             }
             else {
                 showNetworkError();
@@ -1505,6 +1508,11 @@ const ResetPassword = () => {
     const handleReset = e => {
         e.preventDefault();
 
+        if (email === '') {
+            showError('Oops!', 'Please enter a valid registered email');
+            return;
+        }
+
         setProcessingReset(true);
 
         axios.post('moderator/password_reset', {
@@ -1514,22 +1522,10 @@ const ResetPassword = () => {
             setProcessingReset(false);
 
             if (response.status === 204) {
-                showSuccess('Verification code sent!');
+                showSuccess('Success','Verification code sent!');
             }
             else if (response.status === 409) {
-                ReactSwalFire({
-                    title: 'Oops!',
-                    html: (
-                        <div>
-                            A verification code has already been sent to your email. We can still resend the code if you have not seen it yet.
-
-                            <Button variant="contained" className={classes.resendBtn} onClick={resendCode}>Resend Code</Button>
-                        </div>
-                    ),
-                    icon: 'error',
-                    showCloseButton: true,
-                    showConfirmButton: false,
-                });
+                showError('Oops!', 'A verification code has already been sent to your email address. You can use the Resend button below to resend the code.')
             }
             else if (response.status === 400) { //Validation Error
                 showError('Oops!', getErrorsMarkup(response.data.messages.error));
@@ -1547,6 +1543,11 @@ const ResetPassword = () => {
     const handleUpdatePassword = e => {
         e.preventDefault();
 
+        if (email === '') {
+            showError('Oops!', 'Please enter a valid registered email');
+            return;
+        }
+
         if (passwordData.new_password !== passwordData.confirm_password) {
             showError('Oops!', 'Passwords do not match!');
             return;
@@ -1554,7 +1555,7 @@ const ResetPassword = () => {
 
         setProcessingUpdatePassword(true);
         
-        axios.delte('moderator/password_reset', {
+        axios.post('moderator/password_reset/finalize', {
             email: email,
             new_password: passwordData.new_password,
             confirm_password: passwordData.confirm_password,
@@ -1565,7 +1566,8 @@ const ResetPassword = () => {
 
             if (response.status === 204) {
                 ReactSwal.fire({
-                    title: 'Password updated successfully!',
+                    title: 'Success',
+                    html: 'Password updated successfully!',
                     icon: 'success',
                     timer: 3000,
                     onAfterClose: () => history.push('/moderation/login')
@@ -1592,27 +1594,27 @@ const ResetPassword = () => {
                         <Typography variant="h4" className="header">Reset Password</Typography>
                         <form className={classes.form} onSubmit={handleReset}>
                             <TextField 
-                                label="Enter your email" 
-                                variant="outlined" 
-                                required 
+                                label="Email" 
+                                variant="outlined"  
                                 type="email" 
+                                required
                                 fullWidth
                                 color="secondary"
                                 name="email" onChange={e => setEmail(e.target.value)} inputProps={{maxLength: 50}}/>
 
                             <Grid container className={classes.grid} spacing={3}>
                                 <Grid item xs={12} sm={6} md={4} xl={3}>
-                                    {!processingReset && !processingResend && !processingUpdatePassword ? 
+                                    {!processingReset ? 
                                     <Button fullWidth variant="contained" type="submit" color="secondary" className={classes.btn}>Reset Password</Button> :
                                     <Button fullWidth variant="contained" type="submit" color="secondary" className={classes.btn}>
-                                        Procesing... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                                        Procesing... <CircularProgress color="inherit" style={{marginLeft: '2rem'}}/>
                                     </Button>}
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={4} xl={3}>
-                                    {!processingReset && !processingResend && !processingUpdatePassword ? 
-                                    <Button fullWidth variant="contained" type="submit" color="secondary" className={classes.btn} onClick={resendCode}>Resend Code</Button> :
-                                    <Button fullWidth variant="contained" type="submit" color="secondary" className={classes.btn}>
-                                        Resending... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                                    {!processingResend ? 
+                                    <Button fullWidth variant="contained" color="secondary" className={classes.btn} onClick={resendCode}>Resend Code</Button> :
+                                    <Button fullWidth variant="contained" color="secondary" className={classes.btn}>
+                                        Resending... <CircularProgress color="inherit" style={{marginLeft: '2rem'}}/>
                                     </Button>}
                                 </Grid>
                             </Grid>
@@ -1624,50 +1626,52 @@ const ResetPassword = () => {
     }
     else {
         return (
-            <div>
-                <div fluid="sm">
-                    <Paper className={classes.paper}>
-                        <Typography variant="h4" className="bold-font pt-2 pt-md-0">Reset Password</Typography>
+            <div className={classes.root}>
+                <div className={classes.paperContainer}>
+                    <Paper elevation={6} className={classes.paper}>
+                        <Typography variant="h4" className="header">Change Password</Typography>
                         <form className={classes.form} onSubmit={handleUpdatePassword}>
                             <TextField 
-                                label="Enter your email" 
-                                variant="outlined" 
-                                required 
+                                label="Email" 
+                                variant="outlined"  
                                 type="email" 
+                                required
                                 fullWidth
                                 color="secondary"
+                                style={{marginBottom: '1rem'}}
                                 name="email" onChange={e => setEmail(e.target.value)} inputProps={{maxLength: 50}}/>
                             <TextField 
-                                label="Enter New Password" 
-                                variant="outlined" 
-                                required 
+                                label="New Password" 
+                                variant="outlined"  
                                 type="password" 
+                                required
                                 fullWidth
                                 color="secondary"
+                                style={{marginBottom: '1rem'}}
                                 name="new_password" onChange={handlePasswordInputChanged}/>
 
                             <TextField 
-                                label="Confirm New Password" 
-                                variant="outlined" 
+                                label="Confirm Password" 
+                                variant="outlined"  
+                                type="password"
                                 required 
-                                type="password" 
                                 fullWidth
                                 color="secondary"
                                 name="confirm_password" onChange={handlePasswordInputChanged}/>
                             
-                            <Grid container className={classes.grid}>
-                                <Grid item xs={12}>
-                                    {!processingReset && !processingResend && !processingUpdatePassword ? 
-                                    <Button type="submit" color="secondary">Change Password</Button> :
-                                    <Button type="submit" color="secondary">
-                                        Procesing... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                            <Grid container className={classes.grid} spacing={3}>
+                                <Grid item xs={12} sm={6} md={4} xl={3}>
+                                    {!processingUpdatePassword ? 
+                                    <Button fullWidth variant="contained" type="submit" color="secondary" className={classes.btn}>Change Password</Button> :
+                                    <Button fullWidth variant="contained" type="submit" color="secondary" className={classes.btn}>
+                                        Procesing... <CircularProgress color="inherit"  />
                                     </Button>}
-                                </Grid> 
-                                <Grid item xs={12}>
-                                    {!processingReset && !processingResend && !processingUpdatePassword ? 
-                                    <Button type="submit" color="secondary" onClick={resendCode}>Resend Code</Button> :
-                                    <Button type="submit" color="secondary">
-                                        Resending... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={4} xl={3}>
+                                    {!processingResend ? 
+                                    <Button fullWidth variant="contained" color="secondary" className={classes.btn} onClick={resendCode}>Resend Code</Button> :
+                                    <Button fullWidth variant="contained" color="secondary" className={classes.btn}>
+                                        Resending... <CircularProgress color="inherit" style={{marginLeft: '2rem'}}/>
                                     </Button>}
                                 </Grid>
                             </Grid>
