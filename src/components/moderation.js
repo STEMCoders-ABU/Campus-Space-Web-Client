@@ -185,7 +185,7 @@ const Home = connect(state => ({
     auth: {...state.appReducer.auth},
     categories: state.appReducer.categories,
   }))(({ auth, categories }) => {
-      
+
     const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
     const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
     const [moderatorData, setModeratorData] = useState(null);
@@ -941,15 +941,25 @@ const ResourceCard = ({ resource = {category: 'Video'}, editResource, removeReso
     );
 };
 
-const Manage = () => {
+const Manage = connect(state => ({
+    auth: {...state.appReducer.auth},
+    categories: state.appReducer.categories,
+  }))(({ auth, categories }) => {
     const [showEditResourceDialog, setShowEditResourceDialog] = useState(false);
     const [showDeleteResourceDialog, setShowDeleteResourceDialog] = useState(false);
+    const [courses, setCourses] = useState(null);
 
     const handleCloseEditResourceDialog = () => {
         setShowEditResourceDialog(false);
     };
 
     const handleShowEditResourceDialog = (resource) => {
+        if (courses === null) {
+            showNetworkError();
+            getCourses();
+            return;
+        }
+        
         setShowEditResourceDialog(true);
     };
 
@@ -1016,9 +1026,36 @@ const Manage = () => {
 
     const classes = useStyles();
 
+    const dispatch = useDispatch();
+    const history = useHistory();
+
     useEffect(() => {
         scrollToTop();
     }, []);
+
+    useEffect(() => {
+        if (!auth.authenticated)
+            history.push('/moderation/login');
+    }, [auth, history]);
+
+    useEffect(() => {
+        if (categories === constants.flags.INITIAL_VALUE)
+            dispatch(creators.app.getCategories());
+        
+        if (courses === null)
+            getCourses();
+    }, [categories, courses, dispatch]);
+
+    const getCourses = () => {
+        setCourses(null);
+
+        axios.get('moderator/courses')
+        .then(res => {
+            if (res.status === 200)
+                setCourses(res.data);
+        })
+        .catch(() => {});
+    };
 
     return (
         <div className={classes.root}>
@@ -1162,7 +1199,7 @@ const Manage = () => {
             </Dialog>
         </div>
     );
-};
+});
 
 const Moderation = ({ showFooter }) => {
     const useStyles = makeStyles(theme => ({
