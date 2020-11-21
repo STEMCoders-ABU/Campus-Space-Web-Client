@@ -995,6 +995,7 @@ const Manage = connect(state => ({
     const [course, setCourse] = useState(0);
     const [resources, setResources] = useState(constants.flags.INITIAL_VALUE);
     const [currentResource, setCurrentResource] = useState(null);
+    const [processingEditProfile, setProcessingEditProfile] = useState(false);
 
     const handleCloseEditResourceDialog = () => {
         setShowEditResourceDialog(false);
@@ -1209,45 +1210,64 @@ const Manage = connect(state => ({
             >
                 <AppBar className={classes.dialogAppBar} color="primary">
                     <Toolbar>
+                        {processingEditProfile ? 
+                        <IconButton disabled edge="start" color="inherit" aria-label="close">
+                            <KeyboardArrowLeftRounded/>
+                        </IconButton> : 
                         <IconButton edge="start" color="inherit" onClick={handleCloseEditResourceDialog} aria-label="close">
                             <KeyboardArrowLeftRounded/>
-                        </IconButton>
+                        </IconButton>}
                         <Typography variant="h6" className={classes.dialogTitle}>
                             Edit Resource
                         </Typography>
-                        <Button color="inherit" variant="outlined" type="submit" form="edit-resource-form" startIcon={<EditRounded/>}>
+                        {processingEditProfile ? 
+                        <Button disabled color="inherit" variant="outlined" form="edit-resource-form">
+                            Updating... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                        </Button> :
+                        <Button color="inherit" variant="outlined" type="submit" form="edit-profile-form" startIcon={<EditRounded/>}>
                             Update
-                        </Button>
+                        </Button>}
                     </Toolbar>
                 </AppBar>
                 <DialogContent>
                     <DialogContentText className={classes.dialogContent}>
-                        Enter new values for fields that you want to update. Fields marked with asteriks are required.<br/>
+                        Enter new values for fields that you want to update. All fieds are required!<br/>
                         <strong>Please note that you are not allowed to change the category or file of an uploaded resource. If that's your requirement, you'll have
                         to delete the resource and add it again with the desired configurations.</strong>
                     </DialogContentText>
                         <Formik
                             initialValues={{
-                                
+                                course_id: currentResource ? currentResource.course_id : 0,
+                                title: currentResource ? currentResource.title : '',
+                                description: currentResource ? currentResource.description : '',
                             }}
                             
-                            
+                            validationSchema={Yup.object({
+                                title: Yup.string()
+                                    .required('Enter the resource title')
+                                    .max(50, 'Resource must be atmost 50 characters long'),
+                                description: Yup.string()
+                                    .required('Describe this resource')
+                                    .max(2000, 'Resource description must be atmost 2000 characters long'),
+                            })}
+
                             onSubmit={(values) => { alert('hello'); }}
                         >
                             <Form id="edit-resource-form">
                             <FormikSelect 
-                                    name="course_code" 
+                                    name="course_id" 
                                     label="Course Code"
                                     variant="outlined"
                                     required
                                     fullWidth
                                 >
-                                    <MenuItem value="test1">COSC101</MenuItem>
-                                    <MenuItem value="test2">COSC102</MenuItem>
+                                    {courses && courses.map((item, index) => (
+                                        <MenuItem key={index} value={item.id}>{item.course_code}</MenuItem>
+                                    ))}
                                 </FormikSelect>
                                 <FormikField
                                     color="secondary"
-                                    name="resource_name"
+                                    name="title"
                                     label="Resource Title"
                                     type="text"
                                     variant="outlined"
@@ -1256,7 +1276,7 @@ const Manage = connect(state => ({
                                 />
                                 <FormikField
                                     color="secondary"
-                                    name="resource_description"
+                                    name="description"
                                     label="Resource Description"
                                     type="text"
                                     variant="outlined"
