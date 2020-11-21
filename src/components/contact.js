@@ -4,7 +4,7 @@ import { Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { axios } from "../init";
 import CombinationSelection from "./combination-selection";
-import { ReactSwalFire, showInfo, showLoading, showNetworkError, showSuccess } from "./utils";
+import { ReactSwalFire, showInfo, showLoading, showNetworkError } from "./utils";
 
 const Contact = ({ showFooter }) => {
     const useStyles = makeStyles(theme => ({

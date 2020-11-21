@@ -1,8 +1,9 @@
 import { Button, Grid, Hidden, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
 import { Form, Formik } from "formik";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ScrollAnimation from "react-animate-on-scroll";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { ReactComponent as Storage } from '../images/cloud_storage.svg';
 import { ReactComponent as Discussion } from '../images/discussion.svg';
 import largeLogo from '../images/large-logo.jpg';
@@ -10,11 +11,12 @@ import { ReactComponent as MobileApp } from '../images/mobile_app.svg';
 import { ReactComponent as Questions } from '../images/questions.svg';
 import { ReactComponent as Reading } from '../images/reading.svg';
 import { ReactComponent as TimeManagement } from '../images/time_management.svg';
+import { axios } from "../init";
+import * as creators from '../redux/actions/creators';
 import FormikSelect from './formik-select';
 import { scrollToTop } from "./utils";
-import * as creators from '../redux/actions/creators';
 
-const RawHome = ({ showFooter }) => {
+const Home = ({ showFooter }) => {
     const useStyles = makeStyles(theme => ({
       root: {
         marginTop: theme.spacing(1),
@@ -318,6 +320,8 @@ const RawHome = ({ showFooter }) => {
       },
     }));
 
+    const [stats, setStats] = useState(null);
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -331,6 +335,17 @@ const RawHome = ({ showFooter }) => {
     }, [dispatch]);
 
     useEffect(() => showFooter(true), [showFooter]);
+
+    useEffect(() => {
+        if (stats === null) {
+          axios.get('stats')
+          .then(res => {
+            if (res.status === 200)
+              setStats(res.data);
+          })
+          .catch(() => {});
+        }
+    }, [stats]);
 
     const classes = useStyles();
   
@@ -403,22 +418,24 @@ const RawHome = ({ showFooter }) => {
   
           <Paper elevation={0} square className={classes.statPaperContainer}>
             <ScrollAnimation animateOnce animateIn="animate__zoomIn">
+                {stats ? 
                 <Paper elevation={20} className={classes.statPaper}>
                     <Grid container justify="space-between" spacing={4}>
                         <Grid item xs={12} md={4}>
-                        <Typography variant="h2" className="header">24</Typography>
+                        <Typography variant="h2" className="header">{stats.departments}</Typography>
                         <Typography variant="span" component="p" className="label">Departments</Typography>
                         </Grid>
                         <Grid item xs={12} md={4}>
-                        <Typography variant="h2" className="header">23</Typography>
+                        <Typography variant="h2" className="header">{stats.resources}</Typography>
                         <Typography variant="span" component="p" className="label">Resources</Typography>
                         </Grid>
                         <Grid item xs={12} md={4}>
-                        <Typography variant="h2" className="header">175</Typography>
+                        <Typography variant="h2" className="header">{stats.downloads}</Typography>
                         <Typography variant="span" component="p" className="label">Downloads</Typography>
                         </Grid>
                     </Grid>
-                </Paper>
+                </Paper> :
+                <Skeleton variant="rect" height={300}/>}
             </ScrollAnimation>
           </Paper>
   
@@ -516,6 +533,4 @@ const RawHome = ({ showFooter }) => {
     );
 };
 
-export default connect(state => ({
-
-}))(RawHome);
+export default Home;
