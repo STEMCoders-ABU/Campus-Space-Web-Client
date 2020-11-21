@@ -80,7 +80,7 @@ const Contact = ({ showFooter }) => {
 
     useEffect(() => showFooter(true), [showFooter]);
 
-    const onShowContact = (values) => {
+    const onShowContact = () => {
         showLoading();
 
         const faculty_id = combinationData.faculty_id;

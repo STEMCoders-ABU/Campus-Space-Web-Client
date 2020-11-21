@@ -66,7 +66,7 @@ const CombinationSelection = ({ faculties, departments, levels, dataChanged }) =
     };
 
     const levelChanged = evt => {
-        data.department_id = evt.target.value;
+        data.level_id = evt.target.value;
         dataChanged(data);
     };
 
