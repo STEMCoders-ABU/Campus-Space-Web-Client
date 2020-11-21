@@ -3,7 +3,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import 'animate.css/animate.min.css';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContactsRounded';
 import { cloneElement, useEffect, useState } from "react";
-import { Link, Route, Switch as Router } from "react-router-dom";
+import { Link, Route, Switch as Router, useHistory } from "react-router-dom";
 import Moon from './images/moon.png';
 import Sun from './images/sun.png';
 import darkTheme from './themes/dark';
@@ -150,12 +150,17 @@ const RawNavBar = ({ themeName, changeTheme, auth, ...props }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const history = useHistory();
+  
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (link) => {
     setAnchorEl(null);
+
+    if (link !== null)
+      history.push(link);
   };
 
   const classes = useStyles();
@@ -196,16 +201,16 @@ const RawNavBar = ({ themeName, changeTheme, auth, ...props }) => {
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
+            onClose={() => handleMenuClose(null)}
             className={classes.menu}
           >
-            <MenuItem onClick={() => handleMenuClose()}>Home</MenuItem>
-            <MenuItem onClick={() => handleMenuClose()}>Resources</MenuItem>
-            <MenuItem onClick={() => handleMenuClose()}>Moderation</MenuItem>
-            <MenuItem onClick={() => handleMenuClose()}>Contact</MenuItem>
+            <MenuItem onClick={() => handleMenuClose('/')}>Home</MenuItem>
+            <MenuItem onClick={() => handleMenuClose('/resources-filter')}>Resources</MenuItem>
+            <MenuItem onClick={() => handleMenuClose('/moderation')}>Moderation</MenuItem>
+            <MenuItem onClick={() => handleMenuClose('/contact')}>Contact</MenuItem>
             {auth.authenticated ? 
             <MenuItem onClick={() => handleMenuClose(auth.logout)}>Logout</MenuItem> : 
-            <MenuItem onClick={() => handleMenuClose()}>Login</MenuItem>}
+            <MenuItem onClick={() => handleMenuClose('/moderation/login')}>Login</MenuItem>}
           </Menu>
         </Hidden>
       </Toolbar>
