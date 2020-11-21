@@ -9,6 +9,9 @@ const Contact = ({ showFooter }) => {
         root: {
             marginTop: '1rem',
             padding: '5rem',
+            [theme.breakpoints.down('sm')]: {
+                padding: '4rem 1rem 4rem 1rem',
+            }
         },
 
         sendMailPaper: {
@@ -18,10 +21,27 @@ const Contact = ({ showFooter }) => {
             '& .text': {
                 fontFamily: theme.fontFamily,
                 marginBottom: '1rem',
+                [theme.breakpoints.down('xs')]: {
+                    fontSize: '1.2rem',
+                },
+                [theme.breakpoints.only('sm')]: {
+                    fontSize: '1.5rem',
+                }
             },
             '& .text2': {
                 fontFamily: theme.fontFamily,
                 marginRight: '1rem',
+                [theme.breakpoints.down('sm')]: {
+                    fontSize: '1rem',
+                },
+                [theme.breakpoints.only('sm')]: {
+                    fontSize: '1.4rem',
+                }
+            },
+            '& .contactBtn': {
+                [theme.breakpoints.down('xs')]: {
+                    marginTop: '1rem',
+                }
             },
         },
 
@@ -30,10 +50,16 @@ const Contact = ({ showFooter }) => {
             '& .text': {
                 fontFamily: theme.fontFamily,
                 marginBottom: '1rem',
+                [theme.breakpoints.down('xs')]: {
+                    fontSize: '1.7rem',
+                },
             },
             '& .text2': {
                 fontFamily: theme.fontFamily,
                 marginBottom: '4rem',
+                [theme.breakpoints.down('xs')]: {
+                    fontSize: '1.2rem',
+                },
             },
         },
 
@@ -51,12 +77,12 @@ const Contact = ({ showFooter }) => {
             <Paper elevation={1} className={classes.sendMailPaper}>
                 <Typography variant="h4" className="text">Do you need help or want to get in touch?</Typography>
                 <Typography variant="h5" color="textSecondary" component="span" className="text2">We are always ready to assist you.</Typography>
-                <Button component="a" href="https://stemcoders.com.ng/index#contact" target="_blank" variant="contained" size="medium" color="secondary" startIcon={<MailRounded/>}>Contact Us!</Button>
+                <Button className="contactBtn" component="a" href="https://stemcoders.com.ng/index#contact" target="_blank" variant="contained" size="medium" color="secondary" startIcon={<MailRounded/>}>Contact Us!</Button>
             </Paper>
 
             <Paper elevation={6} className={classes.getRepPaper}>
                 <Typography variant="h4" className="text">Contact a Rep</Typography>
-                <Typography variant="h5" color="textSecondary" className="text2">Get the ccontact details of a registered departmental rep easily!</Typography>
+                <Typography variant="h5" color="textSecondary" className="text2">Get the contact details of a registered departmental rep easily!</Typography>
 
                 <Formik
                         initialValues={{
@@ -77,7 +103,7 @@ const Contact = ({ showFooter }) => {
                                 <MenuItem value="test">100</MenuItem>
                             </FormikSelect>
 
-                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>Get Contact</Button>
+                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.findBtn}>Show Contact</Button>
                         </Form>
                     </Formik>
             </Paper>
