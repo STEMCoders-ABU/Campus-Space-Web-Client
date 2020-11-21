@@ -2,17 +2,20 @@ import { MenuItem } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
+import { axios } from "../init";
 import * as constants from '../redux/actions/constants';
 import * as creators from '../redux/actions/creators';
 import FormikSelect from "./formik-select";
 
-const CombinationSelection = ({ faculties, departments, levels, dataChanged, excludeLevel = false, excludeDepartment = false, 
-    setFaculties = null, setDepartments = null }) => {
+const CombinationSelection = ({ faculties, levels, dataChanged, excludeLevel = false, excludeDepartment = false, 
+    setFaculties = null, setDepartments = null, }) => {
     const [data] = useState({
         faculty_id: 0,
         department_id: 0,
         level_id: 0,
     });
+
+    const [departments, setCurrentDepartments] = useState(constants.flags.INITIAL_VALUE);
 
     const dispatch = useDispatch();
 
@@ -20,7 +23,13 @@ const CombinationSelection = ({ faculties, departments, levels, dataChanged, exc
         if (faculties === constants.flags.INITIAL_VALUE)
             dispatch(creators.app.getFaculties());
         else {
-            dispatch(creators.app.getDepartments(faculties[0].id));
+            dispatch(creators.app.getDepartments());
+            axios.get('departments?faculty_id=' + faculties[0].id)
+                .then(response => {
+                    if (response.status === 200)
+                        setCurrentDepartments(response.data);
+                })
+                .catch(() => {});
         }
     }, [dispatch, faculties]);
 
@@ -60,8 +69,16 @@ const CombinationSelection = ({ faculties, departments, levels, dataChanged, exc
     }, [levels]);
 
     const facultyChanged = evt => {
+        setCurrentDepartments(constants.flags.INITIAL_VALUE);
+        
         data.faculty_id = evt.target.value;
-        dispatch(creators.app.getDepartments(data.faculty_id));
+        axios.get('departments?faculty_id=' + evt.target.value)
+        .then(response => {
+            if (response.status === 200)
+                setCurrentDepartments(response.data);
+        })
+        .catch(() => {});
+
         dataChanged(data);
     };
 
@@ -118,6 +135,5 @@ const CombinationSelection = ({ faculties, departments, levels, dataChanged, exc
 
 export default connect(state => ({
     faculties: state.appReducer.faculties,
-    departments: state.appReducer.departments,
     levels: state.appReducer.levels,
 }))(CombinationSelection);
