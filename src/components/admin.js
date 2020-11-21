@@ -189,6 +189,8 @@ const Home = connect(state => ({
 
     const [faculties, setFaculties] = useState(constants.flags.INITIAL_VALUE);
     const [departments, setDepartments] = useState(constants.flags.INITIAL_VALUE);
+    const [targetFaculty, setTargetFaculty] = useState(null);
+    const [targetDept, setTargetDept] = useState(null);
 
     const handleCloseEditFacultyDialog = () => {
         setShowEditFacultyDialog(false);
@@ -200,6 +202,13 @@ const Home = connect(state => ({
             return;
         }
 
+        setTargetFaculty(null);
+
+        const target = faculties.filter((item, index) => {
+            return (item.id === manageFactData.faculty_id);
+        })[0];
+
+        setTargetFaculty(target);
         setShowEditFacultyDialog(true);
     };
 
@@ -330,7 +339,7 @@ const Home = connect(state => ({
                                 onSubmit={(values) => {}}
                             >
                                 <Form>
-                                    <CombinationSelection setFaculties={setFaculties} excludeDepartment={true} excludeLevel={true} dataChanged={setManageFactData} />
+                                    <CombinationSelection key="comb1" setFaculties={setFaculties} excludeDepartment={true} excludeLevel={true} dataChanged={setManageFactData} />
                                 </Form>
                             </Formik>
                         </CardContent>
@@ -352,7 +361,7 @@ const Home = connect(state => ({
                                 onSubmit={(values) => {}}
                             >
                                 <Form>
-                                    <CombinationSelection setDepartments={setDepartments} excludeLevel={true} dataChanged={setManageDeptData} />
+                                    <CombinationSelection key="comb2" setDepartments={setDepartments} excludeLevel={true} dataChanged={setManageDeptData} />
                                 </Form>
                             </Formik>
                         </CardContent>
@@ -374,7 +383,7 @@ const Home = connect(state => ({
                                 onSubmit={(values) => {}}
                             >
                                 <Form>
-                                    <CombinationSelection dataChanged={setCombinationData} />
+                                    <CombinationSelection key="comb3" dataChanged={setCombinationData} />
 
                                     <FormikField  
                                         color="secondary"
@@ -447,7 +456,7 @@ const Home = connect(state => ({
                 <DialogContent>
                     <Formik
                         initialValues={{
-                            
+                            faculty: targetFaculty ? targetFaculty.faculty : '',
                         }}
                         
                         onSubmit={(values) => {}}
@@ -455,7 +464,7 @@ const Home = connect(state => ({
                         <Form id="edit-faculty">
                             <FormikField  
                                 color="secondary"
-                                name="faculty_name"
+                                name="faculty"
                                 label="Faculty Name"
                                 variant="outlined"
                                 fullWidth
