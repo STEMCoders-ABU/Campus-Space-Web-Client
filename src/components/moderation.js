@@ -1,10 +1,10 @@
-import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, LinearProgress, makeStyles, MenuItem, Paper, Select, Slide, Toolbar, Typography, withStyles } from "@material-ui/core";
+import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, LinearProgress, makeStyles, MenuItem, Paper, Select, Slide, TextField, Toolbar, Typography, withStyles } from "@material-ui/core";
 import { AccountCircleRounded, CloudUploadRounded, DeleteRounded, EditRounded, KeyboardArrowLeftRounded } from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
-import { Link, Redirect, Route, Switch, useHistory } from "react-router-dom";
+import { Link, Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import * as Yup from 'yup';
 import addResourceImage from '../images/add.svg';
 import editProfileImage from '../images/edit.svg';
@@ -17,7 +17,7 @@ import * as constants from '../redux/actions/constants';
 import * as creators from '../redux/actions/creators';
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { getErrorsMarkup, ReactSwal, scrollToTop, showError, showLoading, showNetworkError, showSuccess } from "./utils";
+import { getErrorsMarkup, ReactSwal, ReactSwalFire, scrollToTop, showError, showLoading, showNetworkError, showSuccess } from "./utils";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -145,6 +145,8 @@ const Login = () => {
                                 </Button>
                                  : 
                                  <Button type="submit" variant="contained" color="secondary" size="large" startIcon={<AccountCircleRounded/>}>Submit</Button>}
+
+                                 <Button variant="text" color="secondary" size="large" style={{marginLeft: '2rem'}} component={Link} to="/moderation/password_reset">Forgot Password?</Button>
                             </div>
                         </Form>
                     </Formik>
@@ -1397,6 +1399,286 @@ const Manage = connect(state => ({
     );
 });
 
+const ResetPassword = () => {
+    const history = useHistory();
+    const queries = new URLSearchParams(useLocation().search);
+
+    const verification_code = queries.get('code') || null;
+    const [processingResend, setProcessingResend] = useState(false);
+    const [processingReset, setProcessingReset] = useState(false);
+    const [processingUpdatePassword, setProcessingUpdatePassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [passwordData, setPasswordData] = useState({
+        new_password: '',
+        confirm_password: '',
+    });
+    
+    const useStyles = makeStyles(theme => ({
+        root: {
+            marginTop: theme.spacing(15),
+            textAlign: 'center',
+            [theme.breakpoints.down('sm')]: {
+                marginTop: theme.spacing(8),
+                marginBottom: theme.spacing(6),
+            },
+            [theme.breakpoints.only('md')]: {
+                marginBottom: theme.spacing(6),
+            },
+        },
+
+        paperContainer: {
+            padding: '0 20rem 0 20rem',
+            [theme.breakpoints.down('xs')]: {
+                padding: '0 1rem 0 1rem',
+            },
+            [theme.breakpoints.only('sm')]: {
+                padding: '0 5rem 0 5rem',
+            },
+            [theme.breakpoints.only('md')]: {
+                padding: '0 10rem 0 10rem',
+            },
+        },
+        paper: {
+            padding: '2rem',
+            textAlign: 'left',
+
+            '& .header': {
+                marginBottom: '3rem',
+                textAlign: 'center',
+            },
+            '& .selector': {
+                textAlign: 'left',
+            },
+        },
+        btn: {
+            //marginBottom: '1rem',
+        },
+
+        grid: {
+            marginTop: '3rem',
+        }
+    }));
+
+    const classes = useStyles();
+
+    useEffect(() => {
+        scrollToTop();
+    }, []);
+
+    const handlePasswordInputChanged = e => {
+        const name = e.target.name;
+        const value = e.target.value;
+        passwordData[name] = value;
+        setPasswordData({...passwordData});
+    };
+    
+    const resendCode = () => {
+        if (email === '') {
+            showError('Please enter a valid registered email');
+            return;
+        }
+
+        setProcessingResend(true);
+        
+        axios.get('moderator/password_reset', {
+            email: email,
+        })
+        .then((response) => {
+            setProcessingResend(false);
+
+            if (response.status === 204) {
+                showSuccess('Verification code resent!');
+            }
+            else if (response.status === 400) { //Validation Error
+                showError('Validation Error', 'There is no password reset request associated with this email!');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => {
+            setProcessingResend(false);
+            showNetworkError();
+        });
+    };
+
+    const handleReset = e => {
+        e.preventDefault();
+
+        setProcessingReset(true);
+
+        axios.post('moderator/password_reset', {
+            email: email,
+        })
+        .then((response) => {
+            setProcessingReset(false);
+
+            if (response.status === 204) {
+                showSuccess('Verification code sent!');
+            }
+            else if (response.status === 409) {
+                ReactSwalFire({
+                    title: 'Oops!',
+                    html: (
+                        <div>
+                            A verification code has already been sent to your email. We can still resend the code if you have not seen it yet.
+
+                            <Button variant="contained" className={classes.resendBtn} onClick={resendCode}>Resend Code</Button>
+                        </div>
+                    ),
+                    icon: 'error',
+                    showCloseButton: true,
+                    showConfirmButton: false,
+                });
+            }
+            else if (response.status === 400) { //Validation Error
+                showError('Oops!', getErrorsMarkup(response.data.messages.error));
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => {
+            setProcessingReset(false);
+            showNetworkError();
+        });
+    };
+
+    const handleUpdatePassword = e => {
+        e.preventDefault();
+
+        if (passwordData.new_password !== passwordData.confirm_password) {
+            showError('Oops!', 'Passwords do not match!');
+            return;
+        }
+
+        setProcessingUpdatePassword(true);
+        
+        axios.delte('moderator/password_reset', {
+            email: email,
+            new_password: passwordData.new_password,
+            confirm_password: passwordData.confirm_password,
+            verification_code: verification_code,
+        })
+        .then((response) => {
+            setProcessingUpdatePassword(false);
+
+            if (response.status === 204) {
+                ReactSwal.fire({
+                    title: 'Password updated successfully!',
+                    icon: 'success',
+                    timer: 3000,
+                    onAfterClose: () => history.push('/moderation/login')
+                });
+            }
+            else if (response.status === 400) { //Validation Error
+                showError('Oops!', getErrorsMarkup(response.data.messages.error));
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => {
+            setProcessingUpdatePassword(false);
+            showNetworkError();
+        });
+    };
+
+    if (verification_code === null) {
+        return (
+            <div className={classes.root}>
+                <div className={classes.paperContainer}>
+                    <Paper elevation={6} className={classes.paper}>
+                        <Typography variant="h4" className="header">Reset Password</Typography>
+                        <form className={classes.form} onSubmit={handleReset}>
+                            <TextField 
+                                label="Enter your email" 
+                                variant="outlined" 
+                                required 
+                                type="email" 
+                                fullWidth
+                                color="secondary"
+                                name="email" onChange={e => setEmail(e.target.value)} inputProps={{maxLength: 50}}/>
+
+                            <Grid container className={classes.grid} spacing={3}>
+                                <Grid item xs={12} sm={6} md={4} xl={3}>
+                                    {!processingReset && !processingResend && !processingUpdatePassword ? 
+                                    <Button fullWidth variant="contained" type="submit" color="secondary" className={classes.btn}>Reset Password</Button> :
+                                    <Button fullWidth variant="contained" type="submit" color="secondary" className={classes.btn}>
+                                        Procesing... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                                    </Button>}
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={4} xl={3}>
+                                    {!processingReset && !processingResend && !processingUpdatePassword ? 
+                                    <Button fullWidth variant="contained" type="submit" color="secondary" className={classes.btn} onClick={resendCode}>Resend Code</Button> :
+                                    <Button fullWidth variant="contained" type="submit" color="secondary" className={classes.btn}>
+                                        Resending... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                                    </Button>}
+                                </Grid>
+                            </Grid>
+                        </form>
+                    </Paper>
+                </div>
+            </div>
+        );
+    }
+    else {
+        return (
+            <div>
+                <div fluid="sm">
+                    <Paper className={classes.paper}>
+                        <Typography variant="h4" className="bold-font pt-2 pt-md-0">Reset Password</Typography>
+                        <form className={classes.form} onSubmit={handleUpdatePassword}>
+                            <TextField 
+                                label="Enter your email" 
+                                variant="outlined" 
+                                required 
+                                type="email" 
+                                fullWidth
+                                color="secondary"
+                                name="email" onChange={e => setEmail(e.target.value)} inputProps={{maxLength: 50}}/>
+                            <TextField 
+                                label="Enter New Password" 
+                                variant="outlined" 
+                                required 
+                                type="password" 
+                                fullWidth
+                                color="secondary"
+                                name="new_password" onChange={handlePasswordInputChanged}/>
+
+                            <TextField 
+                                label="Confirm New Password" 
+                                variant="outlined" 
+                                required 
+                                type="password" 
+                                fullWidth
+                                color="secondary"
+                                name="confirm_password" onChange={handlePasswordInputChanged}/>
+                            
+                            <Grid container className={classes.grid}>
+                                <Grid item xs={12}>
+                                    {!processingReset && !processingResend && !processingUpdatePassword ? 
+                                    <Button type="submit" color="secondary">Change Password</Button> :
+                                    <Button type="submit" color="secondary">
+                                        Procesing... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                                    </Button>}
+                                </Grid> 
+                                <Grid item xs={12}>
+                                    {!processingReset && !processingResend && !processingUpdatePassword ? 
+                                    <Button type="submit" color="secondary" onClick={resendCode}>Resend Code</Button> :
+                                    <Button type="submit" color="secondary">
+                                        Resending... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                                    </Button>}
+                                </Grid>
+                            </Grid>
+                        </form>
+                    </Paper>
+                </div>
+            </div>
+        );
+    }
+};
+
 const Moderation = ({ showFooter }) => {
     const useStyles = makeStyles(theme => ({
         root: {
@@ -1411,6 +1693,7 @@ const Moderation = ({ showFooter }) => {
     return (
         <div className={classes.root}>
             <Switch>
+                <Route path="/moderation/password_reset"><ResetPassword/></Route>
                 <Route path="/moderation/manage"><Manage/></Route>
                 <Route path="/moderation/login"><Login/></Route>
                 <Route path="/moderation/logout"><Logout/></Route>
