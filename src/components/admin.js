@@ -559,6 +559,33 @@ const Home = connect(state => ({
         .catch(() => showNetworkError())
     };
 
+    const addModerator = (values) => {
+        showLoading();
+
+        axios.post('admin/moderator', {
+            ...values,
+            ...combinationData,
+        })
+        .then(res => {
+            if (res.status === 204) {
+                showSuccess('Success!', 'Rep added.');
+            }
+            else if (res.status === 400) {
+               showError('Oops!', getErrorsMarkup(res.data.messages.error));
+            }
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('admin/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/admin/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError())
+    };
+
     return (
         <div className={classes.root}>
             <Grid container justify="center" alignItems="stretch">
@@ -614,6 +641,9 @@ const Home = connect(state => ({
                                 initialValues={defaultRepData}
 
                                 validationSchema={Yup.object({
+                                    username: Yup.string()
+                                        .required('Enter the  username')
+                                        .max(12, 'The username must be atmost 12 characters long'),
                                     email: Yup.string()
                                         .required('Enter the email address')
                                         .email('Enter a valid email address')
@@ -633,7 +663,7 @@ const Home = connect(state => ({
                                         .oneOf([Yup.ref('password'), null], 'Passwords do not match!'),
                                 })}
 
-                                onSubmit={(values) => {}}
+                                onSubmit={addModerator}
                             >
                                 <Form>
                                     <CombinationSelection key="comb3" dataChanged={setCombinationData} />
