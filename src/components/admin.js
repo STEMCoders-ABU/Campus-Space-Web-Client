@@ -352,6 +352,31 @@ const Home = connect(state => ({
         .catch(() => showNetworkError())
     };
 
+    const removeFaculty = () => {
+        showLoading();
+
+        axios.delete('admin/faculty/' + manageFactData.faculty_id)
+        .then(res => {
+            if (res.status === 204) {
+                showSuccess('Success!', 'Faculty removed.');
+                handleCloseDeleteFacultyDialog();
+            }
+            else if (res.status === 400) {
+               showError('Oops!', getErrorsMarkup(res.data.messages.error));
+            }
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('admin/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/admin/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError())
+    };
+
     return (
         <div className={classes.root}>
             <Grid container justify="center" alignItems="stretch">
@@ -633,15 +658,15 @@ const Home = connect(state => ({
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText className={classes.dialogContent}>
-                        Are you sure you want to permanently remove this faculty?<br/>
-                        <strong>Please note that you cannot reverse this process.</strong>
+                        Are you sure you want to permanently remove "<strong>{targetFaculty && targetFaculty.faculty}</strong>"?<br/><br/>
+                        <strong>Please note that you cannot reverse this action.</strong>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDeleteFacultyDialog} variant="contained" color="primary">
                         Cancel
                     </Button>
-                    <Button type="submit" variant="contained" color="secondary" startIcon={<DeleteRounded/>}>
+                    <Button variant="contained" color="secondary" startIcon={<DeleteRounded/>} onClick={removeFaculty}>
                         Delete
                     </Button>
                 </DialogActions>
