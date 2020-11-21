@@ -11,6 +11,7 @@ import * as constants from '../redux/actions/constants';
 import * as creators from '../redux/actions/creators';
 import { axios } from "../init";
 import * as Yup from 'yup';
+import CombinationSelection from "./combination-selection";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -173,6 +174,22 @@ const Home = connect(state => ({
     const [showAddFacultyDialog, setShowAddFacultyDialog] = useState(false);
     const [showAddDepartmentDialog, setShowAddDepartmentDialog] = useState(false);
 
+    const [combinationData, setCombinationData] = useState({
+        faculty_id: 0,
+        level_id: 0,
+        department_id: 0,
+    });
+    const [manageDeptData, setManageDeptData] = useState({
+        faculty_id: 0,
+        level_id: 0,
+        department_id: 0,
+    });
+    const [manageFactData, setManageFactData] = useState({
+        faculty_id: 0,
+        level_id: 0,
+        department_id: 0,
+    });
+
     const handleCloseEditFacultyDialog = () => {
         setShowEditFacultyDialog(false);
     };
@@ -318,19 +335,15 @@ const Home = connect(state => ({
                     <Card className={classes.heroCard}>
                         <Typography variant="h4" className="header">Manage Faculty</Typography>
                         <CardContent>
-                            <Select 
-                                name="faculty_id" 
-                                defaultValue={faculties[0].id} 
-                                label="Faculty"
-                                variant="outlined"
-                                color="secondary"
-                                required
-                                fullWidth
+                            <Formik
+                                initialValues={{}}
+                                isInitialValid={false}
+                                onSubmit={(values) => {}}
                             >
-                                {faculties.map((item, index) => (
-                                    <MenuItem key={index} value={item.id}>{item.faculty}</MenuItem>
-                                ))}
-                            </Select>
+                                <Form>
+                                    <CombinationSelection excludeDepartment={true} excludeLevel={true} dataChanged={setManageFactData} />
+                                </Form>
+                            </Formik>
                         </CardContent>
                         <CardActions className={classes.heroBtnContainer}>
                             <Button variant="contained" color="secondary" startIcon={<EditRounded/>} onClick={handleShowEditFacultyDialog}>Edit</Button>
@@ -347,18 +360,22 @@ const Home = connect(state => ({
                             <Select
                                 style={{width: '100%', marginBottom: '1rem' }}
                                 name="faculty" 
-                                defaultValue="0" 
+                                defaultValue={faculties[0].id}  
                                 label="Faculty"
+                                color="secondary"
                                 variant="outlined"
                                 required
                                 fullWidth
                             >
-                                <MenuItem value="0">Test Faculty</MenuItem>
+                                {faculties.map((item, index) => (
+                                    <MenuItem key={index} value={item.id}>{item.faculty}</MenuItem>
+                                ))}
                             </Select>
                             <Select
                                 name="department" 
                                 defaultValue="0" 
                                 label="Department"
+                                color="secondary"
                                 variant="outlined"
                                 required
                                 fullWidth
@@ -379,34 +396,13 @@ const Home = connect(state => ({
                         <Typography variant="h4" className="header">Add Class Rep</Typography>
                         <CardContent>
                             <Formik
-                                initialValues={{
-                                    
-                                }}
-                                
-                                
+                                initialValues={{}}
+                                isInitialValid={false}
                                 onSubmit={(values) => {}}
                             >
                                 <Form>
-                                    <FormikSelect
-                                        name="faculty" 
-                                        defaultValue="0" 
-                                        label="Faculty"
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                    >
-                                        <MenuItem value="0">Test Faculty</MenuItem>
-                                    </FormikSelect>
-                                    <FormikSelect
-                                        name="department" 
-                                        defaultValue="0" 
-                                        label="Department"
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                    >
-                                        <MenuItem value="0">Test Department</MenuItem>
-                                    </FormikSelect>
+                                    <CombinationSelection dataChanged={setCombinationData} />
+
                                     <FormikField  
                                         color="secondary"
                                         name="username"

@@ -6,7 +6,7 @@ import * as constants from '../redux/actions/constants';
 import * as creators from '../redux/actions/creators';
 import FormikSelect from "./formik-select";
 
-const CombinationSelection = ({ faculties, departments, levels, dataChanged }) => {
+const CombinationSelection = ({ faculties, departments, levels, dataChanged, excludeLevel = false, excludeDepartment = false, }) => {
     const [data] = useState({
         faculty_id: 0,
         department_id: 0,
@@ -84,7 +84,7 @@ const CombinationSelection = ({ faculties, departments, levels, dataChanged }) =
                 ))}
             </FormikSelect> : <Skeleton variant="rect" height={40} style={{marginBottom: '1.5rem'}} />}
 
-            {departments !== constants.flags.INITIAL_VALUE ? 
+            {!excludeDepartment && (departments !== constants.flags.INITIAL_VALUE ? 
             <FormikSelect 
                 name="department_id" 
                 label="Choose a Department" 
@@ -94,9 +94,9 @@ const CombinationSelection = ({ faculties, departments, levels, dataChanged }) =
                 {departments.map((item, index) => (
                     <MenuItem key={index} value={item.id}>{item.department}</MenuItem>
                 ))}
-            </FormikSelect> : <Skeleton variant="rect" height={40} style={{marginBottom: '1.5rem'}} />}
+            </FormikSelect> : <Skeleton variant="rect" height={40} style={{marginBottom: '1.5rem'}} />)}
 
-            {levels !== constants.flags.INITIAL_VALUE ? 
+            {!excludeLevel && (levels !== constants.flags.INITIAL_VALUE ? 
             <FormikSelect 
                 name="level_id" 
                 label="Choose a Level" 
@@ -106,7 +106,7 @@ const CombinationSelection = ({ faculties, departments, levels, dataChanged }) =
                 {levels.map((item, index) => (
                     <MenuItem key={index} value={item.id}>{item.level}</MenuItem>
                 ))}
-            </FormikSelect> : <Skeleton variant="rect" height={40} style={{marginBottom: '1.5rem'}} />}
+            </FormikSelect> : <Skeleton variant="rect" height={40} style={{marginBottom: '1.5rem'}} />)}
         </>
     );
 };
