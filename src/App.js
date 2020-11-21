@@ -185,7 +185,7 @@ const RawNavBar = ({ themeName, changeTheme, auth, ...props }) => {
         <Hidden smDown>
           {auth.authenticated ? 
           <Button className={classes.loginButton} component={Link} to={auth.logout} variant="contained" color="secondary" size="large">Logout</Button> : 
-          <Button className={classes.loginButton} variant="contained" color="secondary" size="large">Login</Button>}
+          <Button className={classes.loginButton} component={Link} to="/moderation/login" variant="contained" color="secondary" size="large">Login</Button>}
         </Hidden>
 
         <Hidden mdUp>
