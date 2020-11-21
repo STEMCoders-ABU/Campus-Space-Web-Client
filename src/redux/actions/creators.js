@@ -6,6 +6,8 @@ export const app = {
 
     getFaculties: () => {
         return (dispatch) => {
+            dispatch({ type: constants.app.GET_FACULTIES_SUCESS, payload: constants.flags.INITIAL_VALUE });
+
             return axios.get('faculties')
                 .then(response => {
                     if (response.status === 200)

@@ -10,7 +10,7 @@ import * as creators from '../redux/actions/creators';
 import CombinationSelection from "./combination-selection";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { getErrorsMarkup, scrollToTop, showError, showLoading, showNetworkError, showSuccess } from "./utils";
+import { getErrorsMarkup, ReactSwalFire, scrollToTop, showError, showLoading, showNetworkError, showSuccess } from "./utils";
 import * as constants from '../redux/actions/constants';
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -230,6 +230,19 @@ const Home = connect(state => ({
     };
 
     const handleShowDeleteFacultyDialog = () => {
+        if (faculties === constants.flags.INITIAL_VALUE) {
+            showError('Oops!', 'A network error occured! Please reload the page.');
+            return;
+        }
+
+        setTargetFaculty(null);
+
+        const target = faculties.filter((item, index) => {
+            return (item.id === manageFactData.faculty_id);
+        })[0];
+
+        setTargetFaculty(target);
+        
         setShowDeleteFacultyDialog(true);
     };
 
@@ -333,7 +346,13 @@ const Home = connect(state => ({
         axios.put('admin/faculty/' + manageFactData.faculty_id, values)
         .then(res => {
             if (res.status === 204) {
-                showSuccess('Success!', 'Faculty updated.');
+                ReactSwalFire({
+                    title: 'Success',
+                    html: 'Faculty updated',
+                    icon: 'success',
+                    timer: 3000,
+                    didClose: () => dispatch(creators.app.getFaculties()),
+                });
                 handleCloseEditFacultyDialog();
             }
             else if (res.status === 400) {
@@ -358,8 +377,47 @@ const Home = connect(state => ({
         axios.delete('admin/faculty/' + manageFactData.faculty_id)
         .then(res => {
             if (res.status === 204) {
-                showSuccess('Success!', 'Faculty removed.');
+                ReactSwalFire({
+                    title: 'Success',
+                    html: 'Faculty removed',
+                    icon: 'success',
+                    timer: 3000,
+                    didClose: () => dispatch(creators.app.getFaculties()),
+                });
+
                 handleCloseDeleteFacultyDialog();
+            }
+            else if (res.status === 400) {
+               showError('Oops!', getErrorsMarkup(res.data.messages.error));
+            }
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('admin/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/admin/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError())
+    };
+
+    const addFaculty = (values) => {
+        showLoading();
+
+        axios.post('admin/faculty', values)
+        .then(res => {
+            if (res.status === 204) {
+                ReactSwalFire({
+                    title: 'Success',
+                    html: 'Faculty added',
+                    icon: 'success',
+                    timer: 3000,
+                    didClose: () => dispatch(creators.app.getFaculties()),
+                });
+
+                handleCloseAddFacultyDialog();
             }
             else if (res.status === 400) {
                showError('Oops!', getErrorsMarkup(res.data.messages.error));
@@ -510,6 +568,12 @@ const Home = connect(state => ({
                             faculty: targetFaculty ? targetFaculty.faculty : '',
                         }}
                         
+                        validationSchema={Yup.object({
+                            faculty: Yup.string()
+                                .required('Enter the faculty name')
+                                .max(60, 'Faculty name must be atmost 60 characters long!'),
+                        })}
+
                         onSubmit={updateFaculty}
                     >
                         <Form id="edit-faculty">
@@ -545,15 +609,21 @@ const Home = connect(state => ({
                 <DialogContent>
                     <Formik
                         initialValues={{
-                            
+                           faculty: '', 
                         }}
+
+                        validationSchema={Yup.object({
+                            faculty: Yup.string()
+                                .required('Enter the faculty name')
+                                .max(60, 'Faculty name must be atmost 60 characters long!'),
+                        })}
                         
-                        onSubmit={(values) => {}}
+                        onSubmit={addFaculty}
                     >
-                        <Form id="edit-faculty">
+                        <Form id="add-faculty">
                             <FormikField  
                                 color="secondary"
-                                name="faculty_name"
+                                name="faculty"
                                 label="Faculty Name"
                                 variant="outlined"
                                 fullWidth
@@ -565,7 +635,7 @@ const Home = connect(state => ({
                     <Button onClick={handleCloseAddFacultyDialog} variant="contained" color="primary">
                         Cancel
                     </Button>
-                    <Button type="submit" variant="contained" form="edit-faculty" color="secondary" startIcon={<AddRounded/>}>
+                    <Button type="submit" variant="contained" form="add-faculty" color="secondary" startIcon={<AddRounded/>}>
                         Add
                     </Button>
                 </DialogActions>
