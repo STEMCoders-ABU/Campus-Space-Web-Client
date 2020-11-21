@@ -532,7 +532,7 @@ const Home = connect(state => ({
                 <DialogContent>
                     <DialogContentText className={classes.dialogContent}>
                         Enter new values for fields that you want to update.<br/>
-                        <sttong>Leave the password fiels empty if you do not want to change it!</sttong>
+                        <strong>Leave the password fields empty if you do not want to change it!</strong>
                     </DialogContentText>
                         <Formik
                             initialValues={{
