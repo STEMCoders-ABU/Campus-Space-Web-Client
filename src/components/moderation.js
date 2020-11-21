@@ -928,9 +928,9 @@ const ResourceCard = ({ resource, editResource, removeResource }) => {
                     />
                 </div>
                 <CardContent>
-                    <Typography variant="h6" className={classes.title}>Excellent Resource</Typography>
-                    <Typography variant="subtitle1" color="textSecondary">2020-01-12</Typography>
-                    <Typography variant="subtitle1" color="textSecondary">COSC101</Typography>
+                    <Typography variant="h6" className={classes.title}>{resource.title}</Typography>
+                    <Typography variant="subtitle1" color="textSecondary">{resource.date_added}</Typography>
+                    <Typography variant="subtitle1" color="textSecondary">{resource.course_code} {resource.category}</Typography>
                 </CardContent>
                 <CardActions>
                     <Button variant="outlined" color="primary.dark" component={Link} to={`../resource/${resource.id}`}>View</Button>
@@ -994,6 +994,7 @@ const Manage = connect(state => ({
     const [category, setCategory] = useState(0);
     const [course, setCourse] = useState(0);
     const [resources, setResources] = useState(constants.flags.INITIAL_VALUE);
+    const [currentResource, setCurrentResource] = useState(null);
 
     const handleCloseEditResourceDialog = () => {
         setShowEditResourceDialog(false);
@@ -1006,6 +1007,7 @@ const Manage = connect(state => ({
             return;
         }
         
+        setCurrentResource(resource);
         setShowEditResourceDialog(true);
     };
 
@@ -1014,6 +1016,7 @@ const Manage = connect(state => ({
     };
 
     const handleShowDeleteResourceDialog = (resource) => {
+        setCurrentResource(resource);
         setShowDeleteResourceDialog(true);
     };
 
@@ -1068,6 +1071,12 @@ const Manage = connect(state => ({
                 fontSize: '1rem',
             }
         },
+
+        notFoundTxt: {
+            textAlign: 'center',
+            marginTop: '4rem',
+            fontFamily: theme.fontFamily,
+        }
     }));
 
     const classes = useStyles();
@@ -1139,28 +1148,6 @@ const Manage = connect(state => ({
         setCourse(index === -1 ? 0 : courses[index].id);
     };
 
-    const fetchResources = () => {
-        setResources(constants.flags.INITIAL_VALUE);
-
-        axios.get(`moderator/resources?join=true&category_id=${category}&course_id=${course}`)
-        .then(res => {
-            if (res.status === 200)
-                setResources(res.data);
-            else if (res.status === 404)
-                setResources(constants.flags.NOT_FOUND);
-            else if (res.status === 401) {
-                // Unauthorized
-                axios.delete('moderator/session');
-                dispatch(creators.app.authenticate(false, ''));
-                history.push('/moderation/login');
-            }
-            else {
-                showNetworkError();
-            }
-        })
-        .catch(() => showNetworkError());
-    };
-
     return (
         <div className={classes.root}>
             <div className={classes.filterPaperContainer}>
@@ -1202,7 +1189,7 @@ const Manage = connect(state => ({
             </div>
 
             <div className={classes.resourcesContainer}>
-                {resources === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No resource matched your queries. You may have not uploaded any resource for this combination.</Typography>}
+                {resources === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No resource matched your queries. You may have not uploaded any resource for this combination yet.</Typography>}
                 
                 <Grid container justify="start" alignItems="stretch" className={classes.resourcesContainer}>
                     {resources && resources !== constants.flags.NOT_FOUND && resources !== constants.flags.INITIAL_VALUE ? 
