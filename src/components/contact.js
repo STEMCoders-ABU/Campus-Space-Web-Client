@@ -4,7 +4,7 @@ import { Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { axios } from "../init";
 import CombinationSelection from "./combination-selection";
-import { showInfo, showLoading, showNetworkError, showSuccess } from "./utils";
+import { ReactSwalFire, showInfo, showLoading, showNetworkError, showSuccess } from "./utils";
 
 const Contact = ({ showFooter }) => {
     const useStyles = makeStyles(theme => ({
@@ -89,8 +89,24 @@ const Contact = ({ showFooter }) => {
 
         axios.get(`moderator/public?faculty_id=${faculty_id}&department_id=${department_id}&level_id=${level_id}`)
         .then(res => {
+            const data = res.data;
+
             if (res.status === 200) {
-                showSuccess('Yeah');
+                ReactSwalFire({
+                    html: (
+                        <div>
+                            <ul style={{textAlign: 'left'}}>
+                                <li><strong>Name:</strong> {data.full_name}</li>
+                                <li><strong>Faculty:</strong> {data.faculty}</li>
+                                <li><strong>Department:</strong> {data.department}</li>
+                                <li><strong>Level:</strong> {data.level}</li>
+                                <li><strong>Phone:</strong> {data.phone}</li>
+                                <li><strong>Email:</strong> {data.email}</li> 
+                            </ul>
+                        </div>
+                    ),
+                    title: 'Rep Contact',
+                });
             }
             else if (res.status === 404) {
                 showInfo('Ouch!', 'Sorry, the class rep for this combination is not registered yet!');
