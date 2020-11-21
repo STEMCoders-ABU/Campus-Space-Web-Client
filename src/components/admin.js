@@ -222,6 +222,13 @@ const Home = connect(state => ({
             return;
         }
 
+        setTargetDept(null);
+
+        const target = departments.filter((item, index) => {
+            return (item.id === manageDeptData.department_id);
+        })[0];
+
+        setTargetDept(target);
         setShowEditDepartmentDialog(true);
     };
 
@@ -251,6 +258,18 @@ const Home = connect(state => ({
     };
 
     const handleShowDeleteDepartmentDialog = () => {
+        if (departments === constants.flags.INITIAL_VALUE) {
+            showError('Oops!', 'A network error occured! Please reload the page.');
+            return;
+        }
+
+        setTargetDept(null);
+
+        const target = departments.filter((item, index) => {
+            return (item.id === manageDeptData.department_id);
+        })[0];
+
+        setTargetDept(target);
         setShowDeleteDepartmentDialog(true);
     };
 
