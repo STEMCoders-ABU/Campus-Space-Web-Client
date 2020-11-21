@@ -6,7 +6,7 @@ import { connect, useDispatch } from "react-redux";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { scrollToTop, showError, showNetworkError } from "./utils";
+import { ReactSwal, scrollToTop, showError, showLoading, showNetworkError } from "./utils";
 import * as constants from '../redux/actions/constants';
 import * as creators from '../redux/actions/creators';
 import { axios } from "../init";
@@ -285,6 +285,7 @@ const Home = connect(state => ({
 
     useEffect(() => {
         scrollToTop();
+        showLoading();
     }, []);
 
     useEffect(() => {
@@ -302,6 +303,14 @@ const Home = connect(state => ({
             dispatch(creators.app.getLevels());
     }, [dispatch, levels]);
 
+    useEffect(() => {
+        if (faculties !== constants.flags.INITIAL_VALUE && levels !== constants.flags.INITIAL_VALUE)
+            ReactSwal.close();
+    }, [faculties, levels]);
+
+    if (faculties === constants.flags.INITIAL_VALUE || levels === constants.flags.INITIAL_VALUE)
+        return null;
+
     return (
         <div className={classes.root}>
             <Grid container justify="center" alignItems="stretch">
@@ -310,14 +319,17 @@ const Home = connect(state => ({
                         <Typography variant="h4" className="header">Manage Faculty</Typography>
                         <CardContent>
                             <Select 
-                                name="faculty" 
-                                defaultValue="0" 
+                                name="faculty_id" 
+                                defaultValue={faculties[0].id} 
                                 label="Faculty"
                                 variant="outlined"
+                                color="secondary"
                                 required
                                 fullWidth
                             >
-                                <MenuItem value="0">Test Faculty</MenuItem>
+                                {faculties.map((item, index) => (
+                                    <MenuItem key={index} value={item.id}>{item.faculty}</MenuItem>
+                                ))}
                             </Select>
                         </CardContent>
                         <CardActions className={classes.heroBtnContainer}>
