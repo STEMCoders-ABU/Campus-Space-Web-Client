@@ -34,7 +34,7 @@ const CombinationSelection = ({ faculties, levels, dataChanged, fetchDepartments
 
     useEffect(() => {
         dispatch(creators.app.getFaculties());
-    }, [data.faculty_id, dispatch, fetchDepartmentsSignal]);
+    }, [dispatch, fetchDepartmentsSignal]);
 
     useEffect(() => {
         if (levels === constants.flags.INITIAL_VALUE)
