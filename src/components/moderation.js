@@ -174,6 +174,8 @@ const Home = connect(state => ({
     const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
     const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
     const [moderatorData, setModeratorData] = useState(null);
+    const [courses, setCourses] = useState(null);
+
     const [processingAddCourse, setProcessingAddCourse] = useState(false);
     const [processingEditProfile, setProcessingEditProfile] = useState(false);
     const [processingAddResource, setProcessingAddResource] = useState(false);
@@ -190,16 +192,22 @@ const Home = connect(state => ({
     };
 
     const handleCloseAddResourceDialog = () => {
+        setShowAddResourceDialog(false);
+    };
+
+    const handleShowAddResourceDialog = () => {
         if (categories === constants.flags.INITIAL_VALUE) {
             showNetworkError();
             dispatch(creators.app.getCategories());
             return;
         }
 
-        setShowAddResourceDialog(false);
-    };
+        if (courses === null) {
+            showNetworkError();
+            getCourses();
+            return;
+        }
 
-    const handleShowAddResourceDialog = () => {
         setShowAddResourceDialog(true);
     };
 
@@ -342,7 +350,10 @@ const Home = connect(state => ({
     useEffect(() => {
         if (categories === constants.flags.INITIAL_VALUE)
             dispatch(creators.app.getCategories());
-    }, [categories, dispatch]);
+
+        if (courses === null)
+            getCourses();
+    }, [categories, courses, dispatch]);
 
     useEffect(() => {
         if (auth.authenticated) {
@@ -369,6 +380,17 @@ const Home = connect(state => ({
         }
     }, [auth.authenticated, dispatch, history]);
 
+    const getCourses = () => {
+        setCourses(null);
+
+        axios.get('moderator/courses')
+        .then(res => {
+            if (res.status === 200)
+                setCourses(res.data);
+        })
+        .catch(() => {});
+    };
+    
     const addCourse = (values) => {
         setProcessingAddCourse(true);
 
