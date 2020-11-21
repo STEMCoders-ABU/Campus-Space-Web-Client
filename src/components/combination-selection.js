@@ -33,13 +33,8 @@ const CombinationSelection = ({ faculties, levels, dataChanged, fetchDepartments
     }, [dispatch, faculties]);
 
     useEffect(() => {
-        axios.get('departments?faculty_id=' + data.faculty_id)
-        .then(response => {
-            if (response.status === 200)
-                setCurrentDepartments(response.data);
-        })
-        .catch(() => {});
-    }, [data.faculty_id, fetchDepartmentsSignal]);
+        dispatch(creators.app.getFaculties());
+    }, [data.faculty_id, dispatch, fetchDepartmentsSignal]);
 
     useEffect(() => {
         if (levels === constants.flags.INITIAL_VALUE)
