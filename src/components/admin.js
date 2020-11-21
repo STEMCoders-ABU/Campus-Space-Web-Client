@@ -664,7 +664,6 @@ const Home = connect(state => ({
                                         defaultValue="Male" 
                                         label="Gender"
                                         variant="outlined"
-                                        required
                                         fullWidth
                                     >
                                         <MenuItem value="Male">Male</MenuItem>
@@ -676,7 +675,6 @@ const Home = connect(state => ({
                                         label="Phone"
                                         type="tel"
                                         variant="outlined"
-                                        required
                                         fullWidth
                                     />
                                     <FormikField  
