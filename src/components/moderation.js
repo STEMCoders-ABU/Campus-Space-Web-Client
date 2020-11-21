@@ -167,14 +167,16 @@ const Logout = () => {
 };
 
 const Home = connect(state => ({
-    auth: {...state.appReducer.auth}
-  }))(({ auth }) => {
+    auth: {...state.appReducer.auth},
+    categories: state.appReducer.categories,
+  }))(({ auth, categories }) => {
 
     const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
     const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
     const [moderatorData, setModeratorData] = useState(null);
     const [processingAddCourse, setProcessingAddCourse] = useState(false);
     const [processingEditProfile, setProcessingEditProfile] = useState(false);
+    const [processingAddResource, setProcessingAddResource] = useState(false);
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -188,6 +190,12 @@ const Home = connect(state => ({
     };
 
     const handleCloseAddResourceDialog = () => {
+        if (categories === constants.flags.INITIAL_VALUE) {
+            showNetworkError();
+            dispatch(creators.app.getCategories());
+            return;
+        }
+
         setShowAddResourceDialog(false);
     };
 
@@ -330,6 +338,11 @@ const Home = connect(state => ({
         if (!auth.authenticated)
             history.push('/moderation/login');
     }, [auth, history]);
+
+    useEffect(() => {
+        if (categories === constants.flags.INITIAL_VALUE)
+            dispatch(creators.app.getCategories());
+    }, [categories, dispatch]);
 
     useEffect(() => {
         if (auth.authenticated) {
