@@ -17,7 +17,7 @@ import * as constants from '../redux/actions/constants';
 import * as creators from '../redux/actions/creators';
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { getErrorsMarkup, ReactSwal, ReactSwalFire, scrollToTop, showError, showLoading, showNetworkError, showSuccess } from "./utils";
+import { getErrorsMarkup, ReactSwal, scrollToTop, showError, showLoading, showNetworkError, showSuccess } from "./utils";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
