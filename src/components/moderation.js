@@ -639,15 +639,23 @@ const Home = connect(state => ({
             >
                 <AppBar className={classes.dialogAppBar} color="primary">
                     <Toolbar>
+                        {processingAddResource ? 
+                        <IconButton disabled edge="start" color="inherit" aria-label="close">
+                            <KeyboardArrowLeftRounded/>
+                        </IconButton> : 
                         <IconButton edge="start" color="inherit" onClick={handleCloseAddResourceDialog} aria-label="close">
                             <KeyboardArrowLeftRounded/>
-                        </IconButton>
+                        </IconButton>}
                         <Typography variant="h6" className={classes.dialogTitle}>
-                            Upload Resources
+                            Upload Resource
                         </Typography>
-                        <Button color="inherit" variant="outlined" type="submit" form="add-resource-form" startIcon={<CloudUploadRounded/>}>
+                        {processingAddResource ? 
+                        <Button disabled color="inherit" variant="outlined" form="edit-profile-form">
+                            Uploading... <CircularProgress color="secondary" style={{marginLeft: '2rem'}}/>
+                        </Button> :
+                        <Button color="inherit" variant="outlined" type="submit" form="edit-profile-form" startIcon={<CloudUploadRounded/>}>
                             Upload
-                        </Button>
+                        </Button>}
                     </Toolbar>
                 </AppBar>
                 <DialogContent>
@@ -655,7 +663,7 @@ const Home = connect(state => ({
                         A resource category determines the type of resource that can be uploaded. The list below explains the type of resources allowed for each category:
                         <ul>
                             <li>
-                                <strong>Document</strong>: For Microsoft documents like Word (doc, docx), Excel (xls, xlsx) or Power Point (ppt, pptx).
+                                <strong>Document</strong>: For Microsoft Office documents like Word (doc, docx), Excel (xls, xlsx) or Power Point (ppt, pptx).
                             </li>
                             <li>
                                 <strong>Material</strong>: For lecture materials released by lecturers. This must be in PDF format.
