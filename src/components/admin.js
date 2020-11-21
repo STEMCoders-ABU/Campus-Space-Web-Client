@@ -1,17 +1,16 @@
-import { Button, Card, CardActions, CardContent, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, makeStyles, MenuItem, Paper, Select, Slide, Typography } from "@material-ui/core";
+import { Button, Card, CardActions, CardContent, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, makeStyles, MenuItem, Paper, Slide, Typography } from "@material-ui/core";
 import { AccountCircleRounded, AddRounded, DeleteRounded, EditRounded } from "@material-ui/icons";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
+import * as Yup from 'yup';
+import { axios } from "../init";
+import * as creators from '../redux/actions/creators';
+import CombinationSelection from "./combination-selection";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { ReactSwal, scrollToTop, showError, showLoading, showNetworkError } from "./utils";
-import * as constants from '../redux/actions/constants';
-import * as creators from '../redux/actions/creators';
-import { axios } from "../init";
-import * as Yup from 'yup';
-import CombinationSelection from "./combination-selection";
+import { scrollToTop, showError, showLoading, showNetworkError } from "./utils";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -163,10 +162,7 @@ const Logout = () => {
 
 const Home = connect(state => ({
     auth: {...state.appReducer.auth},
-    faculties: state.appReducer.faculties,
-    departments: state.appReducer.departments,
-    levels: state.appReducer.levels,
-  }))(({ auth, faculties, departments, levels,}) => {
+  }))(({ auth}) => {
     const [showEditFacultyDialog, setShowEditFacultyDialog] = useState(false);
     const [showEditDepartmentDialog, setShowEditDepartmentDialog] = useState(false);
     const [showDeleteFacultyDialog, setShowDeleteFacultyDialog] = useState(false);
@@ -296,37 +292,16 @@ const Home = connect(state => ({
     }));
 
     const classes = useStyles();
-
-    const dispatch = useDispatch();
     const history = useHistory();
 
     useEffect(() => {
         scrollToTop();
-        showLoading();
     }, []);
 
     useEffect(() => {
         if (!auth.authenticated)
             history.push('/admin/login');
     }, [auth, history]);
-
-    useEffect(() => {
-        if (faculties === constants.flags.INITIAL_VALUE)
-            dispatch(creators.app.getFaculties());
-    }, [dispatch, faculties]);
-
-    useEffect(() => {
-        if (levels === constants.flags.INITIAL_VALUE)
-            dispatch(creators.app.getLevels());
-    }, [dispatch, levels]);
-
-    useEffect(() => {
-        if (faculties !== constants.flags.INITIAL_VALUE && levels !== constants.flags.INITIAL_VALUE)
-            ReactSwal.close();
-    }, [faculties, levels]);
-
-    if (faculties === constants.flags.INITIAL_VALUE || levels === constants.flags.INITIAL_VALUE)
-        return null;
 
     return (
         <div className={classes.root}>
@@ -357,31 +332,15 @@ const Home = connect(state => ({
                     <Card className={classes.heroCard}>
                         <Typography variant="h4" className="header">Manage Department</Typography>
                         <CardContent>
-                            <Select
-                                style={{width: '100%', marginBottom: '1rem' }}
-                                name="faculty" 
-                                defaultValue={faculties[0].id}  
-                                label="Faculty"
-                                color="secondary"
-                                variant="outlined"
-                                required
-                                fullWidth
+                            <Formik
+                                initialValues={{}}
+                                isInitialValid={false}
+                                onSubmit={(values) => {}}
                             >
-                                {faculties.map((item, index) => (
-                                    <MenuItem key={index} value={item.id}>{item.faculty}</MenuItem>
-                                ))}
-                            </Select>
-                            <Select
-                                name="department" 
-                                defaultValue="0" 
-                                label="Department"
-                                color="secondary"
-                                variant="outlined"
-                                required
-                                fullWidth
-                            >
-                                <MenuItem value="0">Test Department</MenuItem>
-                            </Select>
+                                <Form>
+                                    <CombinationSelection excludeLevel={true} dataChanged={setManageDeptData} />
+                                </Form>
+                            </Formik>
                         </CardContent>
                         <CardActions className={classes.heroBtnContainer}>
                             <Button variant="contained" color="secondary" startIcon={<EditRounded/>} onClick={handleShowEditDepartmentDialog}>Edit</Button>
