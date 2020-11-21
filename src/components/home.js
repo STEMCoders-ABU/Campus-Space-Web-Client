@@ -1,9 +1,10 @@
-import { Button, Grid, Hidden, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
+import { Button, Grid, Hidden, makeStyles, Paper, Typography } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import ScrollAnimation from "react-animate-on-scroll";
 import { useDispatch } from "react-redux";
+import * as Yup from 'yup';
 import { ReactComponent as Storage } from '../images/cloud_storage.svg';
 import { ReactComponent as Discussion } from '../images/discussion.svg';
 import largeLogo from '../images/large-logo.jpg';
@@ -13,8 +14,9 @@ import { ReactComponent as Reading } from '../images/reading.svg';
 import { ReactComponent as TimeManagement } from '../images/time_management.svg';
 import { axios } from "../init";
 import * as creators from '../redux/actions/creators';
-import FormikSelect from './formik-select';
-import { scrollToTop } from "./utils";
+import CombinationSelection from "./combination-selection";
+import FormikField from "./formik-field";
+import { getErrorsMarkup, scrollToTop, showError, showInfo, showLoading, showNetworkError, showSuccess } from "./utils";
 
 const Home = ({ showFooter }) => {
     const useStyles = makeStyles(theme => ({
@@ -321,6 +323,11 @@ const Home = ({ showFooter }) => {
     }));
 
     const [stats, setStats] = useState(null);
+    const [combinationData, setCombinationData] = useState({
+        faculty_id: 0,
+        level_id: 0,
+        department_id: 0,
+    });
 
     const dispatch = useDispatch();
 
@@ -346,6 +353,30 @@ const Home = ({ showFooter }) => {
           .catch(() => {});
         }
     }, [stats]);
+
+    const onSubscribe = (values) => {
+        showLoading();
+
+        axios.post('resources/subscription', {
+          ...combinationData,
+          email: values.email,
+        })
+        .then(res => {
+            if (res.status === 204) {
+               showSuccess('Success!', 'You have successfully subscribed!');
+            }
+            else if (res.status === 409) {
+                showInfo('Uhm!', 'Sorry, you are already subcribed to receive notifications for this combination!<br/><br>You can still subscribe to receive notifications for other combinations.');
+            }
+            else if (res.status === 400) {
+               showError('Oops!', getErrorsMarkup(res.data.messages.error));
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError());
+    };
 
     const classes = useStyles();
   
@@ -499,28 +530,33 @@ const Home = ({ showFooter }) => {
           </Hidden>
 
           <Paper elevation={0} square className={classes.subPaperContainer}>
-            <ScrollAnimation initiallyVisible animatePreScroll={false} animateIn="animate__swing" duration={1}>
+            <ScrollAnimation initiallyVisible animateOnce animatePreScroll={false} animateIn="animate__swing" duration={1}>
                 <Paper elevation={5} className={classes.subPaperInner}>
                     <Typography variant="h4" className="header">SUBSCRIBE FOR EMAIL NOTIFICATIONS</Typography>
 
                     <Formik
                         initialValues={{
-                            
+                          email: '',
                         }}
-                        
-                        
-                        onSubmit={(values) => {}}
+
+                        isInitialValid={false}
+
+                        validationSchema={Yup.object({
+                          email: Yup.string()
+                            .required('Enter your email address')
+                            .email('Enter a valid email'),
+                        })}
+                        onSubmit={(values) => onSubscribe(values)}
                     >
                         <Form>
-                            <FormikSelect name="faculty" defaultValue="test" label="Choose a Faculty" className="selector">
-                                <MenuItem value="test">Test Faculty</MenuItem>
-                            </FormikSelect>
-                            <FormikSelect name="department" defaultValue="test" label="Choose a Department" className="selector">
-                                <MenuItem value="test">Test Department</MenuItem>
-                            </FormikSelect>
-                            <FormikSelect name="department" defaultValue="test" label="Choose a Level" className="selector">
-                                <MenuItem value="test">100</MenuItem>
-                            </FormikSelect>
+                            <FormikField
+                              name="email"
+                              label="Email"
+                              color="secondary"
+                              variant="outlined"
+                              fullWidth
+                            />
+                            <CombinationSelection dataChanged={setCombinationData} />
 
                             <Button type="submit" variant="contained" color="secondary" size="large" className={classes.subBtn}>Subscribe</Button>
                         </Form>
