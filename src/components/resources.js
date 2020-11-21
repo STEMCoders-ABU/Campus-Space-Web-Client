@@ -21,7 +21,7 @@ import * as creators from '../redux/actions/creators';
 import CombinationSelection from "./combination-selection";
 import CommentCard, { CommentCardLoading } from "./comment-card";
 import FormikField from "./formik-field";
-import { downloadResource, getErrorsMarkup, ReactSwal, scrollToTop, showError, showInfo, showLoading, showNetworkError } from "./utils";
+import { downloadResource, getErrorsMarkup, ReactSwal, ReactSwalFire, scrollToTop, showError, showInfo, showLoading, showNetworkError } from "./utils";
 
 const ResourceCard = ({ resource, showDownloads = false }) => {
     const useResourceCardStyles = makeStyles(theme => ({
@@ -578,7 +578,7 @@ const Comments = ({ course, category, combination }) => {
             setProcessing(false);
 
             if (response.status === 200) {
-                ReactSwal.fire({
+                ReactSwalFire({
                     title: 'Success',
                     html: 'Comment added successfully!',
                     icon: 'success',
@@ -715,7 +715,7 @@ const Resources = ({ showFooter, categories }) => {
                     ReactSwal.close();
                 }
                 else if (response.status === 404) {
-                    ReactSwal.fire({
+                    ReactSwalFire({
                         title: 'Oops!',
                         html: 'There are no courses for the selected combination yet. Please choose another combination!',
                         icon: 'error',

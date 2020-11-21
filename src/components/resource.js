@@ -14,7 +14,7 @@ import FormikField from "./formik-field";
 
 const { makeStyles, Paper, Card, CardContent, Typography, CardActions, Button, useTheme, CircularProgress } = require("@material-ui/core");
 const { useEffect, useState } = require("react");
-const { scrollToTop, showNetworkError, showError, ReactSwal, getErrorsMarkup, downloadResource } = require("./utils");
+const { scrollToTop, showNetworkError, showError, ReactSwal, getErrorsMarkup, downloadResource, ReactSwalFire } = require("./utils");
 
 const VideoViewer = ({ resource }) => {
     return (
@@ -218,7 +218,7 @@ const Resource = ({ showFooter }) => {
             setProcessing(false);
 
             if (response.status === 200) {
-                ReactSwal.fire({
+                ReactSwalFire({
                     title: 'Success',
                     html: 'Comment added successfully!',
                     icon: 'success',
