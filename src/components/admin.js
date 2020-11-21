@@ -10,7 +10,7 @@ import * as creators from '../redux/actions/creators';
 import CombinationSelection from "./combination-selection";
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
-import { scrollToTop, showError, showNetworkError } from "./utils";
+import { getErrorsMarkup, scrollToTop, showError, showLoading, showNetworkError, showSuccess } from "./utils";
 import * as constants from '../redux/actions/constants';
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -316,6 +316,7 @@ const Home = connect(state => ({
 
     const classes = useStyles();
     const history = useHistory();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         scrollToTop();
@@ -325,6 +326,31 @@ const Home = connect(state => ({
         if (!auth.authenticated)
             history.push('/admin/login');
     }, [auth, history]);
+
+    const updateFaculty = (values) => {
+        showLoading();
+
+        axios.put('admin/faculty/' + manageFactData.faculty_id, values)
+        .then(res => {
+            if (res.status === 204) {
+                showSuccess('Success!', 'Faculty updated.');
+                handleCloseEditFacultyDialog();
+            }
+            else if (res.status === 400) {
+               showError('Oops!', getErrorsMarkup(res.data.messages.error));
+            }
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('admin/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/admin/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError())
+    };
 
     return (
         <div className={classes.root}>
@@ -459,7 +485,7 @@ const Home = connect(state => ({
                             faculty: targetFaculty ? targetFaculty.faculty : '',
                         }}
                         
-                        onSubmit={(values) => {}}
+                        onSubmit={updateFaculty}
                     >
                         <Form id="edit-faculty">
                             <FormikField  
