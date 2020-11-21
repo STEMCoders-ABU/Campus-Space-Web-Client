@@ -1,22 +1,23 @@
-import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, LinearProgress, makeStyles, MenuItem, Paper, Slide, Toolbar, Typography, withStyles } from "@material-ui/core";
-import { AccountCircleRounded, CloudUploadRounded, DeleteRounded, EditRounded, KeyboardArrowLeftRounded, SearchRounded } from "@material-ui/icons";
+import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, LinearProgress, makeStyles, MenuItem, Paper, Select, Slide, Toolbar, Typography, withStyles } from "@material-ui/core";
+import { AccountCircleRounded, CloudUploadRounded, DeleteRounded, EditRounded, KeyboardArrowLeftRounded } from "@material-ui/icons";
+import { Skeleton } from "@material-ui/lab";
 import { Form, Formik } from "formik";
 import { forwardRef, useEffect, useState } from "react";
+import { connect, useDispatch } from "react-redux";
 import { Link, Redirect, Route, Switch, useHistory } from "react-router-dom";
+import * as Yup from 'yup';
 import addResourceImage from '../images/add.svg';
 import editProfileImage from '../images/edit.svg';
+import documentImage from '../images/folder.svg';
+import pdfImage from '../images/pdf.svg';
 import manageResourceImage from '../images/settings.svg';
+import videoImage from '../images/youtube.svg';
+import { axios } from "../init";
+import * as constants from '../redux/actions/constants';
+import * as creators from '../redux/actions/creators';
 import FormikField from "./formik-field";
 import FormikSelect from "./formik-select";
 import { getErrorsMarkup, ReactSwal, scrollToTop, showError, showLoading, showNetworkError, showSuccess } from "./utils";
-import documentImage from '../images/folder.svg';
-import pdfImage from '../images/pdf.svg';
-import videoImage from '../images/youtube.svg';
-import { connect, useDispatch } from "react-redux";
-import * as creators from '../redux/actions/creators';
-import * as Yup from 'yup';
-import { axios } from "../init";
-import * as constants from '../redux/actions/constants';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -883,7 +884,7 @@ const Home = connect(state => ({
     );
 });
 
-const ResourceCard = ({ resource = {category: 'Video'}, editResource, removeResource }) => {
+const ResourceCard = ({ resource, editResource, removeResource }) => {
     const useStyles = makeStyles(theme => ({
         imgContainer: {
             padding: '3rem',
@@ -941,6 +942,48 @@ const ResourceCard = ({ resource = {category: 'Video'}, editResource, removeReso
     );
 };
 
+const ResourceCardLoading = () => {
+    const useResourceCardStyles = makeStyles(theme => ({
+        root: {
+            padding: '1rem 1rem 0 1rem',
+            [theme.breakpoints.down('xs')]: {
+                padding: '1rem .2rem 0 .2rem',
+            },
+        },
+    
+        title: {
+            [theme.breakpoints.down('xs')]: {
+                fontSize: '1rem',
+            },
+        },
+    
+        imgContainer: {
+            padding: '3rem',
+            background: theme.resourceCard.background,
+        },
+    }));
+    
+    const classes = useResourceCardStyles();
+    
+    return (
+        <Grid item xs={12} md={4} className={classes.root}>
+            <Card>
+                <Skeleton variant="rect" height={150} animation="wave"/>
+                <CardContent>
+                    <Typography variant="h6" component="div"><Skeleton/></Typography>
+                    <Typography variant="subtitle1" component="div"><Skeleton/></Typography>
+                    <Typography variant="subtitle1" component="div"><Skeleton/></Typography>
+                </CardContent>
+                <CardActions>
+                    <Skeleton variant="rect" width={100} height={40} animation="wave"/>
+                    <Skeleton variant="rect" width={100} height={40} animation="wave"/>
+                    <Skeleton variant="rect" width={100} height={40} animation="wave"/>
+                </CardActions>
+            </Card>
+        </Grid>
+    );
+};
+
 const Manage = connect(state => ({
     auth: {...state.appReducer.auth},
     categories: state.appReducer.categories,
@@ -948,6 +991,9 @@ const Manage = connect(state => ({
     const [showEditResourceDialog, setShowEditResourceDialog] = useState(false);
     const [showDeleteResourceDialog, setShowDeleteResourceDialog] = useState(false);
     const [courses, setCourses] = useState(null);
+    const [category, setCategory] = useState(0);
+    const [course, setCourse] = useState(0);
+    const [resources, setResources] = useState(constants.flags.INITIAL_VALUE);
 
     const handleCloseEditResourceDialog = () => {
         setShowEditResourceDialog(false);
@@ -1041,10 +1087,38 @@ const Manage = connect(state => ({
     useEffect(() => {
         if (categories === constants.flags.INITIAL_VALUE)
             dispatch(creators.app.getCategories());
-        
+    }, [categories, dispatch]);
+
+    useEffect(() => {
         if (courses === null)
             getCourses();
-    }, [categories, courses, dispatch]);
+    }, [courses, dispatch]);
+
+    useEffect(() => {
+        const fetchResources = () => {
+            setResources(constants.flags.INITIAL_VALUE);
+    
+            axios.get(`moderator/resources?join=true&category_id=${category}&course_id=${course}`)
+            .then(res => {
+                if (res.status === 200)
+                    setResources(res.data);
+                else if (res.status === 404)
+                    setResources(constants.flags.NOT_FOUND);
+                else if (res.status === 401) {
+                    // Unauthorized
+                    axios.delete('moderator/session');
+                    dispatch(creators.app.authenticate(false, ''));
+                    history.push('/moderation/login');
+                }
+                else {
+                    showNetworkError();
+                }
+            })
+            .catch(() => showNetworkError());
+        };
+        
+        fetchResources();
+    }, [category, course, dispatch, history]);
 
     const getCourses = () => {
         setCourses(null);
@@ -1057,50 +1131,86 @@ const Manage = connect(state => ({
         .catch(() => {});
     };
 
+    const categoryChanged = index => {
+        setCategory(index === -1 ? 0 : categories[index].id);
+    };
+
+    const courseChanged = index => {
+        setCourse(index === -1 ? 0 : courses[index].id);
+    };
+
+    const fetchResources = () => {
+        setResources(constants.flags.INITIAL_VALUE);
+
+        axios.get(`moderator/resources?join=true&category_id=${category}&course_id=${course}`)
+        .then(res => {
+            if (res.status === 200)
+                setResources(res.data);
+            else if (res.status === 404)
+                setResources(constants.flags.NOT_FOUND);
+            else if (res.status === 401) {
+                // Unauthorized
+                axios.delete('moderator/session');
+                dispatch(creators.app.authenticate(false, ''));
+                history.push('/moderation/login');
+            }
+            else {
+                showNetworkError();
+            }
+        })
+        .catch(() => showNetworkError());
+    };
+
     return (
         <div className={classes.root}>
             <div className={classes.filterPaperContainer}>
                 <Paper className={classes.filterPaper} elevation={4}>
                     <Typography variant="h4" className="header">Filter Resources</Typography>
 
-                    <Formik
-                        initialValues={{
-                            
-                        }}
-                        
-                        onSubmit={(values) => {}}
-                    >
-                        <Form>
-                            <FormikSelect 
-                                name="resource_category" 
-                                defaultValue="0" 
-                                label="Category"
-                                variant="outlined"
-                                required
-                                fullWidth
-                            >
-                                <MenuItem value="0">All</MenuItem>
-                            </FormikSelect>
-                            <FormikSelect 
-                                name="course" 
-                                defaultValue="0" 
-                                label="Course"
-                                variant="outlined"
-                                required
-                                fullWidth
-                            >
-                                <MenuItem value="0">COSC101</MenuItem>
-                            </FormikSelect>
-                            <Button type="submit" variant="contained" color="secondary" size="large" className={classes.filterBtn} startIcon={<SearchRounded/>}>Filter</Button>
-                        </Form>
-                    </Formik>
+                    <FormControl color="secondary" variant="outlined" style={{width: '100%', marginBottom: '2rem' }}>
+                        <InputLabel>Choose Course</InputLabel>
+                        <Select
+                            name="course"
+                            label="Choose Course"
+                            color="secondary"
+                            variant="outlined"
+                            defaultValue="0"
+                        >
+                            <MenuItem value="0" onClick={() => courseChanged(-1)}>All Courses</MenuItem>
+                            {courses && courses.map((item, index) => (
+                                <MenuItem key={index} value={item.id} onClick={() => courseChanged(index)}>{item.course_code}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
+                    <FormControl color="secondary" variant="outlined" style={{width: '100%', marginBottom: '1rem' }}>
+                        <InputLabel>Choose Category</InputLabel>
+                        <Select
+                            name="category"
+                            label="Choose Category"
+                            color="secondary"
+                            variant="outlined"
+                            defaultValue="0"
+                        >
+                            <MenuItem value="0" onClick={() => categoryChanged(-1)}>All Categories</MenuItem>
+                            {categories !== constants.flags.INITIAL_VALUE && categories.map((item, index) => (
+                                <MenuItem key={index} value={item.id} onClick={() => categoryChanged(index)}>{item.category}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                 </Paper>
             </div>
 
             <div className={classes.resourcesContainer}>
-                <Grid container justify="start" spacing={0} alignItems="stretch">
-                    <ResourceCard editResource={handleShowEditResourceDialog} removeResource={handleShowDeleteResourceDialog} resource={{ category: 'Document' }}/> <ResourceCard resource={{ category: 'Textbook' }}/> <ResourceCard/>
-                    <ResourceCard resource={{ category: 'Material' }}/>
+                {resources === constants.flags.NOT_FOUND && <Typography variant="h6" className={classes.notFoundTxt}>No resource matched your queries. You may have not uploaded any resource for this combination.</Typography>}
+                
+                <Grid container justify="start" alignItems="stretch" className={classes.resourcesContainer}>
+                    {resources && resources !== constants.flags.NOT_FOUND && resources !== constants.flags.INITIAL_VALUE ? 
+                    resources.map((item, index) => (
+                        <ResourceCard key={index} resource={item} editResource={handleShowEditResourceDialog} removeResource={handleShowDeleteResourceDialog} />
+                    )) : ''}
+
+                    {resources === constants.flags.INITIAL_VALUE && <><ResourceCardLoading/><ResourceCardLoading/><ResourceCardLoading/></>}
                 </Grid>
             </div>
 
