@@ -176,7 +176,7 @@ const Home = connect(state => ({
         level_id: 0,
         department_id: 0,
     });
-    const [defaultRepData, setDefaultRepData] = useState({
+    const [defaultRepData] = useState({
         username: '',
         email: '',
         full_name: '',
@@ -559,7 +559,7 @@ const Home = connect(state => ({
         .catch(() => showNetworkError())
     };
 
-    const addModerator = (values) => {
+    const addModerator = (values, { resetForm }) => {
         showLoading();
 
         axios.post('admin/moderator', {
@@ -569,6 +569,7 @@ const Home = connect(state => ({
         .then(res => {
             if (res.status === 204) {
                 showSuccess('Success!', 'Rep added.');
+                resetForm(defaultRepData);
             }
             else if (res.status === 400) {
                showError('Oops!', getErrorsMarkup(res.data.messages.error));
