@@ -476,7 +476,7 @@ const Home = ({ showFooter }) => {
                     <Grid item xs={12} md={6}>
                         <Questions/>
                     </Grid>
-                    <Grid item xs={12} md={6} alignContent="center" className="content-container">
+                    <Grid item xs={12} md={6} className="content-container">
                         <Typography variant="span" component="p" className="content">
                         Campus Space is a cloud-based socio-academic web application built to provide students and other key players in the learning environment easy access to study materials.
                         <br/><br/>
