@@ -103,3 +103,26 @@ export const downloadResource = (resource) => {
     })
     .catch(() => showNetworkError());
 };
+
+export const downloadApp = () => {
+    showLoading('Getting Application...');
+
+    axios.get('app', { responseType: 'blob'})
+    .then(response => {
+        if (response.status === 200) {
+            const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.setAttribute('download', 'campus-space.apk'); //any other extension
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            showSuccess('Success!', 'Downloading application');
+        }
+        else if (response.status === 404) {
+            showError('Oops!', 'The application is not available for download at the moment!');
+        }
+    })
+    .catch(() => showNetworkError());
+};

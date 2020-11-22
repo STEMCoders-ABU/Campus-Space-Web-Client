@@ -4,6 +4,7 @@ import { Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import ScrollAnimation from "react-animate-on-scroll";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import * as Yup from 'yup';
 import { ReactComponent as Storage } from '../images/cloud_storage.svg';
 import { ReactComponent as Discussion } from '../images/discussion.svg';
@@ -16,7 +17,7 @@ import { axios } from "../init";
 import * as creators from '../redux/actions/creators';
 import CombinationSelection from "./combination-selection";
 import FormikField from "./formik-field";
-import { getErrorsMarkup, scrollToTop, showError, showInfo, showLoading, showNetworkError, showSuccess } from "./utils";
+import { downloadApp, getErrorsMarkup, scrollToTop, showError, showInfo, showLoading, showNetworkError, showSuccess } from "./utils";
 
 const Home = ({ showFooter }) => {
     const useStyles = makeStyles(theme => ({
@@ -399,10 +400,10 @@ const Home = ({ showFooter }) => {
                     
                     <Grid container justify="center" className={classes.heroBtnsContainer}>
                       <Grid item xs={12} lg={6}>
-                        <Button variant="contained" color="secondary" size="large" className={classes.heroBtn}>Explore Resources</Button>
+                        <Button component={Link} to="/resources-filter" variant="contained" color="secondary" size="large" className={classes.heroBtn}>Explore Resources</Button>
                       </Grid>
                       <Grid item xs={12} lg={6}>
-                        <Button variant="contained" color="primary" size="large" className={classes.heroBtn}>Download App</Button>
+                        <Button variant="contained" color="primary" size="large" className={classes.heroBtn} onClick={downloadApp}>Download App</Button>
                       </Grid>
                     </Grid>
                   </Grid>
@@ -501,7 +502,7 @@ const Home = ({ showFooter }) => {
                     <Typography variant="span" component="p" className="content">
                         Our mobile application allows you to access and manage campus space resources without the need for a browser! 
                     </Typography>
-                    <Button variant="contained" color="secondary" size="large" className={classes.appBtn}>Download Mobile App</Button>
+                    <Button variant="contained" color="secondary" size="large" className={classes.appBtn} onClick={downloadApp}>Download Mobile App</Button>
                     </Grid>
                     <Grid item xs={12} md={6}>
                     <MobileApp/>
