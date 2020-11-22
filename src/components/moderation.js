@@ -805,7 +805,7 @@ const Home = connect(state => ({
                                 <strong>Textbook</strong>: For other useful textual resources like e-books. This must also be in PDF format.
                             </li>
                             <li>
-                                <strong>Video</strong>: For visual resources like tutorial vidoes. This must be in MP4 format.
+                                <strong>Video</strong>: For visual resources like tutorial vidoes. This can be in MP4, WEBM or MKV format.
                             </li>
                         </ul>
                     </DialogContentText>
@@ -1492,8 +1492,8 @@ const ResetPassword = () => {
             if (response.status === 204) {
                 showSuccess('Success', 'Verification code resent!');
             }
-            else if (response.status === 404) { //Validation Error
-                showError('Oops!', 'There is no password reset request associated with this email!');
+            else if (response.status === 400) { //Validation Error
+                showError('Oops!', 'There is no password reset request associated with this email yet.<br/><br/>Use the Reset Password button below to request a password reset.');
             }
             else {
                 showNetworkError();
